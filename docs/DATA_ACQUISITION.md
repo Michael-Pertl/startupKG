@@ -1,0 +1,243 @@
+# Data Acquisition Plan
+
+## Principle
+
+Use public sources to construct a curated evidence table. The project should not depend on one perfect dataset.
+
+The raw table is the evidence layer. The Neo4j graph is generated from cleaned and normalized versions of this table.
+
+## Source Priority
+
+Use sources in this order:
+
+1. Company press releases
+2. Reuters or comparable high-quality business/financial news
+3. TechCrunch
+4. Sifted
+5. EU-Startups or comparable regional startup publications
+6. Crunchbase/Dealroom public pages for enrichment only
+7. Kaggle datasets only as seed material, not final evidence
+
+## Seed Sources
+
+Use the following kinds of sources to identify candidate companies:
+
+- TechCrunch lists of US AI startups with USD 100M+ funding rounds
+- Sifted AI 100 and European AI startup rankings
+- Reuters articles on AI venture funding
+- Company funding announcements
+- Public startup profiles
+- Regional business publications for Israel, China, UAE / Gulf, Canada, India, Singapore, and other global AI hubs
+- Public reporting on sovereign, corporate, and strategic AI investments when the target is an AI company and the transaction can be represented as a funding event
+
+## Global Coverage Strategy
+
+The target dataset is global. US and Europe remain important comparison groups,
+but they are not the only valid regions. Search and review qualifying AI
+mega-rounds from any country when the round meets the evidence standard.
+
+Use these initial global region labels:
+
+- `US`
+- `Europe`
+- `Israel`
+- `China`
+- `UAE / Gulf`
+- `Canada`
+- `India`
+- `Singapore`
+- `Other Global`
+
+Track global candidates in `data/raw/global_candidate_round_review.csv` before
+importing them. Move a row into `funding_events_raw.csv` only after confirming:
+
+- company is AI-native or AI-infrastructure-related;
+- country and region assignment;
+- round date or year;
+- amount in USD or converted to USD;
+- round type / transaction type;
+- at least one investor;
+- source URL;
+- confidence level.
+
+For China, UAE / Gulf, and other markets where reporting may include state-backed
+strategic investments, infrastructure commitments, or corporate minority stakes,
+label the `round_type` and `notes` precisely. Do not mix these transactions with
+ordinary venture rounds in interpretation unless the distinction is stated.
+
+## Manual Search Queries
+
+Use search patterns like:
+
+```text
+"<startup name>" "raises" "$100 million" "led by"
+"<startup name>" "Series B" "participation from"
+"<startup name>" "funding round" "AI" "investors"
+"<startup name>" "raises" "AI startup" "Reuters"
+"<country>" "AI startup" "raises" "$100 million"
+"Israel" "AI startup" "raises" "$100 million"
+"China" "AI startup" "raises" "$100 million"
+"UAE" "AI company" "investment" "$100 million"
+"AI infrastructure" "strategic investment" "$100 million"
+```
+
+## Required Raw Fields
+
+Every raw funding event must contain:
+
+```csv
+event_id,startup_name,region,country,city,round_date,year,month,round_type,amount_original,amount_currency,amount_usd,lead_investors,participating_investors,ai_domain,source_url,source_type,confidence,notes
+```
+
+## Source Type Values
+
+Use:
+
+- `press_release`
+- `reuters`
+- `techcrunch`
+- `sifted`
+- `eu_startups`
+- `crunchbase_public`
+- `dealroom_public`
+- `kaggle`
+- `other`
+
+## Confidence Values
+
+Use:
+
+- `high`
+- `medium`
+- `low`
+
+Recommended mapping:
+
+```text
+high   = company press release, Reuters, official filing
+medium = TechCrunch, Sifted, EU-Startups, strong secondary source
+low    = Kaggle-only, blog-only, unclear or weak secondary source
+```
+
+## Data Collection Workflow
+
+1. Create `data/raw/startup_seed_list.csv`.
+2. Add candidate startups from seed sources.
+3. Mark each candidate as `include`, `exclude`, or `uncertain`.
+4. For each included startup, identify all funding rounds above USD 100M.
+5. Stage one row per funding event in `data/raw/new_funding_events.csv`.
+6. Validate the staged rows with `python3 scripts/ingest_funding_events.py`.
+7. Append valid staged rows with `python3 scripts/ingest_funding_events.py --apply`.
+8. Normalize investor names using `data/raw/investor_name_mapping.csv`.
+9. Validate the raw table.
+10. Generate processed tables.
+11. Run `python3 scripts/audit_coverage.py` before final claims.
+12. Maintain app-facing company profiles in `data/raw/startup_profiles.csv`.
+
+The staged ingest script uses the same schema and validation rules as the main
+raw evidence table. It rejects duplicate `event_id` values and runs as a dry run
+unless `--apply` is passed.
+
+After appending new funding events, refresh the derived data with:
+
+```bash
+python3 scripts/validate_raw_data.py
+python3 scripts/normalize_raw_data.py
+python3 scripts/build_growth_metrics.py
+python3 scripts/init_startup_profiles.py
+python3 scripts/build_app_graph.py
+```
+
+The app reads `web/public/data/market_graph.json`, which is regenerated by
+`scripts/build_app_graph.py`.
+13. Add optional pre-2024 or below-threshold funding history to `data/raw/historical_funding_events_raw.csv` only for company profile timelines.
+
+For broader coverage, use `data/raw/candidate_round_review.csv` as the audit
+layer before adding new events to `funding_events_raw.csv`. This file records
+candidate companies, status, inclusion/exclusion rationale, and source URLs.
+Use `data/raw/global_candidate_round_review.csv` for non-US and non-European
+markets and strategic AI infrastructure candidates.
+
+The coverage audit cannot prove full market completeness. It reports structural
+data issues, open local candidate rows, small regional samples, and a benchmark
+watch list of important known gaps.
+
+## Company Profile Layer
+
+The app should use two layers:
+
+1. `funding_events_raw.csv` for sourced mega-round graph evidence.
+2. `startup_profiles.csv` and `historical_funding_events_raw.csv` for profile
+   context such as founding year, valuation, total funding, products, founders,
+   and older or smaller funding rounds.
+
+Generate or refresh sparse profile rows with:
+
+```bash
+python3 scripts/init_startup_profiles.py
+python3 scripts/validate_startup_profiles.py
+python3 scripts/report_profile_quality.py
+```
+
+Profile fields may come from company websites, press kits, reputable startup
+profiles, or high-quality financial reporting. Keep `profile_source_url` and
+`profile_confidence` populated before using profile claims in the app.
+
+## Inclusion Rule
+
+A row is valid only if:
+
+- `startup_name` is not empty;
+- `region` is in the controlled vocabulary;
+- `year` is 2024, 2025, or 2026;
+- `amount_usd >= 100000000`;
+- `source_url` is not empty;
+- at least one investor is present;
+- `ai_domain` is not empty.
+
+## Exclusion Rule
+
+Exclude:
+
+- non-AI companies;
+- companies without a clear AI-native or AI-infrastructure role;
+- rounds below USD 100M;
+- rounds without public source URLs;
+- acquisitions unless they are explicitly funding rounds;
+- debt facilities unless deliberately included and marked separately.
+
+For global coverage, distinguish startup funding rounds from strategic state,
+corporate, infrastructure, or acquisition transactions. For example, UAE-related
+AI activity may involve large corporate or sovereign strategic investments; those
+can be useful to track, but they should be labelled clearly and not mixed with
+standard venture rounds without caveats.
+
+## Investor Parsing
+
+Use semicolon-separated investor lists.
+
+Example:
+
+```csv
+lead_investors,participating_investors
+"General Catalyst","Accel; NVIDIA; Salesforce Ventures"
+```
+
+## Currency Handling
+
+If the original amount is not USD:
+
+- keep `amount_original`;
+- keep `amount_currency`;
+- convert to `amount_usd`;
+- document the conversion method in `notes` or a separate file.
+
+For a university prototype, an approximate historical conversion is acceptable if explicitly documented.
+
+## Data Quality Rules
+
+- Do not silently overwrite raw source values.
+- Do not delete excluded rows; mark them in the seed list.
+- Do not use investor centrality results before deduplicating investor names.
+- Do not mix total company funding with individual round amount.
+- Prefer exact funding date. If only year is known, set `month` empty and document uncertainty.

@@ -1,0 +1,416 @@
+investor_id,name,investor_type,country,website
+investor_01_advisors,01 Advisors,VC,USA,https://01a.com
+investor_137_ventures,137 Ventures,VC,USA,https://www.137ventures.com
+investor_1789_capital,1789 Capital,VC,USA,https://1789capital.com
+investor_20vc,20VC,VC,United Kingdom,https://www.20vc.com
+investor_8090_industries,8090 Industries,VC,USA,https://8090industries.com
+investor_8vc,8VC,VC,USA,https://www.8vc.com
+investor_a,A*,VC,USA,
+investor_abu_dhabi_investment_authority,Abu Dhabi Investment Authority,Sovereign Wealth Fund,United Arab Emirates,https://www.adia.ae
+investor_abu_dhabi_investment_council,Abu Dhabi Investment Council,Sovereign Wealth Fund,United Arab Emirates,
+investor_accel,Accel,VC,USA,https://www.accel.com
+investor_addition,Addition,VC,USA,https://addition.com
+investor_adobe_ventures,Adobe Ventures,Corporate VC,USA,https://www.adobe.com
+investor_advent_international,Advent International,Private Equity,USA,https://www.adventinternational.com
+investor_afw_partners,AFW Partners,Investment Firm,,
+investor_aidenlair_global,Aidenlair Global,Investment Firm,,
+investor_air_street_capital,Air Street Capital,VC,United Kingdom,https://airstreet.com
+investor_aker_asa,Aker ASA,Corporate,Norway,https://www.akerasa.com
+investor_albionvc,AlbionVC,VC,United Kingdom,https://albion.vc
+investor_aleph,Aleph,VC,Israel,https://aleph.vc
+investor_alexandr_wang,Alexandr Wang,Angel,USA,
+investor_alfred_akirov,Alfred Akirov,Angel,Israel,
+investor_alibaba,Alibaba,Corporate,China,https://www.alibabagroup.com
+investor_alibaba_cloud,Alibaba Cloud,Corporate,China,https://www.alibabacloud.com
+investor_allen_company,Allen & Company,Investment Bank,USA,https://www.alleninvestments.com
+investor_alliancebernstein,AllianceBernstein,Investment Manager,USA,https://www.alliancebernstein.com
+investor_alpha_square_group,Alpha Square Group,Investment Manager,USA,https://alphasquaregroup.com
+investor_alpha_wave_global,Alpha Wave Global,Investment Manager,USA,https://www.alphawaveglobal.com
+investor_alphabet,Alphabet,Corporate,USA,https://abc.xyz
+investor_altimeter_capital,Altimeter Capital,Investment Manager,USA,https://www.altimeter.com
+investor_altitude_life_science_ventures,Altitude Life Science Ventures,VC,USA,
+investor_alumni_ventures,Alumni Ventures,VC,USA,https://www.av.vc
+investor_alven,Alven,VC,France,https://www.alven.co
+investor_amazon,Amazon,Corporate,USA,https://www.amazon.com
+investor_amd,AMD,Corporate,USA,https://www.amd.com
+investor_amd_ventures,AMD Ventures,Corporate VC,USA,https://www.amd.com/en/corporate/amd-ventures.html
+investor_amp_coalition,AMP Coalition,Investment Partnership,USA,
+investor_amplify_partners,Amplify Partners,VC,USA,https://www.amplifypartners.com
+investor_andra_capital,Andra Capital,Investment Manager,USA,https://andracapital.com
+investor_andreessen_horowitz,Andreessen Horowitz,VC,USA,https://a16z.com
+investor_andrew_sieja,Andrew Sieja,Angel,USA,
+investor_anjney_midha,Anjney Midha,Angel,USA,
+investor_apandion,Apandion,Investment Manager,USA,
+investor_applied_materials,Applied Materials,Corporate,USA,https://www.appliedmaterials.com
+investor_aravind_srinivas,Aravind Srinivas,Angel,USA,
+investor_arch_venture_partners,ARCH Venture Partners,VC,USA,https://www.archventure.com
+investor_archerman_capital,Archerman Capital,VC,USA,
+investor_ark_invest,ARK Invest,Investment Manager,USA,https://ark-invest.com
+investor_ark_venture_fund,ARK Venture Fund,VC,USA,https://ark-funds.com
+investor_asml,ASML,Corporate,Netherlands,https://www.asml.com
+investor_association_familiale_mulliez,Association Familiale Mulliez,Family Office,France,
+investor_aster_capital,Aster Capital,VC,France,https://www.aster.com
+investor_astra_capital_management,Astra Capital Management,Investment Manager,USA,https://www.astracapital.com
+investor_at_t_ventures,AT&T Ventures,Corporate VC,USA,
+investor_atlassian,Atlassian,Corporate,Australia,https://www.atlassian.com
+investor_atlassian_ventures,Atlassian Ventures,Corporate VC,Australia,https://www.atlassian.com/company/ventures
+investor_atomico,Atomico,VC,United Kingdom,https://atomico.com
+investor_autodesk,Autodesk,Corporate,USA,https://www.autodesk.com
+investor_automotive_equipment,Automotive Equipment,Corporate,Israel,
+investor_ava_investments,Ava Investments,Investment Firm,,
+investor_avp,AVP,VC,France,https://www.axa-vp.com
+investor_b3_capital,B3 Capital,VC,USA,
+investor_b_capital,B Capital,VC,USA,https://www.bcapitalgroup.com
+investor_backbone,Backbone,VC,USA,
+investor_baillie_gifford,Baillie Gifford,Investment Manager,United Kingdom,https://www.bailliegifford.com
+investor_bain_capital,Bain Capital,Private Equity,USA,https://www.baincapital.com
+investor_bain_capital_ventures,Bain Capital Ventures,VC,USA,https://www.baincapitalventures.com
+investor_bam_elevate,BAM Elevate,Investment Firm,USA,https://www.bamfunds.com
+investor_battery_ventures,Battery Ventures,VC,USA,https://www.battery.com
+investor_bedrock,Bedrock,VC,USA,https://www.bedrockcap.com
+investor_beijing_ai_industry_investment_fund,Beijing AI Industry Investment Fund,Government Fund,China,
+investor_benchmark,Benchmark,VC,USA,https://www.benchmark.com
+investor_bessemer_venture_partners,Bessemer Venture Partners,VC,USA,https://www.bvp.com
+investor_bezos_expeditions,Bezos Expeditions,Family Office,USA,https://www.bezosexpeditions.com
+investor_bhp_ventures,BHP Ventures,Corporate VC,Australia,https://www.bhp.com
+investor_bicycle_capital,Bicycle Capital,VC,USA,
+investor_blackbird_ventures,Blackbird Ventures,VC,Australia,https://blackbird.vc
+investor_blackrock,BlackRock,Investment Manager,USA,https://www.blackrock.com
+investor_blue_horizon_advisors,Blue Horizon Advisors,Investment Firm,USA,
+investor_blue_owl_capital,Blue Owl Capital,Investment Manager,USA,https://www.blueowl.com
+investor_bnf_capital,BNF Capital,Investment Firm,,
+investor_bnp_paribas,BNP Paribas,Corporate,France,https://group.bnpparibas
+investor_bond,Bond,VC,USA,https://www.bondcap.com
+investor_bow_wave_capital,Bow Wave Capital,VC,USA,
+investor_boxgroup,BoxGroup,VC,USA,https://www.boxgroup.com
+investor_bpifrance,Bpifrance,Government Fund,France,https://www.bpifrance.com
+investor_braidwell,Braidwell,Investment Firm,USA,https://braidwell.com
+investor_breakthrough_energy_ventures,Breakthrough Energy Ventures,VC,USA,https://www.breakthroughenergy.org
+investor_breyer_capital,Breyer Capital,VC,USA,https://breyercapital.com
+investor_british_business_bank,British Business Bank,Government Fund,United Kingdom,https://www.british-business-bank.co.uk
+investor_british_patient_capital,British Patient Capital,Government Fund,United Kingdom,https://www.britishpatientcapital.co.uk
+investor_broadlight_capital,BroadLight Capital,Investment Manager,USA,https://broadlightcapital.com
+investor_buckley_ventures,Buckley Ventures,VC,USA,https://www.buckleyventures.com
+investor_bullhound_capital,Bullhound Capital,Investment Manager,United Kingdom,https://www.bullhoundcapital.com
+investor_byers_capital,Byers Capital,VC,USA,
+investor_byfounders,byFounders,VC,Denmark,https://byfounders.vc
+investor_california_health_care_foundation,California Health Care Foundation,Foundation,USA,https://www.chcf.org
+investor_canaan_partners,Canaan Partners,VC,USA,https://www.canaan.com
+investor_canva,Canva,Corporate,Australia,https://www.canva.com
+investor_capital_one_ventures,Capital One Ventures,Corporate VC,USA,https://www.capitaloneventures.com
+investor_capital_riesgo_de_euskadi_grupo_spri,Capital Riesgo de Euskadi - Grupo SPRI,Government Fund,Spain,https://www.spri.eus
+investor_capitalg,CapitalG,Corporate VC,USA,https://www.capitalg.com
+investor_cathay_innovation,Cathay Innovation,VC,France,https://www.cathayinnovation.com
+investor_cdp_venture_capital,CDP Venture Capital,Government Fund,Italy,https://www.cdpventurecapital.it
+investor_china_merchants_china_direct_investments,China Merchants China Direct Investments,Investment Firm,China,
+investor_china_mobile,China Mobile,Corporate,China,https://www.chinamobileltd.com
+investor_chris_re,Chris Re,Angel,USA,
+investor_cicc,CICC,Investment Bank,China,https://www.cicc.com
+investor_cisco,Cisco,Corporate,USA,https://www.cisco.com
+investor_citadel,Citadel,Investment Manager,USA,https://www.citadel.com
+investor_citi_ventures,Citi Ventures,Corporate VC,USA,https://www.citi.com/ventures
+investor_coatue,Coatue,Investment Manager,USA,https://www.coatue.com
+investor_collective_global,Collective Global,Investment Firm,USA,https://www.collectiveglobal.com
+investor_comasco,Comasco,Corporate,Israel,
+investor_conviction,Conviction,VC,USA,https://www.conviction.com
+investor_cpe_yuanfeng,CPE Yuanfeng,Investment Firm,China,
+investor_craft_ventures,Craft Ventures,VC,USA,https://www.craftventures.com
+investor_creandum,Creandum,VC,Sweden,https://creandum.com
+investor_cyberstarts,Cyberstarts,VC,Israel,https://www.cyberstarts.com
+investor_d1_capital_partners,D1 Capital Partners,Investment Manager,USA,https://www.d1cap.com
+investor_d_e_shaw_ventures,D. E. Shaw Ventures,VC,USA,https://www.deshaw.com
+investor_daniel_gross,Daniel Gross,Angel,USA,
+investor_dassault_aviation,Dassault Aviation,Corporate,France,https://www.dassault-aviation.com
+investor_databricks,Databricks,Corporate,USA,https://www.databricks.com
+investor_databricks_ventures,Databricks Ventures,Corporate VC,USA,https://www.databricks.com
+investor_david_siegel,David Siegel,Angel,USA,
+investor_dawn_capital,Dawn Capital,VC,United Kingdom,https://www.dawncapital.com
+investor_dclba,DCLBA,Investment Firm,,
+investor_decarbonization_partners,Decarbonization Partners,Investment Firm,USA,https://www.decarbonizationpartners.com
+investor_definition_capital,Definition Capital,VC,USA,
+investor_defy,Defy,VC,USA,https://www.defy.vc
+investor_delek_motors,Delek Motors,Corporate,Israel,
+investor_dell_technologies,Dell Technologies,Corporate,USA,https://www.delltechnologies.com
+investor_destiny_tech100,Destiny Tech100,Investment Company,USA,https://destiny.xyz
+investor_deutsche_telekom_capital_partners,Deutsche Telekom Capital Partners,Corporate VC,Germany,https://dtcp.capital
+investor_disruptive,Disruptive,VC,USA,https://www.disruptive.vc
+investor_dragoneer_investment_group,Dragoneer Investment Group,Growth Equity,USA,https://www.dragoneer.com
+investor_dst_global,DST Global,VC,United Kingdom,https://www.dst-global.com
+investor_durable_capital_partners,Durable Capital Partners,Investment Manager,USA,https://durablecap.com
+investor_earlybird,Earlybird,VC,Germany,https://earlybird.com
+investor_ebay_ventures,eBay Ventures,Corporate VC,USA,https://www.ebayinc.com
+investor_eclipse_ventures,Eclipse Ventures,VC,USA,https://www.eclipse.vc
+investor_elad_gil,Elad Gil,Angel,USA,https://eladgil.com
+investor_elaia,Elaia,VC,France,https://www.elaia.com
+investor_emergence_capital,Emergence Capital,VC,USA,https://www.emcap.com
+investor_emerson_collective,Emerson Collective,Investment Company,USA,https://www.emersoncollective.com
+investor_emphatic_capital,Emphatic Capital,VC,USA,https://emphatic.capital
+investor_endeavor_catalyst,Endeavor Catalyst,VC,USA,https://endeavor.org/endeavor-catalyst
+investor_eqt_ventures,EQT Ventures,VC,Sweden,https://eqtventures.com
+investor_equinor_ventures,Equinor Ventures,Corporate VC,Norway,https://www.equinor.com
+investor_eric_schmidt,Eric Schmidt,Angel,USA,
+investor_eurazeo,Eurazeo,Investment Manager,France,https://www.eurazeo.com
+investor_evantic_capital,Evantic Capital,Investment Manager,USA,
+investor_everywhere_ventures,Everywhere Ventures,VC,USA,https://everywhere.vc
+investor_evolution_equity_partners,Evolution Equity Partners,VC,USA,https://evolutionequity.com
+investor_export_development_canada,Export Development Canada,Government Agency,Canada,https://www.edc.ca
+investor_f_prime_capital,F-Prime Capital,VC,USA,https://fprimecapital.com
+investor_factorial_funds,Factorial Funds,VC,USA,https://factorialfunds.com
+investor_felicis,Felicis,VC,USA,https://www.felicis.com
+investor_fidelity_management_research,Fidelity Management & Research,Investment Manager,USA,https://www.fidelity.com
+investor_fifty_years,Fifty Years,VC,USA,https://fiftyyears.com
+investor_figma_ventures,Figma Ventures,Corporate VC,USA,https://www.figma.com
+investor_first_round_capital,First Round Capital,VC,USA,https://firstround.com
+investor_firstmark_capital,FirstMark Capital,VC,USA,https://firstmark.com
+investor_flagship_pioneering,Flagship Pioneering,VC,USA,https://www.flagshippioneering.com
+investor_floodgate,Floodgate,VC,USA,https://www.floodgate.com
+investor_flying_fish_partners,Flying Fish Partners,VC,USA,https://www.flyingfish.vc
+investor_foresite_capital,Foresite Capital,VC,USA,https://foresitecapital.com
+investor_forestay_capital,Forestay Capital,VC,Switzerland,https://forestay.com
+investor_forgepoint_capital,Forgepoint Capital,VC,USA,https://forgepointcap.com
+investor_founder_collective,Founder Collective,VC,USA,https://www.foundercollective.com
+investor_founders_fund,Founders Fund,VC,USA,https://foundersfund.com
+investor_franklin_templeton,Franklin Templeton,Investment Manager,USA,https://www.franklintempleton.com
+investor_fred_alger_management,Fred Alger Management,Investment Manager,USA,https://www.alger.com
+investor_fujitsu,Fujitsu,Corporate,Japan,https://www.fujitsu.com
+investor_g_squared,G Squared,Investment Manager,USA,https://www.gsquared.com
+investor_gabe_newell,Gabe Newell,Angel,USA,
+investor_garuda_ventures,Garuda Ventures,VC,USA,
+investor_general_atlantic,General Atlantic,Growth Equity,USA,https://www.generalatlantic.com
+investor_general_catalyst,General Catalyst,VC,USA,https://www.generalcatalyst.com
+investor_geodesic_capital,Geodesic Capital,VC,USA,https://www.geodesiccap.com
+investor_georges_harik,Georges Harik,Angel,USA,
+investor_georgian,Georgian,VC,Canada,https://georgian.io
+investor_gic,GIC,Sovereign Wealth Fund,Singapore,https://www.gic.com.sg
+investor_gigascale_capital,Gigascale Capital,VC,USA,https://www.gigascale.com
+investor_gil_agmon,Gil Agmon,Angel,Israel,
+investor_gim_marcel_dassault,GIM Marcel Dassault,Family Office,France,
+investor_gokul_rajaram,Gokul Rajaram,Angel,USA,
+investor_goldman_sachs_alternatives,Goldman Sachs Alternatives,Investment Manager,USA,https://www.gsam.com
+investor_google,Google,Corporate,USA,https://www.google.com
+investor_google_ai_futures_fund,Google AI Futures Fund,Corporate VC,USA,https://ai.google
+investor_gradient_ventures,Gradient Ventures,Corporate VC,USA,https://www.gradient.com
+investor_greenoaks,Greenoaks,Investment Manager,USA,https://www.greenoaks.com
+investor_greycroft,Greycroft,VC,USA,https://www.greycroft.com
+investor_greylock,Greylock,VC,USA,https://greylock.com
+investor_group_11,Group 11,VC,USA,https://www.group11.vc
+investor_grove_ventures,Grove Ventures,VC,Israel,https://www.grovevc.com
+investor_gv,GV,Corporate VC,USA,https://www.gv.com
+investor_hakluyt_capital,Hakluyt Capital,Investment Firm,United Kingdom,https://hakluytandco.com
+investor_hanabi_capital,Hanabi Capital,VC,USA,https://hanabi.capital
+investor_healthcare_of_ontario_pension_plan,Healthcare of Ontario Pension Plan,Investment Manager,Canada,https://hoopp.com
+investor_henrique_dubugras,Henrique Dubugras,Angel,USA,
+investor_hetz_ventures,Hetz Ventures,VC,Israel,https://www.hetz.vc
+investor_hh_ctbc_partnership,HH-CTBC Partnership,Corporate VC,Taiwan,
+investor_high_tech_gruenderfonds,High-Tech Gruenderfonds,VC,Germany,https://www.htgf.de
+investor_hillhouse_investment,Hillhouse Investment,Investment Manager,China,https://www.hillhouseinvestment.com
+investor_hiro_capital,Hiro Capital,VC,United Kingdom,https://hiro.capital
+investor_hongshan,HongShan,VC,China,https://www.hongshan.com
+investor_hp_tech_ventures,HP Tech Ventures,Corporate VC,USA,https://www.hptechventures.com
+investor_hsbc,HSBC,Corporate,United Kingdom,https://www.hsbc.com
+investor_humain,HUMAIN,Corporate,Saudi Arabia,https://humain.ai
+investor_hummingbird_ventures,Hummingbird Ventures,VC,Belgium,https://www.hummingbird.vc
+investor_hv_capital,HV Capital,VC,Germany,https://www.hvcapital.com
+investor_hyundai_motor_group,Hyundai Motor Group,Corporate,South Korea,https://www.hyundai.com
+investor_ibm,IBM,Corporate,USA,https://www.ibm.com
+investor_ibm_ventures,IBM Ventures,Corporate VC,USA,https://www.ibm.com
+investor_iconiq_capital,ICONIQ Capital,Investment Manager,USA,https://www.iconiqcapital.com
+investor_idg_capital,IDG Capital,VC,China,https://www.idgcapital.com
+investor_in_q_tel,In-Q-Tel,Government VC,USA,https://www.iqt.org
+investor_incharge_capital,Incharge Capital,VC,USA,
+investor_index_ventures,Index Ventures,VC,United Kingdom,https://www.indexventures.com
+investor_innovation_endeavors,Innovation Endeavors,VC,USA,https://www.innovationendeavors.com
+investor_innovationx,InnovationX,VC,USA,
+investor_inovia_capital,Inovia Capital,VC,Canada,https://www.inovia.vc
+investor_insight_partners,Insight Partners,VC,USA,https://www.insightpartners.com
+investor_intel_capital,Intel Capital,Corporate VC,USA,https://www.intelcapital.com
+investor_interface_fund,Interface Fund,VC,USA,
+investor_ivp,IVP,VC,USA,https://www.ivp.com
+investor_jane_street,Jane Street,Trading Firm,USA,https://www.janestreet.com
+investor_jeff_bezos,Jeff Bezos,Angel,USA,
+investor_jpmorganchase_security_and_resiliency_initiative,JPMorganChase Security and Resiliency Initiative,Corporate Investment,USA,https://www.jpmorganchase.com
+investor_july_fund,July Fund,VC,USA,https://www.julyfund.com
+investor_junlian_capital,Junlian Capital,VC,China,
+investor_kddi,KDDI,Corporate,Japan,https://www.kddi.com
+investor_khosla_ventures,Khosla Ventures,VC,USA,https://www.khoslaventures.com
+investor_kindred_ventures,Kindred Ventures,VC,USA,https://kindredventures.com
+investor_kingdom_holding_company,Kingdom Holding Company,Investment Company,Saudi Arabia,https://kingdom.com.sa
+investor_kleiner_perkins,Kleiner Perkins,VC,USA,https://www.kleinerperkins.com
+investor_kyle_vogt,Kyle Vogt,Angel,USA,
+investor_latitude_capital,Latitude Capital,Investment Manager,USA,
+investor_lenovo,Lenovo,Corporate,China,https://www.lenovo.com
+investor_lg_electronics,LG Electronics,Corporate,South Korea,https://www.lg.com
+investor_lightspeed_venture_partners,Lightspeed Venture Partners,VC,USA,https://lsvp.com
+investor_linden_advisors,Linden Advisors,Investment Manager,USA,https://www.lindenllc.com
+investor_long_journey_ventures,Long Journey Ventures,VC,USA,https://longjourney.vc
+investor_long_z_investments,Long-Z Investments,Corporate VC,China,
+investor_luminarx_capital_management,LuminArx Capital Management,Investment Manager,USA,https://www.luminarx.com
+investor_lunate,Lunate,Investment Manager,United Arab Emirates,https://www.lunate.com
+investor_lux_capital,Lux Capital,VC,USA,https://www.luxcapital.com
+investor_macquarie_capital,Macquarie Capital,Investment Bank,Australia,https://www.macquarie.com
+investor_madrona,Madrona,VC,USA,https://www.madrona.com
+investor_magnetar_capital,Magnetar Capital,Investment Manager,USA,https://www.magnetar.com
+investor_marc_benioff,Marc Benioff,Angel,USA,
+investor_march_capital,March Capital,VC,USA,https://www.marchcp.com
+investor_mark_cuban,Mark Cuban,Angel,USA,
+investor_matrix_partners,Matrix Partners,VC,USA,https://www.matrixpartners.com
+investor_maverick_capital,Maverick Capital,Investment Manager,USA,https://www.maverickcap.com
+investor_meituan,Meituan,Corporate,China,https://about.meituan.com
+investor_menlo_ventures,Menlo Ventures,VC,USA,https://menlovc.com
+investor_mercato_partners,Mercato Partners,VC,USA,https://mercatopartners.com
+investor_meritech_capital_partners,Meritech Capital Partners,VC,USA,https://www.meritechcapital.com
+investor_mesh,MESH,Investment Firm,USA,
+investor_mgx,MGX,Investment Company,United Arab Emirates,https://mgx.ae
+investor_microsoft,Microsoft,Corporate,USA,https://www.microsoft.com
+investor_mike_gamson,Mike Gamson,Angel,USA,
+investor_mirae_asset,Mirae Asset,Investment Manager,South Korea,https://www.miraeasset.com
+investor_mitsubishi_corporation,Mitsubishi Corporation,Corporate,Japan,https://www.mitsubishicorp.com
+investor_mmc_ventures,MMC Ventures,VC,United Kingdom,https://www.mmc.vc
+investor_modi_ventures,Modi Ventures,VC,USA,
+investor_mongodb,MongoDB,Corporate,USA,https://www.mongodb.com
+investor_morgan_stanley,Morgan Stanley,Investment Bank,USA,https://www.morganstanley.com
+investor_mosaic_ventures,Mosaic Ventures,VC,United Kingdom,https://www.mosaicventures.com
+investor_mubadala,Mubadala,Sovereign Wealth Fund,United Arab Emirates,https://www.mubadala.com
+investor_mufg,MUFG,Bank,Japan,https://www.mufg.jp
+investor_mumtalakat,Mumtalakat,Sovereign Wealth Fund,Bahrain,https://mumtalakat.bh
+investor_nat_friedman,Nat Friedman,Angel,USA,
+investor_national_grid_partners,National Grid Partners,Corporate VC,USA,https://www.ngpartners.com
+investor_nebius_group,Nebius Group,Corporate,Netherlands,https://nebius.com
+investor_neuberger_berman,Neuberger Berman,Investment Manager,USA,https://www.nb.com
+investor_new_enterprise_associates,New Enterprise Associates,VC,USA,https://www.nea.com
+investor_nextera_energy,NextEra Energy,Corporate,USA,https://www.nexteraenergy.com
+investor_nfdg,NFDG,Investment Partnership,USA,
+investor_ngp_capital,NGP Capital,VC,USA,https://www.ngpcap.com
+investor_nokia,Nokia,Corporate,Finland,https://www.nokia.com
+investor_northzone,Northzone,VC,United Kingdom,https://www.northzone.com
+investor_notable_capital,Notable Capital,VC,USA,https://www.notablecap.com
+investor_ntt_group,NTT Group,Corporate,Japan,https://group.ntt
+investor_nventures,NVentures,Corporate VC,USA,https://www.nvidia.com
+investor_nvidia,NVIDIA,Corporate,USA,https://www.nvidia.com
+investor_o1a,O1A,VC,USA,https://www.o1a.com
+investor_oak_hc_ft,Oak HC/FT,VC,USA,https://www.oakhcft.com
+investor_olivier_pomel,Olivier Pomel,Angel,USA,
+investor_oman_investment_authority,Oman Investment Authority,Sovereign Wealth Fund,Oman,https://oia.gov.om
+investor_openai,OpenAI,Corporate,USA,https://openai.com
+investor_openai_startup_fund,OpenAI Startup Fund,Corporate VC,USA,https://openai.fund
+investor_orbis_investments,Orbis Investments,Investment Manager,Bermuda,https://www.orbis.com
+investor_ourcrowd,OurCrowd,VC,Israel,https://www.ourcrowd.com
+investor_palo_alto_growth_capital,Palo Alto Growth Capital,Investment Manager,USA,
+investor_parker_institute_for_cancer_immunotherapy,Parker Institute for Cancer Immunotherapy,Nonprofit,USA,https://www.parkerici.org
+investor_parkway_venture_capital,Parkway Venture Capital,VC,USA,https://www.parkway.vc
+investor_peak_xv,Peak XV,VC,Singapore,https://www.peakxv.com
+investor_peter_thiel,Peter Thiel,Angel,USA,
+investor_plural,Plural,VC,United Kingdom,https://pluralplatform.com
+investor_poalim_equity,Poalim Equity,Corporate VC,Israel,
+investor_point72_ventures,Point72 Ventures,VC,USA,https://p72.vc
+investor_positive_sum_ventures,Positive Sum Ventures,VC,USA,https://positivesum.vc
+investor_premji_invest,Premji Invest,Investment Company,India,https://www.premjiinvest.com
+investor_prima_materia,Prima Materia,Investment Company,Sweden,https://www.primamateria.com
+investor_primary_venture_partners,Primary Venture Partners,VC,USA,https://www.primary.vc
+investor_prince_alwaleed_bin_talal,Prince Alwaleed Bin Talal,Angel,Saudi Arabia,
+investor_princeville_capital,Princeville Capital,VC,USA,https://princevillecapital.com
+investor_prosperity7_ventures,Prosperity7 Ventures,Corporate VC,Saudi Arabia,https://www.prosperity7vc.com
+investor_prysm_capital,Prysm Capital,VC,USA,https://www.prysmcapital.com
+investor_psp_growth,PSP Growth,Investment Manager,USA,https://www.pspgrowth.com
+investor_psp_investments,PSP Investments,Investment Manager,Canada,https://www.investpsp.com
+investor_publicis_groupe,Publicis Groupe,Corporate,France,https://www.publicisgroupe.com
+investor_qatar_investment_authority,Qatar Investment Authority,Sovereign Wealth Fund,Qatar,https://www.qia.qa
+investor_qp_ventures,QP Ventures,VC,,
+investor_quantonation,Quantonation,VC,France,https://www.quantonation.com
+investor_radical_ventures,Radical Ventures,VC,Canada,https://radical.vc
+investor_radius_capital,Radius Capital,VC,USA,https://www.radiuscap.com
+investor_redpoint_ventures,Redpoint Ventures,VC,USA,https://www.redpoint.com
+investor_ribbit_capital,Ribbit Capital,VC,USA,https://ribbitcap.com
+investor_riot_ventures,Riot Ventures,VC,USA,https://www.riot.vc
+investor_rizvi_traverse,Rizvi Traverse,Investment Firm,USA,
+investor_rpt_capital,RPT Capital,VC,USA,https://rpt.capital
+investor_rsquared,Rsquared,Investment Firm,USA,
+investor_s32,S32,VC,USA,https://www.s32.vc
+investor_saab,Saab,Corporate,Sweden,https://www.saab.com
+investor_salesforce_ventures,Salesforce Ventures,Corporate VC,USA,https://www.salesforceventures.com
+investor_samsung,Samsung,Corporate,South Korea,https://www.samsung.com
+investor_samsung_securities,Samsung Securities,Investment Bank,South Korea,https://www.samsungsecurities.com
+investor_samsung_ventures,Samsung Ventures,Corporate VC,South Korea,https://www.samsungventures.com
+investor_sandton_capital_partners,Sandton Capital Partners,Investment Manager,United Kingdom,https://www.sandtoncapital.com
+investor_santander_climate_vc,Santander Climate VC,Corporate VC,Spain,https://www.santander.com
+investor_sapphire_ventures,Sapphire Ventures,VC,USA,https://sapphireventures.com
+investor_sbi_group,SBI Group,Corporate,Japan,https://www.sbigroup.co.jp
+investor_scott_belsky,Scott Belsky,Angel,USA,
+investor_sea_limited,Sea Limited,Corporate,Singapore,https://www.sea.com
+investor_senovo,Senovo,VC,Germany,https://senovo.vc
+investor_sequoia_capital,Sequoia Capital,VC,USA,https://www.sequoiacap.com
+investor_servicenow_ventures,ServiceNow Ventures,Corporate VC,USA,https://www.servicenow.com/company/ventures.html
+investor_sett,SETT,Government Fund,Spain,https://www.sett.gob.es
+investor_sgw,SGW,Investment Manager,USA,
+investor_shanghai_ai_industry_investment_fund,Shanghai AI Industry Investment Fund,Government Fund,China,
+investor_shenzhen_capital_group,Shenzhen Capital Group,Government Fund,China,https://www.szvc.com.cn
+investor_shopify_ventures,Shopify Ventures,Corporate VC,Canada,https://www.shopify.com
+investor_siemens,Siemens,Corporate,Germany,https://www.siemens.com
+investor_sierra_ventures,Sierra Ventures,VC,USA,https://www.sierraventures.com
+investor_skybox_datacenters,Skybox Datacenters,Corporate,USA,https://skyboxdatacenters.com
+investor_smash_capital,Smash Capital,VC,USA,https://www.smashcap.com
+investor_snowflake,Snowflake,Corporate,USA,https://www.snowflake.com
+investor_snowpoint_ventures,Snowpoint Ventures,VC,USA,https://www.snowpoint.vc
+investor_softbank_group,SoftBank Group,Corporate,Japan,https://group.softbank
+investor_softbank_vision_fund,SoftBank Vision Fund,Corporate VC,Japan,https://group.softbank
+investor_sony,Sony,Corporate,Japan,https://www.sony.com
+investor_spark_capital,Spark Capital,VC,USA,https://www.sparkcapital.com
+investor_standard_investments,Standard Investments,Investment Manager,USA,https://www.standardindustries.com
+investor_state_of_michigan_retirement_system,State of Michigan Retirement System,Pension Fund,USA,
+investor_state_owned_enterprises,State-owned enterprises,Government Fund,China,
+investor_stepstone_group,StepStone Group,Investment Manager,USA,https://www.stepstonegroup.com
+investor_strategic_investors,Strategic investors,Unknown,,
+investor_stripes,Stripes,Investment Firm,USA,https://www.stripes.co
+investor_sutter_hill_ventures,Sutter Hill Ventures,VC,USA,https://www.sutterhillventures.com
+investor_sv_angel,SV Angel,VC,USA,https://svangel.com
+investor_swish_ventures,Swish Ventures,VC,USA,
+investor_t_capital,T.Capital,Corporate VC,Germany,https://www.telekom-capital.com
+investor_t_rowe_price,T. Rowe Price,Investment Manager,USA,https://www.troweprice.com
+investor_tal_ventures,TAL Ventures,VC,Israel,
+investor_talcar,Talcar,Corporate,Israel,
+investor_tau_capital,Tau Capital,VC,,
+investor_teachers_venture_growth,Teachers' Venture Growth,Investment Manager,Canada,https://www.otpp.com
+investor_telef_nica,Telefónica,Corporate,Spain,https://www.telefonica.com
+investor_temasek,Temasek,Investment Company,Singapore,https://www.temasek.com.sg
+investor_tencent,Tencent,Corporate,China,https://www.tencent.com
+investor_tf_capital,TF Capital,Investment Manager,USA,
+investor_thrive_capital,Thrive Capital,VC,USA,https://thrivecap.com
+investor_tiger_global_management,Tiger Global Management,Investment Manager,USA,https://www.tigerglobal.com
+investor_tim_berners_lee,Tim Berners-Lee,Angel,United Kingdom,
+investor_toshiba,Toshiba,Corporate,Japan,https://www.global.toshiba
+investor_toyota_ventures,Toyota Ventures,Corporate VC,USA,https://www.toyota.ventures
+investor_tribe_capital,Tribe Capital,VC,USA,https://tribecap.co
+investor_tru_arrow_partners,Tru Arrow Partners,Investment Firm,USA,
+investor_tsinghua_capital,Tsinghua Capital,Investment Firm,China,
+investor_two_sigma_ventures,Two Sigma Ventures,VC,USA,https://twosigmaventures.com
+investor_type_one_ventures,Type One Ventures,VC,USA,https://typeone.vc
+investor_uc_berkeley_chancellor_s_fund,UC Berkeley Chancellor's Fund,University Fund,USA,https://www.berkeley.edu
+investor_uc_investments,UC Investments,Investment Manager,USA,https://www.ucop.edu/investment-office
+investor_uipath,UiPath,Corporate,USA,https://www.uipath.com
+investor_uk_sovereign_ai_fund,UK Sovereign AI Fund,Government Fund,United Kingdom,
+investor_universal_health_services,Universal Health Services,Corporate,USA,https://www.uhs.com
+investor_unusual_ventures,Unusual Ventures,VC,USA,https://www.unusual.vc
+investor_upfront_ventures,Upfront Ventures,VC,USA,https://upfront.com
+investor_us_innovative_technology_fund,US Innovative Technology Fund,VC,USA,https://www.usit.fund
+investor_valor_equity_partners,Valor Equity Partners,VC,USA,https://www.valorep.com
+investor_vasuki,Vasuki,Investment Firm,,
+investor_verdure_capital_management,Verdure Capital Management,Investment Manager,USA,
+investor_village_global,Village Global,VC,USA,https://www.villageglobal.vc
+investor_vine_ventures,Vine Ventures,VC,USA,https://www.vineventures.com
+investor_visionaries_club,Visionaries Club,VC,Germany,https://www.visionariesclub.com
+investor_vy_capital,Vy Capital,Investment Manager,United Arab Emirates,https://www.vy.com
+investor_wa_ed_ventures,Wa'ed Ventures,Corporate VC,Saudi Arabia,https://www.waed.net
+investor_wcm_investment_management,WCM Investment Management,Investment Manager,USA,https://www.wcminvest.com
+investor_wellington_management,Wellington Management,Investment Manager,USA,https://www.wellington.com
+investor_wellspan_health,WellSpan Health,Healthcare System,USA,https://www.wellspan.org
+investor_workday_ventures,Workday Ventures,Corporate VC,USA,https://www.workday.com
+investor_world_innovation_lab,World Innovation Lab,VC,USA,https://wilab.com
+investor_xavier_niel,Xavier Niel,Angel,France,
+investor_xiaohongshu,Xiaohongshu,Corporate,China,https://www.xiaohongshu.com
+investor_xiaomi,Xiaomi,Corporate,China,https://www.mi.com
+investor_y_combinator,Y Combinator,Accelerator,USA,https://www.ycombinator.com
+investor_yann_lecun,Yann LeCun,Angel,USA,
+investor_yuri_milner,Yuri Milner,Angel,USA,
+investor_zeev_ventures,Zeev Ventures,VC,USA,https://www.zeev.vc
+investor_zhenfund,ZhenFund,VC,China,https://www.zhenfund.com
+investor_zisapel_family,Zisapel family,Angel,Israel,

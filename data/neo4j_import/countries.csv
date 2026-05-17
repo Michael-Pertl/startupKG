@@ -1,0 +1,15 @@
+country_id,name,region
+country_canada,Canada,Canada
+country_china,China,China
+country_france,France,Europe
+country_germany,Germany,Europe
+country_israel,Israel,Israel
+country_japan,Japan,Other Global
+country_netherlands,Netherlands,Europe
+country_singapore,Singapore,Singapore
+country_spain,Spain,Europe
+country_sweden,Sweden,Europe
+country_switzerland,Switzerland,Europe
+country_united_arab_emirates,United Arab Emirates,UAE / Gulf
+country_united_kingdom,United Kingdom,Europe
+country_usa,USA,US

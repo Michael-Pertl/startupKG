@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments
+.venv/
+venv/
+.env
+.env.*
+web/.env
+web/.env.*
+!.env.example
+!web/.env.example
+
+# Local tool metadata
+.agents/
+.codex/
+
+# Runtime outputs
+*.log
+tmp/
+cache/
+dist/
+node_modules/
+web/dist/
+web/node_modules/
+
+# Neo4j local runtime files
+neo4j/data/
+neo4j/logs/
+neo4j/import/
+neo4j/plugins/
