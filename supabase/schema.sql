@@ -104,7 +104,7 @@ security definer
 set search_path = public
 as $$
 declare
-  trial_credits integer := 3;
+  trial_credits integer := 10;
 begin
   insert into public.profiles (user_id, email, display_name)
   values (new.id, new.email, coalesce(new.raw_user_meta_data->>'name', new.email))

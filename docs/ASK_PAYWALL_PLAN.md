@@ -11,8 +11,8 @@ React app
   -> Supabase Postgres usage + credit deduction
 ```
 
-Stripe is used only for payments and credit top-ups. Nebius credentials and
-Stripe secrets must stay server-side.
+Stripe should be used for monthly subscriptions. Nebius credentials and Stripe
+secrets must stay server-side.
 
 ## Tables
 
@@ -24,7 +24,7 @@ The initial schema lives in `supabase/schema.sql`.
 - `ask_usage_events`: one row per Ask attempt/result.
 - `stripe_events`: processed Stripe webhook events for idempotency.
 
-New users receive a small trial credit grant through the auth trigger in
+New users receive 10 trial Ask questions through the auth trigger in
 `supabase/schema.sql`.
 
 ## Credit Flow
@@ -41,9 +41,37 @@ New users receive a small trial credit grant through the auth trigger in
 For production, credit deduction should happen in a transaction after a
 successful model response. If the model call fails, do not charge the user.
 
-## Stripe Flow
+## Subscription Model
 
-1. User selects a credit pack in the app.
+Initial public-facing plans:
+
+```text
+Free
+- Limited graph preview
+- Selected analytics and news
+- 10 Ask questions total
+
+Starter, EUR 4.99/month
+- Full graph access
+- Full analytics and news
+- 75 Ask questions/month
+
+Pro, EUR 9.99/month
+- Full graph access
+- Full analytics and news
+- Unlimited Ask under fair use
+```
+
+The Pro plan should still have an internal fair-use cap, for example 500 Ask
+questions/month, so model costs and abuse risk remain bounded.
+
+## Current Stripe Flow
+
+The current backend still supports one-time credit-style Checkout sessions. This
+is useful for testing Stripe webhooks and credit granting, but it is not the
+target subscription product.
+
+1. User selects a legacy credit pack in the app.
 2. Backend creates a Stripe Checkout Session.
 3. Stripe redirects the user to payment.
 4. Stripe webhook sends `checkout.session.completed`.
@@ -52,7 +80,7 @@ successful model response. If the model call fails, do not charge the user.
 7. Backend calls `grant_ask_credits`.
 8. User sees the new balance after refresh or realtime update.
 
-Suggested initial packs:
+Legacy test packs:
 
 ```text
 Starter:  €5  ->  50 credits
@@ -60,7 +88,8 @@ Research: €15 -> 200 credits
 Team:     €49 -> 800 credits
 ```
 
-These numbers should be adjusted after measuring real Nebius token usage.
+The next billing implementation should replace these packs with Stripe
+subscriptions and grant monthly Ask allowance on successful invoice payment.
 
 ## Required Production Environment
 

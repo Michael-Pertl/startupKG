@@ -193,7 +193,10 @@ a {
 .news-shell.no-right,
 .login-shell,
 .login-shell.has-right,
-.login-shell.no-right {
+.login-shell.no-right,
+.account-shell,
+.account-shell.has-right,
+.account-shell.no-right {
   grid-template-areas:
     "nav"
     "analytics";
@@ -495,6 +498,161 @@ a {
 .login-message.success {
   background: var(--accent-soft);
   color: var(--text-strong);
+}
+
+.account-page {
+  background:
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px),
+    var(--bg);
+  grid-area: analytics;
+  min-height: 0;
+  overflow: auto;
+  padding: 34px;
+}
+
+.account-panel {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
+  display: grid;
+  gap: 22px;
+  margin: 0 auto;
+  max-width: 1040px;
+  padding: 30px;
+}
+
+.account-header {
+  align-items: start;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  padding-bottom: 22px;
+}
+
+.account-panel span,
+.account-card span,
+.account-billing span,
+.account-balance span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.account-panel h1,
+.account-card h2,
+.account-billing h2 {
+  color: var(--text-strong);
+  letter-spacing: 0;
+  margin: 8px 0;
+}
+
+.account-panel h1 {
+  font-size: 32px;
+}
+
+.account-panel p {
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.account-balance {
+  border: 1px solid var(--accent-border);
+  background: var(--accent-soft);
+  min-width: 220px;
+  padding: 16px;
+}
+
+.account-balance strong {
+  color: var(--text-strong);
+  display: block;
+  font-size: 34px;
+  margin: 4px 0;
+}
+
+.account-balance small {
+  color: var(--muted);
+}
+
+.account-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.account-card,
+.account-billing,
+.plan-card {
+  border: 1px solid var(--border-soft);
+  background: var(--surface-muted);
+  padding: 18px;
+}
+
+.account-billing {
+  display: grid;
+  gap: 18px;
+}
+
+.plan-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.plan-card {
+  display: grid;
+  gap: 10px;
+}
+
+.plan-card.highlighted {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.plan-card strong {
+  color: var(--text-strong);
+  font-size: 13px;
+}
+
+.plan-card ul {
+  color: var(--muted);
+  display: grid;
+  gap: 7px;
+  line-height: 1.35;
+  list-style: none;
+  margin: 4px 0;
+  padding: 0;
+}
+
+.plan-card li {
+  border-left: 2px solid var(--accent-border);
+  padding-left: 10px;
+}
+
+.account-primary,
+.plan-card button {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  color: var(--bg);
+  cursor: pointer;
+  font-weight: 900;
+  min-height: 40px;
+  padding: 8px 14px;
+}
+
+.plan-card button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.account-error {
+  background: var(--danger-surface);
+  border: 1px solid rgba(180, 94, 94, 0.34);
+  color: var(--text-strong);
+  padding: 10px 12px;
 }
 
 .sidebar,
@@ -1621,6 +1779,19 @@ a {
   line-height: 1.35;
 }
 
+.ask-credit-notice button {
+  justify-self: start;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 2px;
+  color: var(--text-strong);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 900;
+  margin-top: 4px;
+  padding: 7px 10px;
+}
+
 .ask-credit-notice.depleted {
   background: var(--danger-surface);
   border-color: rgba(180, 94, 94, 0.34);
@@ -2512,7 +2683,10 @@ a {
   .news-shell.no-right,
   .login-shell,
   .login-shell.has-right,
-  .login-shell.no-right {
+  .login-shell.no-right,
+  .account-shell,
+  .account-shell.has-right,
+  .account-shell.no-right {
     grid-template-areas:
       "nav"
       "analytics";
@@ -2565,7 +2739,10 @@ a {
   .news-shell.no-right,
   .login-shell,
   .login-shell.has-right,
-  .login-shell.no-right {
+  .login-shell.no-right,
+  .account-shell,
+  .account-shell.has-right,
+  .account-shell.no-right {
     grid-template-areas:
       "nav"
       "analytics";
@@ -2576,6 +2753,11 @@ a {
   }
 
   .login-page {
+    min-height: calc(100vh - 79px);
+    padding: 12px;
+  }
+
+  .account-page {
     min-height: calc(100vh - 79px);
     padding: 12px;
   }
@@ -2602,6 +2784,20 @@ a {
   .login-secondary-actions {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .account-panel {
+    padding: 18px;
+  }
+
+  .account-header,
+  .plan-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .account-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .analytics-page {
