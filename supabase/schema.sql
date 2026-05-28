@@ -1,4 +1,4 @@
--- Supabase/Postgres schema for Ask paywall, metering, and Stripe credit packs.
+-- Supabase/Postgres schema for Ask paywall, metering, and Stripe subscriptions.
 -- Apply in the Supabase SQL editor or through the Supabase CLI.
 
 create extension if not exists pgcrypto;
@@ -8,9 +8,21 @@ create table if not exists public.profiles (
   email text,
   display_name text,
   plan text not null default 'free',
+  subscription_status text not null default 'trial',
+  stripe_customer_id text,
+  stripe_subscription_id text,
+  current_period_end timestamptz,
+  monthly_ask_limit integer not null default 10 check (monthly_ask_limit >= 0),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.profiles
+  add column if not exists subscription_status text not null default 'trial',
+  add column if not exists stripe_customer_id text,
+  add column if not exists stripe_subscription_id text,
+  add column if not exists current_period_end timestamptz,
+  add column if not exists monthly_ask_limit integer not null default 10;
 
 create table if not exists public.ask_credit_accounts (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -64,6 +76,14 @@ create index if not exists idx_ask_credit_ledger_user_created
 
 create index if not exists idx_ask_usage_events_user_created
   on public.ask_usage_events (user_id, created_at desc);
+
+create index if not exists idx_profiles_stripe_customer
+  on public.profiles (stripe_customer_id)
+  where stripe_customer_id is not null;
+
+create index if not exists idx_profiles_stripe_subscription
+  on public.profiles (stripe_subscription_id)
+  where stripe_subscription_id is not null;
 
 alter table public.profiles enable row level security;
 alter table public.ask_credit_accounts enable row level security;
