@@ -1300,7 +1300,7 @@ a {
 }
 
 .rail-group {
-  align-items: flex-start;
+  align-items: center;
   border-right: 1px solid var(--border-soft);
   display: flex;
   gap: 3px;
@@ -1318,18 +1318,31 @@ a {
 }
 
 .rail-group button {
+  align-items: center;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 2px;
   color: var(--muted);
   cursor: pointer;
+  display: flex;
   font-size: 10px;
   font-weight: 900;
+  justify-content: center;
   min-height: 28px;
-  min-width: 86px;
+  min-width: 42px;
   padding: 4px 8px;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+.rail-group button svg {
+  fill: none;
+  height: 16px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 16px;
 }
 
 .rail-group button:hover,
