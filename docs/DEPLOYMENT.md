@@ -2,13 +2,13 @@
 
 ## Current Production Shape
 
-The current deployable unit is a static React application. Data is generated
-ahead of time into `web/public/data/*.json`, then bundled by Vite and served by
-nginx.
+The current deployable unit is the Node server in `web/server/app-server.mjs`.
+It serves the Vite build from `web/dist/` and handles the backend API routes for
+Ask, credits, Stripe Checkout, and Stripe webhooks.
 
-This is suitable for a public research/demo deployment. It is not yet a full
-multi-user SaaS because there is no backend API, authentication, user database,
-payment system, or persistent watchlist service.
+Data is generated ahead of time into `web/public/data/*.json`, then bundled by
+Vite. Ask requests are handled server-side so Nebius, Supabase service-role, and
+Stripe secrets are never exposed to the browser.
 
 ## Build Locally
 
@@ -27,9 +27,13 @@ npm run build
 
 The static files are written to `web/dist/`.
 
-## Docker Static Deployment
+## Docker Deployment
 
 ```bash
+cp .env.production.example .env
+# edit .env and replace placeholders
+cd web && npm run check:deploy-env
+cd ..
 docker compose -f docker-compose.prod.yml up --build
 ```
 
@@ -42,6 +46,7 @@ http://127.0.0.1:8080/
 The production container builds the Vite app, serves `web/dist/`, and handles
 the backend API routes:
 
+- `/api/health`
 - `/api/ask`
 - `/api/ask/usage`
 - `/api/credit-packs`
@@ -50,6 +55,15 @@ the backend API routes:
 
 Do not put API keys in frontend `VITE_` variables. Runtime secrets should be
 provided to the Node container through environment variables.
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8080/api/health
+```
+
+The response intentionally reports only whether services are configured, not the
+secret values.
 
 ## Automated Data Refresh
 
@@ -97,13 +111,14 @@ When Supabase is configured, set:
 
 ```bash
 ASK_AUTH_PROVIDER=supabase
+ASK_REQUIRE_AUTH=true
 SUPABASE_URL=...
 SUPABASE_SERVICE_ROLE_KEY=...
 VITE_SUPABASE_URL=...
 VITE_SUPABASE_ANON_KEY=...
 STRIPE_SECRET_KEY=...
 STRIPE_WEBHOOK_SECRET=...
-APP_PUBLIC_URL=https://your-domain.example
+APP_PUBLIC_URL=https://aimarketgraph.com
 ```
 
 The backend will verify the Supabase session token, read the user's Ask credit
@@ -116,9 +131,27 @@ created at `/api/checkout`, and Stripe should send webhooks to
 
 ## Public Launch Checklist
 
+- Use `ASK_AUTH_PROVIDER=supabase`; do not launch with local Ask auth.
+- Use `ASK_REQUIRE_AUTH=true`.
+- Run `cd web && npm run check:deploy-env` before deploying.
+- Run Supabase schema from `supabase/schema.sql`.
+- Add Supabase redirect URLs for `https://aimarketgraph.com` and
+  `https://www.aimarketgraph.com`.
+- Configure the Stripe webhook endpoint:
+  `https://aimarketgraph.com/api/stripe/webhook`.
+- Keep `.env` and host secrets out of git.
 - Keep all source URLs visible.
 - Keep `auto_ingested` events clearly labeled.
 - Do not present investment recommendations.
 - Add terms, privacy policy, and risk disclaimer before collecting users.
 - Add monitoring for ingestion failures and failed builds.
-- Add a backend before adding accounts, payments, or private watchlists.
+
+## Domain DNS
+
+After the host gives you a deployment target:
+
+- point `aimarketgraph.com` to the host target;
+- point `www.aimarketgraph.com` to the same app or configure it as a redirect;
+- enable HTTPS on both hostnames;
+- set `APP_PUBLIC_URL=https://aimarketgraph.com`;
+- add both hostnames to Supabase auth redirects.

@@ -60,6 +60,18 @@ const supabaseAdmin =
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" }) : null;
 const rateBuckets = new Map();
 
+function configStatus() {
+  return {
+    auth_provider: ASK_AUTH_PROVIDER,
+    ask_auth_required: ASK_REQUIRE_AUTH,
+    nebius_configured: Boolean(process.env.NEBIUS_API_KEY),
+    supabase_configured: Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY),
+    stripe_configured: Boolean(STRIPE_SECRET_KEY && STRIPE_WEBHOOK_SECRET),
+    app_public_url: APP_PUBLIC_URL,
+    static_dir: DIST_DIR,
+  };
+}
+
 function stableMonth() {
   return new Date().toISOString().slice(0, 7);
 }
@@ -537,6 +549,16 @@ function summarizeContext(selected, nodes, edges) {
 createServer(async (request, response) => {
   if (request.method === "OPTIONS") {
     sendJson(response, 200, {});
+    return;
+  }
+
+  if (request.method === "GET" && request.url === "/api/health") {
+    sendJson(response, 200, {
+      ok: true,
+      service: "ai-market-graph",
+      timestamp: new Date().toISOString(),
+      config: configStatus(),
+    });
     return;
   }
 
