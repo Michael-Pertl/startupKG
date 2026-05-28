@@ -2884,7 +2884,11 @@ export default function App() {
                 type="button"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24">
-                  <path d="M4 6h6M14 6h6M7 6v6M17 6v6M4 18h6M14 18h6M7 12h10M7 12v6M17 12v6" />
+                  <circle cx="5" cy="6" r="1.8" />
+                  <circle cx="5" cy="12" r="1.8" />
+                  <circle cx="5" cy="18" r="1.8" />
+                  <path d="M7 6h5c2.8 0 4.6 1.3 5.8 3.7M7 12h9.5M7 18h5c2.8 0 4.6-1.3 5.8-3.7" />
+                  <path d="M16 8l3.2 4-3.2 4" />
                 </svg>
               </button>
               <button
@@ -2920,7 +2924,7 @@ export default function App() {
                 title="Ask the assistant about the selected entity and visible graph"
                 type="button"
               >
-                Ask
+                ASK AI
               </button>
             </div>
           </div>
