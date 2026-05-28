@@ -103,8 +103,18 @@ secret-handling rules.
 
 ## Deployment
 
-The current production target is a static Vite build served by nginx. See
-`docs/DEPLOYMENT.md` for the build, Docker, and launch checklist.
+The production target is the Node server in `web/server/app-server.mjs`. It
+serves the Vite build and handles Ask, credit usage, Stripe Checkout, and Stripe
+webhooks server-side. See `docs/DEPLOYMENT.md` and
+`docs/LAUNCH_CHECKLIST.md`.
+
+Production env template:
+
+```bash
+cp .env.production.example .env
+cd web
+npm run check:deploy-env
+```
 
 ## Streamlit App
 
