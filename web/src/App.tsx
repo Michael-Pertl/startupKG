@@ -86,7 +86,53 @@ type Expansion = {
 };
 
 type LayoutMode = "flow" | "network";
-type AppView = "graph" | "analytics" | "news" | "login";
+type AppView = "graph" | "analytics" | "news" | "login" | "account";
+
+type AskUsage = {
+  user_id?: string;
+  plan?: string;
+  credits_remaining: number;
+  credits_per_prompt: number;
+  max_requests_per_minute: number;
+};
+
+type SubscriptionPlan = {
+  id: "free" | "starter" | "pro";
+  label: string;
+  price: string;
+  askAllowance: string;
+  description: string;
+  features: string[];
+  highlighted?: boolean;
+};
+
+const subscriptionPlans: SubscriptionPlan[] = [
+  {
+    id: "free",
+    label: "Free",
+    price: "€0",
+    askAllowance: "10 Ask questions total",
+    description: "A focused preview for evaluating the graph and assistant.",
+    features: ["Limited graph preview", "Selected analytics and news", "Trial Ask allowance"],
+  },
+  {
+    id: "starter",
+    label: "Starter",
+    price: "€4.99 / month",
+    askAllowance: "75 Ask questions / month",
+    description: "For regular market exploration without a high monthly commitment.",
+    features: ["Full graph access", "Full analytics and news", "Monthly Ask allowance"],
+    highlighted: true,
+  },
+  {
+    id: "pro",
+    label: "Pro",
+    price: "€9.99 / month",
+    askAllowance: "Unlimited Ask under fair use",
+    description: "For active users who want broad graph exploration and frequent Ask usage.",
+    features: ["Full graph access", "Full analytics and news", "Fair-use protected Ask access"],
+  },
+];
 
 type GraphIndex = {
   nodeById: Map<string, MarketNode>;
@@ -1338,23 +1384,17 @@ function AskPanel({
   edges,
   session,
   onLoginRequired,
+  onOpenAccount,
 }: {
   selected: MarketNode;
   nodes: MarketNode[];
   edges: MarketEdge[];
   session: SupabaseSession | null;
   onLoginRequired: () => void;
+  onOpenAccount: () => void;
 }) {
   const [askToken, setAskToken] = useState(() => localStorage.getItem("ask_access_token") || "");
-  const [creditPacks, setCreditPacks] = useState<Record<string, { label: string; credits: number; amount_cents: number }>>({});
-  const [selectedPack, setSelectedPack] = useState("starter");
-  const [usage, setUsage] = useState<{
-    user_id?: string;
-    plan?: string;
-    credits_remaining: number;
-    credits_per_prompt: number;
-    max_requests_per_minute: number;
-  } | null>(null);
+  const [usage, setUsage] = useState<AskUsage | null>(null);
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -1366,15 +1406,6 @@ function AskPanel({
   const creditsPerPrompt = Number(usage?.credits_per_prompt || 1);
   const hasCredits = isLocalDevMode || !usage || creditsRemaining >= creditsPerPrompt;
   const requiresTopUp = useSupabaseAuth && Boolean(session) && usage !== null && !hasCredits;
-
-  useEffect(() => {
-    fetch("/api/credit-packs")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload) => {
-        if (payload?.packs) setCreditPacks(payload.packs);
-      })
-      .catch(() => undefined);
-  }, []);
 
   useEffect(() => {
     const headers: Record<string, string> = {};
@@ -1397,34 +1428,6 @@ function AskPanel({
     }
   };
 
-  async function buyCredits() {
-    if (!authToken || !session) {
-      onLoginRequired();
-      return;
-    }
-    setStatus("loading");
-    setError("");
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-ask-token": authToken,
-        },
-        body: JSON.stringify({
-          pack_id: selectedPack,
-          email: session.user.email,
-        }),
-      });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "Checkout is not available.");
-      window.location.href = payload.url;
-    } catch (caught) {
-      setStatus("error");
-      setError(caught instanceof Error ? caught.message : "Checkout is not available.");
-    }
-  }
-
   async function ask() {
     const trimmed = question.trim();
     if (!trimmed || status === "loading") return;
@@ -1434,7 +1437,7 @@ function AskPanel({
     }
     if (requiresTopUp) {
       setStatus("error");
-      setError("No Ask credits remaining. Buy a credit pack to continue.");
+      setError("No Ask allowance remaining. Open your profile to review plan options.");
       return;
     }
     setStatus("loading");
@@ -1471,18 +1474,8 @@ function AskPanel({
 
   return (
     <section className="ask-panel">
-      <div className="ask-access">
-        {useSupabaseAuth ? (
-          <div>
-            <span>Signed in</span>
-            <strong>{session?.user.email || "Required"}</strong>
-          </div>
-        ) : isLocalDevMode ? (
-          <div>
-            <span>Ask access</span>
-            <strong>Local dev mode</strong>
-          </div>
-        ) : (
+      {!useSupabaseAuth && !isLocalDevMode ? (
+        <div className="ask-access compact">
           <label>
             <span>Ask access</span>
             <input
@@ -1493,44 +1486,13 @@ function AskPanel({
               value={askToken}
             />
           </label>
-        )}
-        <div>
-          <span>Credits</span>
-          <strong>
-            {isLocalDevMode ? "Unlimited" : usage ? `${formatCount(usage.credits_remaining)} left` : "Not connected"}
-          </strong>
-        </div>
-      </div>
-      {useSupabaseAuth ? (
-        <div className="credit-pack-row">
-          <label>
-            <span>Credit pack</span>
-            <select onChange={(event) => setSelectedPack(event.target.value)} value={selectedPack}>
-              {Object.entries(creditPacks).map(([packId, pack]) => (
-                <option key={packId} value={packId}>
-                  {pack.label} · {pack.credits} credits · EUR {(pack.amount_cents / 100).toFixed(0)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button disabled={status === "loading"} onClick={buyCredits} type="button">
-            {session ? "Buy credits" : "Sign in to buy"}
-          </button>
         </div>
       ) : null}
-      {useSupabaseAuth && session ? (
-        <div className={requiresTopUp ? "ask-credit-notice depleted" : "ask-credit-notice"}>
-          {requiresTopUp ? (
-            <>
-              <strong>No Ask credits remaining.</strong>
-              <span>Top up to continue using the assistant.</span>
-            </>
-          ) : (
-            <>
-              <strong>{usage ? `${formatCount(creditsRemaining)} Ask credits available` : "Checking Ask credits..."}</strong>
-              <span>New accounts receive a small trial balance. Each successful response deducts {creditsPerPrompt} credit.</span>
-            </>
-          )}
+      {requiresTopUp ? (
+        <div className="ask-credit-notice depleted">
+          <strong>No Ask access remaining.</strong>
+          <span>Open your profile to review plan options and continue using the assistant.</span>
+          <button onClick={onOpenAccount} type="button">Open profile</button>
         </div>
       ) : null}
       <div className="chat-thread">
@@ -1554,7 +1516,7 @@ function AskPanel({
             }
           }}
           onChange={(event) => setQuestion(event.target.value)}
-          placeholder={requiresTopUp ? "Buy credits to continue using Ask." : `Ask about ${selected.label}, this graph, or general market context...`}
+          placeholder={requiresTopUp ? "Open your profile to review Ask plan options." : `Ask about ${selected.label}, this graph, or general market context...`}
           value={question}
         />
         <button
@@ -2277,10 +2239,12 @@ function AuthControls({
   session,
   setSession,
   onOpenLogin,
+  onOpenAccount,
 }: {
   session: SupabaseSession | null;
   setSession: (session: SupabaseSession | null) => void;
   onOpenLogin: () => void;
+  onOpenAccount: () => void;
 }) {
   async function signOut() {
     if (!supabase) return;
@@ -2291,7 +2255,12 @@ function AuthControls({
   if (session) {
     return (
       <div className="auth-controls signed-in">
-        <span>{session.user.email}</span>
+        <button className="profile-button" onClick={onOpenAccount} title="Profile" type="button" aria-label="Open profile">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M20 21a8 8 0 0 0-16 0" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </button>
         <button onClick={signOut} type="button">Sign out</button>
       </div>
     );
@@ -2301,6 +2270,104 @@ function AuthControls({
     <div className="auth-controls">
       <button className="auth-primary" onClick={onOpenLogin} type="button">Sign in</button>
     </div>
+  );
+}
+
+function AccountPage({
+  session,
+  onLoginRequired,
+}: {
+  session: SupabaseSession | null;
+  onLoginRequired: () => void;
+}) {
+  const [usage, setUsage] = useState<AskUsage | null>(null);
+  const authToken = session?.access_token || "";
+
+  useEffect(() => {
+    if (!authToken) {
+      setUsage(null);
+      return;
+    }
+    fetch("/api/ask/usage", { headers: { "x-ask-token": authToken } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => {
+        if (payload?.usage) setUsage(payload.usage);
+      })
+      .catch(() => undefined);
+  }, [authToken]);
+
+  if (!session) {
+    return (
+      <main className="account-page">
+        <section className="account-panel">
+          <div>
+            <span>Profile</span>
+            <h1>Sign in to manage your plan.</h1>
+            <p>Create an account to use the trial Ask allowance.</p>
+          </div>
+          <button className="account-primary" onClick={onLoginRequired} type="button">Sign in</button>
+        </section>
+      </main>
+    );
+  }
+
+  const creditsRemaining = Number(usage?.credits_remaining || 0);
+  const creditsPerPrompt = Number(usage?.credits_per_prompt || 1);
+
+  return (
+    <main className="account-page">
+      <section className="account-panel">
+        <div className="account-header">
+          <div>
+            <span>Profile</span>
+            <h1>Your account</h1>
+            <p>{session.user.email}</p>
+          </div>
+          <div className="account-balance">
+            <span>Ask allowance</span>
+            <strong>{usage ? formatCount(creditsRemaining) : "..."}</strong>
+            <small>{creditsPerPrompt} allowance unit per successful answer</small>
+          </div>
+        </div>
+
+        <div className="profile-summary">
+          <div>
+            <span>Current plan</span>
+            <strong>Free</strong>
+          </div>
+          <div>
+            <span>Status</span>
+            <strong>Trial</strong>
+          </div>
+        </div>
+
+        <div className="plan-grid">
+          {subscriptionPlans.map((plan) => (
+            <article className={plan.highlighted ? "plan-card highlighted" : "plan-card"} key={plan.id}>
+              <span>{plan.label}</span>
+              <h2>{plan.price}</h2>
+              <strong>{plan.askAllowance}</strong>
+              <p>{plan.description}</p>
+              <ul>
+                {plan.features.map((feature) => (
+                  <li key={feature}>{feature}</li>
+                ))}
+              </ul>
+              <button disabled type="button">
+                {plan.id === "free" ? "Current" : "Coming soon"}
+              </button>
+            </article>
+          ))}
+        </div>
+
+        <div className="account-billing">
+          <div>
+            <span>Billing</span>
+            <p>Subscription checkout is not active yet. Current Ask usage runs on the trial allowance.</p>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
 
@@ -2420,7 +2487,7 @@ function LoginPage({
       <section className="login-panel">
         <div className="login-copy">
           <span>AI Market Graph</span>
-          <h1>Sign in to use Ask credits.</h1>
+          <h1>Sign in to use your Ask allowance.</h1>
           <p>
             Use the graph and market intelligence freely. Sign in when you want the assistant to reason over the
             visible network, funding rounds, investors, and sources.
@@ -2659,6 +2726,7 @@ export default function App() {
     view === "analytics" ? "analytics-shell" : "",
         view === "news" ? "news-shell" : "",
         view === "login" ? "login-shell" : "",
+        view === "account" ? "account-shell" : "",
         drawerMode ? "has-right" : "no-right",
       ].join(" ")}
     >
@@ -2682,7 +2750,12 @@ export default function App() {
         >
           {themeMode === "dark" ? "Light" : "Dark"}
         </button>
-        <AuthControls session={session} setSession={setSession} onOpenLogin={() => openLogin()} />
+        <AuthControls
+          session={session}
+          setSession={setSession}
+          onOpenAccount={() => setView("account")}
+          onOpenLogin={() => openLogin()}
+        />
       </nav>
       {view === "login" ? (
         <LoginPage
@@ -2696,6 +2769,8 @@ export default function App() {
           onRecoveryComplete={() => setPasswordRecovery(false)}
           recovery={passwordRecovery}
         />
+      ) : view === "account" ? (
+        <AccountPage session={session} onLoginRequired={() => openLogin()} />
       ) : view === "news" ? (
         <NewsPage eventFeed={eventFeed} graph={graph} onSelectCompany={selectNodeAndOpenGraph} />
       ) : view === "analytics" ? (
@@ -2733,41 +2808,43 @@ export default function App() {
           <DomainNavigator graph={graph} onSelect={(node) => handleSelect(node)} />
           <div className="graph-action-rail">
             <div className="rail-group" aria-label="Graph layout">
-              <span>Layout</span>
+              <span>Graph view</span>
               <button
                 className={layoutMode === "flow" ? "active" : ""}
                 onClick={() => setLayoutMode("flow")}
-                title="Flow layout"
+                title="Arrange companies, investors, and rounds in readable layers"
                 type="button"
               >
-                Flow
+                Guided map
               </button>
               <button
                 className={layoutMode === "network" ? "active" : ""}
                 onClick={() => setLayoutMode("network")}
-                title="Network layout"
+                title="Show the graph as a force-directed relationship network"
                 type="button"
               >
-                Net
+                Network map
               </button>
             </div>
             <div className="rail-group" aria-label="Side panel">
-              <span>Panel</span>
+              <span>Side panel</span>
               <button
-                aria-label="Open details"
+                aria-label="Open selected entity details"
                 className={drawerMode === "details" ? "active" : ""}
                 onClick={() => setDrawerMode(drawerMode === "details" ? null : "details")}
+                title="Show facts, connected entities, and evidence for the selected item"
                 type="button"
               >
-                Details
+                View details
               </button>
               <button
-                aria-label="Open ask"
+                aria-label="Ask questions about the selected graph context"
                 className={drawerMode === "ask" ? "active" : ""}
                 onClick={openAskPanel}
+                title="Ask the assistant about the selected entity and visible graph"
                 type="button"
               >
-                Ask
+                Ask AI
               </button>
             </div>
           </div>
@@ -2809,6 +2886,7 @@ export default function App() {
             edges={neighborhood.edges}
             nodes={neighborhood.nodes}
             onLoginRequired={() => openLogin("ask")}
+            onOpenAccount={() => setView("account")}
             selected={selected}
             session={session}
           />
