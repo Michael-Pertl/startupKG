@@ -1602,6 +1602,30 @@ a {
   cursor: not-allowed;
 }
 
+.ask-credit-notice {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+}
+
+.ask-credit-notice strong {
+  color: var(--text-strong);
+  font-size: 12px;
+}
+
+.ask-credit-notice span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ask-credit-notice.depleted {
+  background: var(--danger-surface);
+  border-color: rgba(180, 94, 94, 0.34);
+}
+
 .chat-thread {
   align-content: start;
   display: grid;

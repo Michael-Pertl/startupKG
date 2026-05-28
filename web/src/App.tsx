@@ -1362,6 +1362,10 @@ function AskPanel({
   const useSupabaseAuth = Boolean(supabase);
   const authToken = useSupabaseAuth ? session?.access_token || "" : askToken.trim();
   const isLocalDevMode = usage?.user_id === "local_dev";
+  const creditsRemaining = Number(usage?.credits_remaining || 0);
+  const creditsPerPrompt = Number(usage?.credits_per_prompt || 1);
+  const hasCredits = isLocalDevMode || !usage || creditsRemaining >= creditsPerPrompt;
+  const requiresTopUp = useSupabaseAuth && Boolean(session) && usage !== null && !hasCredits;
 
   useEffect(() => {
     fetch("/api/credit-packs")
@@ -1426,6 +1430,11 @@ function AskPanel({
     if (!trimmed || status === "loading") return;
     if (useSupabaseAuth && !session) {
       onLoginRequired();
+      return;
+    }
+    if (requiresTopUp) {
+      setStatus("error");
+      setError("No Ask credits remaining. Buy a credit pack to continue.");
       return;
     }
     setStatus("loading");
@@ -1509,6 +1518,21 @@ function AskPanel({
           </button>
         </div>
       ) : null}
+      {useSupabaseAuth && session ? (
+        <div className={requiresTopUp ? "ask-credit-notice depleted" : "ask-credit-notice"}>
+          {requiresTopUp ? (
+            <>
+              <strong>No Ask credits remaining.</strong>
+              <span>Top up to continue using the assistant.</span>
+            </>
+          ) : (
+            <>
+              <strong>{usage ? `${formatCount(creditsRemaining)} Ask credits available` : "Checking Ask credits..."}</strong>
+              <span>New accounts receive a small trial balance. Each successful response deducts {creditsPerPrompt} credit.</span>
+            </>
+          )}
+        </div>
+      ) : null}
       <div className="chat-thread">
         {messages.length ? (
           messages.map((message, index) => (
@@ -1530,10 +1554,15 @@ function AskPanel({
             }
           }}
           onChange={(event) => setQuestion(event.target.value)}
-          placeholder={`Ask about ${selected.label}, this graph, or general market context...`}
+          placeholder={requiresTopUp ? "Buy credits to continue using Ask." : `Ask about ${selected.label}, this graph, or general market context...`}
           value={question}
         />
-        <button className="send-button" disabled={status === "loading" || !question.trim()} onClick={ask} type="button">
+        <button
+          className="send-button"
+          disabled={status === "loading" || !question.trim() || requiresTopUp}
+          onClick={ask}
+          type="button"
+        >
           {useSupabaseAuth && !session ? "Sign in" : "Send"}
         </button>
       </div>
