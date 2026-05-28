@@ -2808,26 +2808,35 @@ export default function App() {
           <DomainNavigator graph={graph} onSelect={(node) => handleSelect(node)} />
           <div className="graph-action-rail">
             <div className="rail-group" aria-label="Graph layout">
-              <span>Graph view</span>
+              <span>View</span>
               <button
                 className={layoutMode === "flow" ? "active" : ""}
                 onClick={() => setLayoutMode("flow")}
+                aria-label="Guided map layout"
                 title="Arrange companies, investors, and rounds in readable layers"
                 type="button"
               >
-                Guided map
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="M4 6h6M14 6h6M7 6v6M17 6v6M4 18h6M14 18h6M7 12h10M7 12v6M17 12v6" />
+                </svg>
               </button>
               <button
                 className={layoutMode === "network" ? "active" : ""}
                 onClick={() => setLayoutMode("network")}
+                aria-label="Network map layout"
                 title="Show the graph as a force-directed relationship network"
                 type="button"
               >
-                Network map
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <circle cx="6" cy="7" r="2.5" />
+                  <circle cx="18" cy="8" r="2.5" />
+                  <circle cx="10" cy="18" r="2.5" />
+                  <path d="M8.3 8.1l7.4-.2M7.1 9.2l2 6.5M16.4 10.2l-4.8 6" />
+                </svg>
               </button>
             </div>
             <div className="rail-group" aria-label="Side panel">
-              <span>Side panel</span>
+              <span>Panel</span>
               <button
                 aria-label="Open selected entity details"
                 className={drawerMode === "details" ? "active" : ""}
@@ -2835,7 +2844,7 @@ export default function App() {
                 title="Show facts, connected entities, and evidence for the selected item"
                 type="button"
               >
-                View details
+                Details
               </button>
               <button
                 aria-label="Ask questions about the selected graph context"
@@ -2844,7 +2853,7 @@ export default function App() {
                 title="Ask the assistant about the selected entity and visible graph"
                 type="button"
               >
-                Ask AI
+                Ask
               </button>
             </div>
           </div>
