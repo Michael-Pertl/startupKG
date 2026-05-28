@@ -137,6 +137,30 @@ textarea {
   font: inherit;
 }
 
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 9px) 50%;
+  background-repeat: no-repeat;
+  background-size:
+    5px 5px,
+    5px 5px;
+  padding-right: 28px;
+}
+
+select:focus {
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+select::-ms-expand {
+  display: none;
+}
+
 a {
   color: var(--link);
   font-weight: 700;
@@ -288,6 +312,24 @@ a {
 
 .auth-controls .auth-primary {
   min-width: 74px;
+}
+
+.auth-controls .profile-button {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  width: 30px;
+}
+
+.profile-button svg {
+  fill: none;
+  height: 16px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 16px;
 }
 
 .login-page {
@@ -515,10 +557,10 @@ a {
   border: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
   display: grid;
-  gap: 22px;
+  gap: 16px;
   margin: 0 auto;
-  max-width: 1040px;
-  padding: 30px;
+  max-width: 880px;
+  padding: 24px;
 }
 
 .account-header {
@@ -527,13 +569,13 @@ a {
   display: flex;
   gap: 20px;
   justify-content: space-between;
-  padding-bottom: 22px;
+  padding-bottom: 16px;
 }
 
 .account-panel span,
-.account-card span,
 .account-billing span,
-.account-balance span {
+.account-balance span,
+.profile-summary span {
   color: var(--accent);
   font-size: 11px;
   font-weight: 900;
@@ -541,7 +583,6 @@ a {
 }
 
 .account-panel h1,
-.account-card h2,
 .account-billing h2 {
   color: var(--text-strong);
   letter-spacing: 0;
@@ -561,8 +602,8 @@ a {
 .account-balance {
   border: 1px solid var(--accent-border);
   background: var(--accent-soft);
-  min-width: 220px;
-  padding: 16px;
+  min-width: 190px;
+  padding: 13px;
 }
 
 .account-balance strong {
@@ -576,18 +617,32 @@ a {
   color: var(--muted);
 }
 
-.account-grid {
+.profile-summary {
+  border-bottom: 1px solid var(--border-soft);
   display: grid;
-  gap: 14px;
+  gap: 10px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-bottom: 16px;
 }
 
-.account-card,
+.profile-summary div {
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+}
+
+.profile-summary strong {
+  color: var(--text-strong);
+  font-size: 15px;
+}
+
 .account-billing,
 .plan-card {
   border: 1px solid var(--border-soft);
   background: var(--surface-muted);
-  padding: 18px;
+  padding: 14px;
 }
 
 .account-billing {
@@ -597,13 +652,13 @@ a {
 
 .plan-grid {
   display: grid;
-  gap: 14px;
+  gap: 10px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .plan-card {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .plan-card.highlighted {
@@ -619,10 +674,10 @@ a {
 .plan-card ul {
   color: var(--muted);
   display: grid;
-  gap: 7px;
+  gap: 6px;
   line-height: 1.35;
   list-style: none;
-  margin: 4px 0;
+  margin: 2px 0;
   padding: 0;
 }
 
@@ -958,6 +1013,9 @@ a {
 }
 
 .domain-select {
+  appearance: auto;
+  -webkit-appearance: listbox;
+  background-image: none;
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(214, 199, 161, 0.18);
   border-radius: 4px;
@@ -1219,7 +1277,7 @@ a {
   color: var(--text);
   min-height: 31px;
   outline: none;
-  padding: 5px 8px;
+  padding: 5px 28px 5px 8px;
   width: 100%;
 }
 
@@ -1234,7 +1292,7 @@ a {
   border-radius: 3px;
   display: flex;
   gap: 8px;
-  padding: 5px;
+  padding: 7px;
   position: absolute;
   right: 24px;
   top: 24px;
@@ -1242,7 +1300,7 @@ a {
 }
 
 .rail-group {
-  align-items: center;
+  align-items: flex-start;
   border-right: 1px solid var(--border-soft);
   display: flex;
   gap: 3px;
@@ -1253,7 +1311,9 @@ a {
   color: var(--muted-2);
   font-size: 9px;
   font-weight: 900;
-  margin-right: 3px;
+  line-height: 28px;
+  margin-right: 5px;
+  min-width: max-content;
   text-transform: uppercase;
 }
 
@@ -1264,10 +1324,12 @@ a {
   color: var(--muted);
   cursor: pointer;
   font-size: 10px;
+  font-weight: 900;
   min-height: 28px;
-  min-width: 48px;
+  min-width: 86px;
   padding: 4px 8px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .rail-group button:hover,
@@ -2011,7 +2073,7 @@ a {
   color: var(--text);
   min-height: 34px;
   outline: none;
-  padding: 6px 8px;
+  padding: 6px 28px 6px 8px;
   width: 100%;
 }
 
@@ -2791,12 +2853,9 @@ a {
   }
 
   .account-header,
-  .plan-grid {
+  .plan-grid,
+  .profile-summary {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .account-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 

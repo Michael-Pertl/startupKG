@@ -1437,7 +1437,7 @@ function AskPanel({
     }
     if (requiresTopUp) {
       setStatus("error");
-      setError("No Ask allowance remaining. Open Account to review plan options.");
+      setError("No Ask allowance remaining. Open your profile to review plan options.");
       return;
     }
     setStatus("loading");
@@ -1491,8 +1491,8 @@ function AskPanel({
       {requiresTopUp ? (
         <div className="ask-credit-notice depleted">
           <strong>No Ask access remaining.</strong>
-          <span>Manage your plan or credits in Account to continue using the assistant.</span>
-          <button onClick={onOpenAccount} type="button">Open account</button>
+          <span>Open your profile to review plan options and continue using the assistant.</span>
+          <button onClick={onOpenAccount} type="button">Open profile</button>
         </div>
       ) : null}
       <div className="chat-thread">
@@ -1516,7 +1516,7 @@ function AskPanel({
             }
           }}
           onChange={(event) => setQuestion(event.target.value)}
-          placeholder={requiresTopUp ? "Open Account to review Ask plan options." : `Ask about ${selected.label}, this graph, or general market context...`}
+          placeholder={requiresTopUp ? "Open your profile to review Ask plan options." : `Ask about ${selected.label}, this graph, or general market context...`}
           value={question}
         />
         <button
@@ -2255,7 +2255,12 @@ function AuthControls({
   if (session) {
     return (
       <div className="auth-controls signed-in">
-        <button className="auth-primary" onClick={onOpenAccount} type="button">Account</button>
+        <button className="profile-button" onClick={onOpenAccount} title="Profile" type="button" aria-label="Open profile">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M20 21a8 8 0 0 0-16 0" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </button>
         <button onClick={signOut} type="button">Sign out</button>
       </div>
     );
@@ -2296,9 +2301,9 @@ function AccountPage({
       <main className="account-page">
         <section className="account-panel">
           <div>
-            <span>Account</span>
+            <span>Profile</span>
             <h1>Sign in to manage your plan.</h1>
-            <p>Create an account to use the trial Ask allowance and choose a monthly plan when subscriptions go live.</p>
+            <p>Create an account to use the trial Ask allowance.</p>
           </div>
           <button className="account-primary" onClick={onLoginRequired} type="button">Sign in</button>
         </section>
@@ -2314,8 +2319,8 @@ function AccountPage({
       <section className="account-panel">
         <div className="account-header">
           <div>
-            <span>Account</span>
-            <h1>Profile and Ask access</h1>
+            <span>Profile</span>
+            <h1>Your account</h1>
             <p>{session.user.email}</p>
           </div>
           <div className="account-balance">
@@ -2325,17 +2330,15 @@ function AccountPage({
           </div>
         </div>
 
-        <div className="account-grid">
-          <article className="account-card">
-            <span>Current access</span>
-            <h2>Free account</h2>
-            <p>New accounts receive 10 trial Ask questions. Paid plans will unlock full graph access and monthly Ask allowance.</p>
-          </article>
-          <article className="account-card">
-            <span>Product model</span>
-            <h2>Monthly subscription</h2>
-            <p>Ask usage stays bounded internally, while the user-facing plan stays simple: Starter or Pro.</p>
-          </article>
+        <div className="profile-summary">
+          <div>
+            <span>Current plan</span>
+            <strong>Free</strong>
+          </div>
+          <div>
+            <span>Status</span>
+            <strong>Trial</strong>
+          </div>
         </div>
 
         <div className="plan-grid">
@@ -2351,7 +2354,7 @@ function AccountPage({
                 ))}
               </ul>
               <button disabled type="button">
-                {plan.id === "free" ? "Current plan" : "Subscription checkout next"}
+                {plan.id === "free" ? "Current" : "Coming soon"}
               </button>
             </article>
           ))}
@@ -2359,12 +2362,8 @@ function AccountPage({
 
         <div className="account-billing">
           <div>
-            <span>Billing status</span>
-            <h2>Subscriptions are the next backend step</h2>
-            <p>
-              The current backend still meters Ask with internal allowance units. The next PR should replace one-time
-              checkout packs with Stripe monthly subscriptions for Starter and Pro.
-            </p>
+            <span>Billing</span>
+            <p>Subscription checkout is not active yet. Current Ask usage runs on the trial allowance.</p>
           </div>
         </div>
       </section>
@@ -2809,41 +2808,43 @@ export default function App() {
           <DomainNavigator graph={graph} onSelect={(node) => handleSelect(node)} />
           <div className="graph-action-rail">
             <div className="rail-group" aria-label="Graph layout">
-              <span>Layout</span>
+              <span>Graph view</span>
               <button
                 className={layoutMode === "flow" ? "active" : ""}
                 onClick={() => setLayoutMode("flow")}
-                title="Flow layout"
+                title="Arrange companies, investors, and rounds in readable layers"
                 type="button"
               >
-                Flow
+                Guided map
               </button>
               <button
                 className={layoutMode === "network" ? "active" : ""}
                 onClick={() => setLayoutMode("network")}
-                title="Network layout"
+                title="Show the graph as a force-directed relationship network"
                 type="button"
               >
-                Net
+                Network map
               </button>
             </div>
             <div className="rail-group" aria-label="Side panel">
-              <span>Panel</span>
+              <span>Side panel</span>
               <button
-                aria-label="Open details"
+                aria-label="Open selected entity details"
                 className={drawerMode === "details" ? "active" : ""}
                 onClick={() => setDrawerMode(drawerMode === "details" ? null : "details")}
+                title="Show facts, connected entities, and evidence for the selected item"
                 type="button"
               >
-                Details
+                View details
               </button>
               <button
-                aria-label="Open ask"
+                aria-label="Ask questions about the selected graph context"
                 className={drawerMode === "ask" ? "active" : ""}
                 onClick={openAskPanel}
+                title="Ask the assistant about the selected entity and visible graph"
                 type="button"
               >
-                Ask
+                Ask AI
               </button>
             </div>
           </div>
