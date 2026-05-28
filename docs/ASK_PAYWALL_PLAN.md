@@ -103,6 +103,11 @@ ASK_AUTH_PROVIDER=supabase
 Use `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the browser. Use
 `SUPABASE_SERVICE_ROLE_KEY` only in the backend.
 
+Stripe Customer Portal must be configured in the Stripe Dashboard before the
+Profile page can open billing management. Stripe hosts subscription invoices
+and receipts; payouts require a completed Stripe account profile and a verified
+bank account/IBAN in Stripe, not in this application.
+
 The local development proxy still supports `ASK_AUTH_PROVIDER=local`, which
 uses `.ask_ledger.json`. Production should use `ASK_AUTH_PROVIDER=supabase` so
 the backend verifies a Supabase access token, reads the user's balance from
