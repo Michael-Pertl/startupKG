@@ -1,15 +1,26 @@
 startup_id,name,region,country,city,primary_domain
+startup_7ai,7AI,US,USA,Boston,Defense / Security AI
+startup_abnormal_security,Abnormal Security,US,USA,San Francisco,Defense / Security AI
 startup_abridge,Abridge,US,USA,San Francisco,Healthcare AI / Drug Discovery
 startup_ai21_labs,AI21 Labs,Israel,Israel,Tel Aviv,Foundation Models / LLMs
+startup_akasa,AKASA,US,USA,San Francisco,Healthcare AI / Drug Discovery
+startup_alphasense,AlphaSense,US,USA,New York,Search / Knowledge Agents
+startup_ambience_healthcare,Ambience Healthcare,US,USA,San Francisco,Healthcare AI / Drug Discovery
 startup_ami_labs,AMI Labs,Europe,France,Paris,Foundation Models / LLMs
 startup_anthropic,Anthropic,US,USA,San Francisco,Foundation Models / LLMs
 startup_applied_intuition,Applied Intuition,US,USA,Mountain View,Autonomous Vehicles
 startup_atlan,Atlan,US,USA,San Francisco,Data / Analytics
 startup_augment,Augment,US,USA,Palo Alto,Coding Agents / Developer Tools
+startup_axelera_ai,Axelera AI,Europe,Netherlands,Eindhoven,AI Chips / Semiconductors
 startup_baichuan_ai,Baichuan AI,China,China,Beijing,Foundation Models / LLMs
 startup_baseten,Baseten,US,USA,San Francisco,AI Infrastructure
 startup_basis,Basis,US,USA,New York,Enterprise AI
 startup_black_forest_labs,Black Forest Labs,Europe,Germany,Freiburg,Creative / Generative Media
+startup_blaize,Blaize,US,USA,El Dorado Hills,AI Chips / Semiconductors
+startup_bright_machines,Bright Machines,US,USA,San Francisco,Robotics / Physical AI
+startup_celestial_ai,Celestial AI,US,USA,Santa Clara,AI Chips / Semiconductors
+startup_cerebras_systems,Cerebras Systems,US,USA,Sunnyvale,AI Chips / Semiconductors
+startup_chai_discovery,Chai Discovery,US,USA,San Francisco,Healthcare AI / Drug Discovery
 startup_clickhouse,ClickHouse,US,USA,San Francisco,AI Infrastructure
 startup_codeium,Codeium,US,USA,Mountain View,Coding Agents / Developer Tools
 startup_cognition,Cognition,US,USA,San Francisco,Coding Agents / Developer Tools
@@ -20,28 +31,39 @@ startup_crusoe,Crusoe,US,USA,San Francisco,AI Infrastructure
 startup_cursor,Cursor,US,USA,San Francisco,Coding Agents / Developer Tools
 startup_cyera,Cyera,US,USA,San Mateo,Defense / Security AI
 startup_databricks,Databricks,US,USA,San Francisco,AI Infrastructure
+startup_decagon,Decagon,US,USA,San Francisco,Enterprise AI
 startup_decart,Decart,Israel,Israel,Tel Aviv,Creative / Generative Media
 startup_deepgram,Deepgram,US,USA,San Francisco,Enterprise AI
 startup_deepl,DeepL,Europe,Germany,Cologne,Enterprise AI
+startup_devrev,DevRev,US,USA,Palo Alto,Enterprise AI
+startup_distyl_ai,Distyl AI,US,USA,San Francisco,Enterprise AI
 startup_dream_security,Dream Security,Israel,Israel,Tel Aviv,Defense / Security AI
 startup_elevenlabs,ElevenLabs,Europe,United Kingdom,London,Creative / Generative Media
+startup_eliseai,EliseAI,US,USA,New York,Enterprise AI
 startup_encharge_ai,EnCharge AI,US,USA,Princeton,AI Chips / Semiconductors
+startup_enfabrica,Enfabrica,US,USA,Mountain View,AI Chips / Semiconductors
 startup_epg_singapore,EPG Singapore,Singapore,Singapore,Singapore,AI Infrastructure
 startup_etched,Etched,US,USA,San Francisco,AI Chips / Semiconductors
 startup_eudia,Eudia,US,USA,Palo Alto,Enterprise AI
+startup_evenup,EvenUp,US,USA,San Francisco,Enterprise AI
 startup_evolutionaryscale,EvolutionaryScale,US,USA,New York,Healthcare AI / Drug Discovery
 startup_fal,Fal,US,USA,San Francisco,Creative / Generative Media
 startup_fieldai,FieldAI,US,USA,Irvine,Robotics / Physical AI
 startup_figure_ai,Figure AI,US,USA,Sunnyvale,Robotics / Physical AI
 startup_fireworks_ai,Fireworks AI,US,USA,Redwood City,AI Infrastructure
+startup_flapping_airplanes,Flapping Airplanes,US,USA,San Francisco,Foundation Models / LLMs
 startup_fractile,Fractile,Europe,United Kingdom,London,AI Chips / Semiconductors
 startup_fundamental,Fundamental,US,USA,New York,Data / Analytics
+startup_fundguard,FundGuard,US,USA,New York,Fintech AI
 startup_g42,G42,UAE / Gulf,United Arab Emirates,Abu Dhabi,AI Infrastructure
+startup_genspark,Genspark,US,USA,Palo Alto,Search / Knowledge Agents
 startup_glean,Glean,US,USA,Palo Alto,Search / Knowledge Agents
+startup_goodfire,Goodfire,US,USA,San Francisco,Foundation Models / LLMs
 startup_groq,Groq,US,USA,Mountain View,AI Chips / Semiconductors
 startup_h_company,H Company,Europe,France,Paris,Foundation Models / LLMs
 startup_hailo,Hailo,Israel,Israel,Tel Aviv,AI Chips / Semiconductors
 startup_harmattan_ai,Harmattan AI,Europe,France,Paris,Defense / Security AI
+startup_harmonic,Harmonic,US,USA,Palo Alto,Foundation Models / LLMs
 startup_harvey,Harvey,US,USA,San Francisco,Enterprise AI
 startup_hebbia,Hebbia,US,USA,New York,Search / Knowledge Agents
 startup_helsing,Helsing,Europe,Germany,Munich,Defense / Security AI
@@ -49,10 +71,15 @@ startup_hippocratic_ai,Hippocratic AI,US,USA,Palo Alto,Healthcare AI / Drug Disc
 startup_humans,humans&,US,USA,San Francisco,Enterprise AI
 startup_ineffable_intelligence,Ineffable Intelligence,Europe,United Kingdom,London,Foundation Models / LLMs
 startup_inferact,Inferact,US,USA,San Francisco,AI Infrastructure
+startup_insilico_medicine,Insilico Medicine,US,USA,Cambridge,Healthcare AI / Drug Discovery
+startup_invisible_technologies,Invisible Technologies,US,USA,New York,Data / Analytics
 startup_isomorphic_labs,Isomorphic Labs,Europe,United Kingdom,London,Healthcare AI / Drug Discovery
 startup_kobold_metals,KoBold Metals,US,USA,Berkeley,Climate / Energy AI
+startup_kore_ai,Kore.ai,US,USA,Orlando,Enterprise AI
+startup_krutrim,Krutrim,India,India,Bengaluru,Foundation Models / LLMs
 startup_lambda,Lambda,US,USA,San Francisco,AI Infrastructure
 startup_legora,Legora,Europe,Sweden,Stockholm,Enterprise AI
+startup_lightmatter,Lightmatter,US,USA,Mountain View,AI Chips / Semiconductors
 startup_lila_sciences,Lila Sciences,US,USA,Cambridge,Healthcare AI / Drug Discovery
 startup_liquid_ai,Liquid AI,US,USA,Cambridge,Foundation Models / LLMs
 startup_livekit,LiveKit,US,USA,San Jose,AI Infrastructure
@@ -66,44 +93,64 @@ startup_merge_labs,Merge Labs,US,USA,San Francisco,Healthcare AI / Drug Discover
 startup_mind_robotics,Mind Robotics,US,USA,Palo Alto,Robotics / Physical AI
 startup_minimax,MiniMax,China,China,Shanghai,Foundation Models / LLMs
 startup_mistral_ai,Mistral AI,Europe,France,Paris,Foundation Models / LLMs
+startup_modular,Modular,US,USA,Palo Alto,AI Infrastructure
 startup_moonshot_ai,Moonshot AI,China,China,Beijing,Foundation Models / LLMs
 startup_multiverse_computing,Multiverse Computing,Europe,Spain,San Sebastian,AI Infrastructure
+startup_mythic,Mythic,US,USA,Austin,AI Chips / Semiconductors
 startup_nebius,Nebius,Europe,Netherlands,Amsterdam,AI Infrastructure
 startup_neural_concept,Neural Concept,Europe,Switzerland,Lausanne,Robotics / Physical AI
+startup_nexthop_ai,Nexthop AI,US,USA,Santa Clara,AI Infrastructure
+startup_nimble_robotics,Nimble Robotics,US,USA,San Francisco,Robotics / Physical AI
 startup_nscale,Nscale,Europe,United Kingdom,London,AI Infrastructure
 startup_openai,OpenAI,US,USA,San Francisco,Foundation Models / LLMs
 startup_openevidence,OpenEvidence,US,USA,Cambridge,Healthcare AI / Drug Discovery
 startup_ori,Ori,Europe,United Kingdom,London,AI Infrastructure
 startup_palebluedot_ai,PaleBlueDot AI,US,USA,Palo Alto,AI Infrastructure
+startup_parallel,Parallel,US,USA,New York,AI Infrastructure
 startup_parloa,Parloa,Europe,Germany,Berlin,Enterprise AI
+startup_path_robotics,Path Robotics,US,USA,Columbus,Robotics / Physical AI
+startup_periodic_labs,Periodic Labs,US,USA,Menlo Park,Climate / Energy AI
 startup_perplexity,Perplexity,US,USA,San Francisco,Search / Knowledge Agents
 startup_physical_intelligence,Physical Intelligence,US,USA,San Francisco,Robotics / Physical AI
 startup_physicsx,PhysicsX,Europe,United Kingdom,London,Robotics / Physical AI
 startup_poolside,Poolside,Europe,France,Paris,Coding Agents / Developer Tools
 startup_quantexa,Quantexa,Europe,United Kingdom,London,Data / Analytics
+startup_recogni,Recogni,US,USA,San Jose,AI Chips / Semiconductors
 startup_recursive_superintelligence,Recursive Superintelligence,US,USA,San Francisco,Foundation Models / LLMs
 startup_reflection_ai,Reflection AI,US,USA,Brooklyn,Foundation Models / LLMs
+startup_reka_ai,Reka AI,US,USA,Sunnyvale,Foundation Models / LLMs
 startup_render,Render,US,USA,San Francisco,AI Infrastructure
 startup_runway,Runway,US,USA,New York,Creative / Generative Media
 startup_safe_superintelligence,Safe Superintelligence,US,USA,Palo Alto,Foundation Models / LLMs
 startup_sakana_ai,Sakana AI,Other Global,Japan,Tokyo,Foundation Models / LLMs
 startup_sandboxaq,SandboxAQ,US,USA,Palo Alto,Enterprise AI
 startup_scale_ai,Scale AI,US,USA,San Francisco,Data / Analytics
+startup_sesame,Sesame,US,USA,San Francisco,Creative / Generative Media
 startup_shield_ai,Shield AI,US,USA,San Diego,Defense / Security AI
 startup_sierra,Sierra,US,USA,San Francisco,Enterprise AI
 startup_simile,Simile,US,USA,San Francisco,Enterprise AI
 startup_skild_ai,Skild AI,US,USA,Pittsburgh,Robotics / Physical AI
+startup_snorkel_ai,Snorkel AI,US,USA,Redwood City,Data / Analytics
 startup_suno,Suno,US,USA,Cambridge,Creative / Generative Media
 startup_synthesia,Synthesia,Europe,United Kingdom,London,Creative / Generative Media
+startup_tennr,Tennr,US,USA,New York,Healthcare AI / Drug Discovery
+startup_tensorwave,TensorWave,US,USA,Las Vegas,AI Infrastructure
 startup_tenstorrent,Tenstorrent,Canada,Canada,Toronto,AI Chips / Semiconductors
 startup_tessl,Tessl,Europe,United Kingdom,London,Coding Agents / Developer Tools
 startup_thinking_machines_lab,Thinking Machines Lab,US,USA,San Francisco,Foundation Models / LLMs
 startup_together_ai,Together AI,US,USA,San Francisco,AI Infrastructure
+startup_tractian,Tractian,US,USA,Atlanta,Enterprise AI
+startup_turing,Turing,US,USA,Palo Alto,Coding Agents / Developer Tools
+startup_unconventional_ai,Unconventional AI,US,USA,San Francisco,AI Chips / Semiconductors
 startup_uniphore,Uniphore,US,USA,Palo Alto,Enterprise AI
+startup_upscale_ai,Upscale AI,US,USA,San Francisco,AI Infrastructure
 startup_wayve,Wayve,Europe,United Kingdom,London,Autonomous Vehicles
+startup_weka,Weka,US,USA,Campbell,AI Infrastructure
 startup_wonderful,Wonderful,Israel,Israel,Tel Aviv,Enterprise AI
 startup_world_labs,World Labs,US,USA,San Francisco,Robotics / Physical AI
 startup_writer,Writer,US,USA,San Francisco,Enterprise AI
 startup_xai,xAI,US,USA,San Francisco,Foundation Models / LLMs
 startup_xaira_therapeutics,Xaira Therapeutics,US,USA,San Francisco,Healthcare AI / Drug Discovery
+startup_you_com,You.com,US,USA,Palo Alto,Search / Knowledge Agents
+startup_zephyr_ai,Zephyr AI,US,USA,Fairfax Station,Healthcare AI / Drug Discovery
 startup_zhipu_ai,Zhipu AI,China,China,Beijing,Foundation Models / LLMs

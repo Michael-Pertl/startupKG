@@ -1,15 +1,26 @@
 startup_id,name,region,country,city,primary_domain,website,founded_year,founders,latest_valuation_usd,total_funding_reported_usd,employee_count_estimate,notable_products,profile_source_url,profile_confidence,notes
+startup_7ai,7AI,US,USA,Boston,Defense / Security AI,,,,,,,,,,
+startup_abnormal_security,Abnormal Security,US,USA,San Francisco,Defense / Security AI,,,,,,,,,,
 startup_abridge,Abridge,US,USA,San Francisco,Healthcare AI / Drug Discovery,https://www.abridge.com,2018,Shiv Rao,,,,Ambient clinical documentation; healthcare conversation intelligence,https://www.abridge.com/about,high,Healthcare AI company focused on turning clinical conversations into structured documentation and insights.
 startup_ai21_labs,AI21 Labs,Israel,Israel,Tel Aviv,Foundation Models / LLMs,https://www.ai21.com,2017,Yoav Shoham; Ori Goshen; Amnon Shashua,,,,Jamba models; enterprise AI; Wordtune,https://www.ai21.com/about,high,Israeli enterprise foundation model company.
+startup_akasa,AKASA,US,USA,San Francisco,Healthcare AI / Drug Discovery,,,,,,,,,,
+startup_alphasense,AlphaSense,US,USA,New York,Search / Knowledge Agents,,,,,,,,,,
+startup_ambience_healthcare,Ambience Healthcare,US,USA,San Francisco,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_ami_labs,AMI Labs,Europe,France,Paris,Foundation Models / LLMs,,,,,,,,,,
 startup_anthropic,Anthropic,US,USA,San Francisco,Foundation Models / LLMs,https://www.anthropic.com,2021,Dario Amodei; Daniela Amodei; Tom Brown; Jack Clark; Jared Kaplan; Sam McCandlish; Chris Olah,,,,Claude models; Claude API; enterprise AI assistant,https://www.anthropic.com/company,high,Profile enrichment starter; valuation and total funding should be sourced separately before app display.
 startup_applied_intuition,Applied Intuition,US,USA,Mountain View,Autonomous Vehicles,https://www.appliedintuition.com,2017,Qasar Younis; Peter Ludwig,,,,Vehicle intelligence; autonomous systems simulation; ADAS/AV development platform,https://www.appliedintuition.com/company,high,Autonomous systems software company.
 startup_atlan,Atlan,US,USA,San Francisco,Data / Analytics,https://atlan.com,2019,Prukalpa Sankar; Varun Banka,,,,Data catalog; metadata platform; data and AI governance,https://atlan.com/company/,high,Data and AI governance platform.
 startup_augment,Augment,US,USA,Palo Alto,Coding Agents / Developer Tools,,,,,,,,,,
+startup_axelera_ai,Axelera AI,Europe,Netherlands,Eindhoven,AI Chips / Semiconductors,,,,,,,,,,
 startup_baichuan_ai,Baichuan AI,China,China,Beijing,Foundation Models / LLMs,https://www.baichuan-ai.com,2023,Wang Xiaochuan,,,,Baichuan foundation models; Chinese LLM applications,https://www.baichuan-ai.com,medium,Profile enrichment starter.
 startup_baseten,Baseten,US,USA,San Francisco,AI Infrastructure,https://www.baseten.co,2019,Tuhin Srivastava; Amir Haghighat; Phil Jones,,,,Model deployment; inference infrastructure; AI application serving,https://www.baseten.co/company/,high,AI infrastructure for production model serving.
 startup_basis,Basis,US,USA,New York,Enterprise AI,,,,,,,,,,
 startup_black_forest_labs,Black Forest Labs,Europe,Germany,Freiburg,Creative / Generative Media,,,,,,,,,,
+startup_blaize,Blaize,US,USA,El Dorado Hills,AI Chips / Semiconductors,,,,,,,,,,
+startup_bright_machines,Bright Machines,US,USA,San Francisco,Robotics / Physical AI,,,,,,,,,,
+startup_celestial_ai,Celestial AI,US,USA,Santa Clara,AI Chips / Semiconductors,,,,,,,,,,
+startup_cerebras_systems,Cerebras Systems,US,USA,Sunnyvale,AI Chips / Semiconductors,,,,,,,,,,
+startup_chai_discovery,Chai Discovery,US,USA,San Francisco,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_clickhouse,ClickHouse,US,USA,San Francisco,AI Infrastructure,https://clickhouse.com,2021,Aaron Katz; Alexey Milovidov; Yury Izrailevsky,,,,Real-time analytics database; AI/ML data infrastructure; observability,https://clickhouse.com/company,high,AI/data infrastructure company.
 startup_codeium,Codeium,US,USA,Mountain View,Coding Agents / Developer Tools,,,,,,,,,,
 startup_cognition,Cognition,US,USA,San Francisco,Coding Agents / Developer Tools,,,,,,,,,,
@@ -20,28 +31,39 @@ startup_crusoe,Crusoe,US,USA,San Francisco,AI Infrastructure,https://crusoe.ai,2
 startup_cursor,Cursor,US,USA,San Francisco,Coding Agents / Developer Tools,https://www.cursor.com,2022,Michael Truell; Sualeh Asif; Arvid Lunnemark; Aman Sanger,,,,AI coding editor; agentic developer tools,https://www.cursor.com/,medium,Also known as Anysphere in funding reports.
 startup_cyera,Cyera,US,USA,San Mateo,Defense / Security AI,,,,,,,,,,
 startup_databricks,Databricks,US,USA,San Francisco,AI Infrastructure,https://www.databricks.com,2013,Ali Ghodsi; Matei Zaharia; Reynold Xin; Ion Stoica; Patrick Wendell; Andy Konwinski; Arsalan Tavakoli-Shiraji,,,,Lakehouse platform; Mosaic AI; MLflow; data and AI infrastructure,https://www.databricks.com/company/about,high,Included as AI/data infrastructure rather than AI-native model lab.
+startup_decagon,Decagon,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_decart,Decart,Israel,Israel,Tel Aviv,Creative / Generative Media,https://www.decart.ai,2023,Dean Leitersdorf; Moshe Shalev,,,,Real-time generative video; AI model and GPU optimization,https://www.decart.ai,medium,Profile enrichment starter.
 startup_deepgram,Deepgram,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_deepl,DeepL,Europe,Germany,Cologne,Enterprise AI,https://www.deepl.com,2017,Jaroslaw Kutylowski,,,,DeepL Translator; DeepL Write; enterprise language AI,https://www.deepl.com/en/about-us,high,German language AI company.
+startup_devrev,DevRev,US,USA,Palo Alto,Enterprise AI,,,,,,,,,,
+startup_distyl_ai,Distyl AI,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_dream_security,Dream Security,Israel,Israel,Tel Aviv,Defense / Security AI,,,,,,,,,,
 startup_elevenlabs,ElevenLabs,Europe,United Kingdom,London,Creative / Generative Media,https://elevenlabs.io,2022,Mati Staniszewski; Piotr Dabkowski,,,,Text-to-speech; voice cloning; dubbing; speech AI APIs,https://help.elevenlabs.io/hc/en-us/articles/27583713738257-What-is-ElevenLabs,medium,London-origin voice AI company.
+startup_eliseai,EliseAI,US,USA,New York,Enterprise AI,,,,,,,,,,
 startup_encharge_ai,EnCharge AI,US,USA,Princeton,AI Chips / Semiconductors,,,,,,,,,,
+startup_enfabrica,Enfabrica,US,USA,Mountain View,AI Chips / Semiconductors,,,,,,,,,,
 startup_epg_singapore,EPG Singapore,Singapore,Singapore,Singapore,AI Infrastructure,,,,,,,,,,
 startup_etched,Etched,US,USA,San Francisco,AI Chips / Semiconductors,,,,,,,,,,
 startup_eudia,Eudia,US,USA,Palo Alto,Enterprise AI,,,,,,,,,,
+startup_evenup,EvenUp,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_evolutionaryscale,EvolutionaryScale,US,USA,New York,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_fal,Fal,US,USA,San Francisco,Creative / Generative Media,,,,,,,,,,
 startup_fieldai,FieldAI,US,USA,Irvine,Robotics / Physical AI,https://www.fieldai.com,2023,Ali Agha,,,,Field foundation models; robot autonomy in unstructured environments,https://www.fieldai.com/company,medium,Physical AI / robot autonomy company.
 startup_figure_ai,Figure AI,US,USA,Sunnyvale,Robotics / Physical AI,https://www.figure.ai,2022,Brett Adcock,,,,Humanoid robots; physical AI; general-purpose labor automation,https://www.figure.ai/company,medium,Humanoid robotics company.
 startup_fireworks_ai,Fireworks AI,US,USA,Redwood City,AI Infrastructure,https://fireworks.ai,2022,Lin Qiao,,,,Inference platform; generative AI model serving; serverless AI,https://fireworks.ai/company,medium,AI inference and model-serving infrastructure.
+startup_flapping_airplanes,Flapping Airplanes,US,USA,San Francisco,Foundation Models / LLMs,,,,,,,,,,
 startup_fractile,Fractile,Europe,United Kingdom,London,AI Chips / Semiconductors,https://www.fractile.ai,2022,Walter Goodwin,,,,AI inference chips; transformer inference acceleration,https://www.fractile.ai,medium,UK AI inference hardware company.
 startup_fundamental,Fundamental,US,USA,New York,Data / Analytics,,,,,,,,,,
+startup_fundguard,FundGuard,US,USA,New York,Fintech AI,,,,,,,,,,
 startup_g42,G42,UAE / Gulf,United Arab Emirates,Abu Dhabi,AI Infrastructure,https://www.g42.ai,2018,,,,,AI infrastructure; sovereign AI; cloud and model partnerships,https://www.g42.ai,medium,Strategic AI infrastructure actor; not a conventional venture-backed startup.
+startup_genspark,Genspark,US,USA,Palo Alto,Search / Knowledge Agents,,,,,,,,,,
 startup_glean,Glean,US,USA,Palo Alto,Search / Knowledge Agents,https://www.glean.com,2019,Arvind Jain; T.R. Vishwanath; Piyush Prahladka; Tony Gentilcore,,,,Enterprise search; work AI assistant; knowledge agents,https://www.glean.com/about,high,Enterprise search and knowledge AI company.
+startup_goodfire,Goodfire,US,USA,San Francisco,Foundation Models / LLMs,,,,,,,,,,
 startup_groq,Groq,US,USA,Mountain View,AI Chips / Semiconductors,https://groq.com,2016,Jonathan Ross,,,,LPU inference chips; GroqCloud; low-latency AI inference,https://groq.com/about-us/,high,Profile enrichment starter.
 startup_h_company,H Company,Europe,France,Paris,Foundation Models / LLMs,https://www.hcompany.ai,2023,Charles Kantor; Daan Wierstra; Karl Tuyls; Laurent Sifre; Julien Perolat,,,,AI agents; foundation models for action and automation,https://www.hcompany.ai,medium,French AI agents / foundation model company.
 startup_hailo,Hailo,Israel,Israel,Tel Aviv,AI Chips / Semiconductors,https://hailo.ai,2017,Orr Danon; Avi Baum; Hadar Zeitlin,,,,Edge AI processors; AI accelerators,https://hailo.ai/company-overview/,high,Israeli AI chip company.
 startup_harmattan_ai,Harmattan AI,Europe,France,Paris,Defense / Security AI,https://www.harmattan.ai,2023,,,,,Defense AI; autonomous drones; military robotics,https://techcrunch.com/2026/01/12/harmattan-ai-raises-200m-series-b-led-by-dassault-aviation-becomes-defense-unicorn/,medium,French defense AI startup; official profile source should be strengthened.
+startup_harmonic,Harmonic,US,USA,Palo Alto,Foundation Models / LLMs,,,,,,,,,,
 startup_harvey,Harvey,US,USA,San Francisco,Enterprise AI,https://www.harvey.ai,2022,Winston Weinberg; Gabriel Pereyra,,,,Legal AI assistant; professional services AI workflows,https://www.harvey.ai/about,medium,Enterprise legal AI company.
 startup_hebbia,Hebbia,US,USA,New York,Search / Knowledge Agents,,,,,,,,,,
 startup_helsing,Helsing,Europe,Germany,Munich,Defense / Security AI,https://helsing.ai,2021,Torsten Reil; Gundbert Scherf; Niklas Kossen,,,,Defense AI software; autonomous defense systems,https://helsing.ai/company,high,European defense AI company.
@@ -49,10 +71,15 @@ startup_hippocratic_ai,Hippocratic AI,US,USA,Palo Alto,Healthcare AI / Drug Disc
 startup_humans,humans&,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_ineffable_intelligence,Ineffable Intelligence,Europe,United Kingdom,London,Foundation Models / LLMs,,,,,,,,,,
 startup_inferact,Inferact,US,USA,San Francisco,AI Infrastructure,,,,,,,,,,
+startup_insilico_medicine,Insilico Medicine,US,USA,Cambridge,Healthcare AI / Drug Discovery,,,,,,,,,,
+startup_invisible_technologies,Invisible Technologies,US,USA,New York,Data / Analytics,,,,,,,,,,
 startup_isomorphic_labs,Isomorphic Labs,Europe,United Kingdom,London,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_kobold_metals,KoBold Metals,US,USA,Berkeley,Climate / Energy AI,,,,,,,,,,
+startup_kore_ai,Kore.ai,US,USA,Orlando,Enterprise AI,,,,,,,,,,
+startup_krutrim,Krutrim,India,India,Bengaluru,Foundation Models / LLMs,,,,,,,,,,
 startup_lambda,Lambda,US,USA,San Francisco,AI Infrastructure,,,,,,,,,,
 startup_legora,Legora,Europe,Sweden,Stockholm,Enterprise AI,,,,,,,,,,
+startup_lightmatter,Lightmatter,US,USA,Mountain View,AI Chips / Semiconductors,,,,,,,,,,
 startup_lila_sciences,Lila Sciences,US,USA,Cambridge,Healthcare AI / Drug Discovery,https://www.lila.ai,2023,,,,,Scientific superintelligence; autonomous labs; life/materials science AI,https://www.lila.ai/news/the-future-of-discovery,high,Scientific AI company incubated by Flagship Pioneering.
 startup_liquid_ai,Liquid AI,US,USA,Cambridge,Foundation Models / LLMs,,,,,,,,,,
 startup_livekit,LiveKit,US,USA,San Jose,AI Infrastructure,https://livekit.io,2021,Russell D'Sa; David Zhao,,,,Real-time voice/video infrastructure; agent communication APIs,https://livekit.com/blog/livekit-series-c,high,Infrastructure for realtime AI voice and video applications.
@@ -66,44 +93,64 @@ startup_merge_labs,Merge Labs,US,USA,San Francisco,Healthcare AI / Drug Discover
 startup_mind_robotics,Mind Robotics,US,USA,Palo Alto,Robotics / Physical AI,https://www.mindrobotics.ai,2026,,,,,AI-powered industrial robotics,https://techcrunch.com/2026/03/11/rivian-mind-robotics-series-a-500m-fund-raise-industrial-ai-powered-robots/,medium,Rivian spinout; official profile fields should be strengthened when source available.
 startup_minimax,MiniMax,China,China,Shanghai,Foundation Models / LLMs,https://www.minimax.io,2021,Yan Junjie,,,,Chinese foundation models; text/audio/video generation,https://www.minimax.io,medium,Profile enrichment starter.
 startup_mistral_ai,Mistral AI,Europe,France,Paris,Foundation Models / LLMs,https://mistral.ai,2023,Arthur Mensch; Timothee Lacroix; Guillaume Lample,,,,Mistral and Mixtral models; Le Chat; enterprise AI platform,https://mistral.ai/company,high,Profile enrichment starter.
+startup_modular,Modular,US,USA,Palo Alto,AI Infrastructure,,,,,,,,,,
 startup_moonshot_ai,Moonshot AI,China,China,Beijing,Foundation Models / LLMs,https://www.moonshot.cn,2023,Yang Zhilin,,,,Kimi chatbot; long-context foundation models,https://www.moonshot.cn,medium,Chinese foundation model company; profile source may need replacement with an English-language source for app display.
 startup_multiverse_computing,Multiverse Computing,Europe,Spain,San Sebastian,AI Infrastructure,,,,,,,,,,
+startup_mythic,Mythic,US,USA,Austin,AI Chips / Semiconductors,,,,,,,,,,
 startup_nebius,Nebius,Europe,Netherlands,Amsterdam,AI Infrastructure,,,,,,,,,,
 startup_neural_concept,Neural Concept,Europe,Switzerland,Lausanne,Robotics / Physical AI,,,,,,,,,,
+startup_nexthop_ai,Nexthop AI,US,USA,Santa Clara,AI Infrastructure,,,,,,,,,,
+startup_nimble_robotics,Nimble Robotics,US,USA,San Francisco,Robotics / Physical AI,,,,,,,,,,
 startup_nscale,Nscale,Europe,United Kingdom,London,AI Infrastructure,https://www.nscale.com,2024,,,,,GPU cloud; AI compute infrastructure; data center platform,https://www.nscale.com/company,medium,Profile enrichment starter.
 startup_openai,OpenAI,US,USA,San Francisco,Foundation Models / LLMs,https://openai.com,2015,Sam Altman; Greg Brockman; Ilya Sutskever; Wojciech Zaremba; John Schulman; Andrej Karpathy; Pamela Vagata,,,,ChatGPT; GPT models; API platform; Sora; enterprise AI products,https://openai.com/about/,high,Profile enrichment starter; valuation and total funding should be sourced separately before app display.
 startup_openevidence,OpenEvidence,US,USA,Cambridge,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_ori,Ori,Europe,United Kingdom,London,AI Infrastructure,,,,,,,,,,
 startup_palebluedot_ai,PaleBlueDot AI,US,USA,Palo Alto,AI Infrastructure,,,,,,,,,,
+startup_parallel,Parallel,US,USA,New York,AI Infrastructure,,,,,,,,,,
 startup_parloa,Parloa,Europe,Germany,Berlin,Enterprise AI,,,,,,,,,,
+startup_path_robotics,Path Robotics,US,USA,Columbus,Robotics / Physical AI,,,,,,,,,,
+startup_periodic_labs,Periodic Labs,US,USA,Menlo Park,Climate / Energy AI,,,,,,,,,,
 startup_perplexity,Perplexity,US,USA,San Francisco,Search / Knowledge Agents,https://www.perplexity.ai,2022,Aravind Srinivas; Denis Yarats; Johnny Ho; Andy Konwinski,,,,AI answer engine; search assistant; research agents,https://www.perplexity.ai/hub/about,medium,AI search and answer engine.
 startup_physical_intelligence,Physical Intelligence,US,USA,San Francisco,Robotics / Physical AI,https://www.physicalintelligence.company,2024,Karol Hausman; Sergey Levine; Lachy Groom; Brian Ichter; Kanishka Rao,,,,Robot foundation models; general-purpose physical AI,https://www.physicalintelligence.company/,medium,Profile enrichment starter.
 startup_physicsx,PhysicsX,Europe,United Kingdom,London,Robotics / Physical AI,,,,,,,,,,
 startup_poolside,Poolside,Europe,France,Paris,Coding Agents / Developer Tools,,,,,,,,,,
 startup_quantexa,Quantexa,Europe,United Kingdom,London,Data / Analytics,,,,,,,,,,
+startup_recogni,Recogni,US,USA,San Jose,AI Chips / Semiconductors,,,,,,,,,,
 startup_recursive_superintelligence,Recursive Superintelligence,US,USA,San Francisco,Foundation Models / LLMs,,,,,,,,,,
 startup_reflection_ai,Reflection AI,US,USA,Brooklyn,Foundation Models / LLMs,https://reflection.ai,2024,Misha Laskin; Ioannis Antonoglou,,,,Autonomous coding agents; frontier AI systems,https://reflection.ai,medium,Profile enrichment starter.
+startup_reka_ai,Reka AI,US,USA,Sunnyvale,Foundation Models / LLMs,,,,,,,,,,
 startup_render,Render,US,USA,San Francisco,AI Infrastructure,,,,,,,,,,
 startup_runway,Runway,US,USA,New York,Creative / Generative Media,https://runwayml.com,2018,Cristobal Valenzuela; Anastasis Germanidis; Alejandro Matamala,,,,Generative video models; creative AI tools; world models,https://runwayml.com/about,medium,Creative/generative media AI company.
 startup_safe_superintelligence,Safe Superintelligence,US,USA,Palo Alto,Foundation Models / LLMs,https://ssi.inc,2024,Ilya Sutskever; Daniel Gross; Daniel Levy,,,,Safe superintelligence research lab,https://ssi.inc,medium,Profile enrichment starter.
 startup_sakana_ai,Sakana AI,Other Global,Japan,Tokyo,Foundation Models / LLMs,,,,,,,,,,
 startup_sandboxaq,SandboxAQ,US,USA,Palo Alto,Enterprise AI,,,,,,,,,,
 startup_scale_ai,Scale AI,US,USA,San Francisco,Data / Analytics,https://scale.com,2016,Alexandr Wang,,,,Data engine for AI; labeling; RLHF and evaluation data,https://scale.com/about,high,Training data and AI data infrastructure.
+startup_sesame,Sesame,US,USA,San Francisco,Creative / Generative Media,,,,,,,,,,
 startup_shield_ai,Shield AI,US,USA,San Diego,Defense / Security AI,https://shield.ai,2015,Brandon Tseng; Ryan Tseng; Andrew Reiter,,,,Hivemind autonomy software; V-BAT; defense autonomy,https://shield.ai/about-us/,high,Defense AI company.
 startup_sierra,Sierra,US,USA,San Francisco,Enterprise AI,https://sierra.ai,2023,Bret Taylor; Clay Bavor,,,,Enterprise AI agents; customer service AI,https://sierra.ai/company,high,Profile enrichment starter.
 startup_simile,Simile,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_skild_ai,Skild AI,US,USA,Pittsburgh,Robotics / Physical AI,https://www.skild.ai,2023,Deepak Pathak; Abhinav Gupta,,,,General-purpose robotics foundation models,https://www.skild.ai/about,medium,Profile enrichment starter.
+startup_snorkel_ai,Snorkel AI,US,USA,Redwood City,Data / Analytics,,,,,,,,,,
 startup_suno,Suno,US,USA,Cambridge,Creative / Generative Media,,,,,,,,,,
 startup_synthesia,Synthesia,Europe,United Kingdom,London,Creative / Generative Media,https://www.synthesia.io,2017,Victor Riparbelli; Steffen Tjerrild; Lourdes Agapito; Matthias Niessner,,,,AI avatars; enterprise video generation; synthetic media,https://www.synthesia.io/about,high,Enterprise AI video company.
+startup_tennr,Tennr,US,USA,New York,Healthcare AI / Drug Discovery,,,,,,,,,,
+startup_tensorwave,TensorWave,US,USA,Las Vegas,AI Infrastructure,,,,,,,,,,
 startup_tenstorrent,Tenstorrent,Canada,Canada,Toronto,AI Chips / Semiconductors,,,,,,,,,,
 startup_tessl,Tessl,Europe,United Kingdom,London,Coding Agents / Developer Tools,,,,,,,,,,
 startup_thinking_machines_lab,Thinking Machines Lab,US,USA,San Francisco,Foundation Models / LLMs,https://thinkingmachines.ai,2025,Mira Murati,,,,AI research lab; multimodal and collaborative AI systems,https://thinkingmachines.ai,medium,Profile enrichment starter.
 startup_together_ai,Together AI,US,USA,San Francisco,AI Infrastructure,https://www.together.ai,2022,Vipul Ved Prakash; Ce Zhang; Percy Liang,,,,Open model cloud; inference; fine-tuning; AI infrastructure,https://www.together.ai/company,medium,AI infrastructure for open and custom models.
+startup_tractian,Tractian,US,USA,Atlanta,Enterprise AI,,,,,,,,,,
+startup_turing,Turing,US,USA,Palo Alto,Coding Agents / Developer Tools,,,,,,,,,,
+startup_unconventional_ai,Unconventional AI,US,USA,San Francisco,AI Chips / Semiconductors,,,,,,,,,,
 startup_uniphore,Uniphore,US,USA,Palo Alto,Enterprise AI,https://www.uniphore.com,2008,Umesh Sachdev; Ravi Saraogi,,,,Business AI cloud; conversational AI; enterprise agents,https://www.uniphore.com/about-us/,high,Enterprise AI company with US/India roots.
+startup_upscale_ai,Upscale AI,US,USA,San Francisco,AI Infrastructure,,,,,,,,,,
 startup_wayve,Wayve,Europe,United Kingdom,London,Autonomous Vehicles,https://wayve.ai,2017,Alex Kendall; Amar Shah,,,,Embodied AI for autonomous driving; AV2.0,https://wayve.ai/about,high,UK autonomous driving AI company.
+startup_weka,Weka,US,USA,Campbell,AI Infrastructure,,,,,,,,,,
 startup_wonderful,Wonderful,Israel,Israel,Tel Aviv,Enterprise AI,,,,,,,,,,
 startup_world_labs,World Labs,US,USA,San Francisco,Robotics / Physical AI,https://www.worldlabs.ai,2024,Fei-Fei Li,,,,Spatial intelligence; world models; 3D generative AI,https://www.worldlabs.ai,medium,Spatial intelligence AI company.
 startup_writer,Writer,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_xai,xAI,US,USA,San Francisco,Foundation Models / LLMs,https://x.ai,2023,Elon Musk,,,,Grok; frontier AI models; X-integrated AI products,https://x.ai/about,medium,Profile enrichment starter.
 startup_xaira_therapeutics,Xaira Therapeutics,US,USA,San Francisco,Healthcare AI / Drug Discovery,https://www.xaira.com,2024,,,,,AI drug discovery; biological foundation models,https://www.xaira.com,medium,AI-native drug discovery company.
+startup_you_com,You.com,US,USA,Palo Alto,Search / Knowledge Agents,,,,,,,,,,
+startup_zephyr_ai,Zephyr AI,US,USA,Fairfax Station,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_zhipu_ai,Zhipu AI,China,China,Beijing,Foundation Models / LLMs,https://www.zhipuai.cn,2019,Tang Jie; Zhang Peng,,,,GLM models; ChatGLM; Chinese foundation model platform,https://www.zhipuai.cn,medium,Profile enrichment starter.

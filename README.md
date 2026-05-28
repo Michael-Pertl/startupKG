@@ -4,6 +4,12 @@ This project builds a Neo4j property graph for analysing AI startup mega-round i
 
 The graph focuses on publicly reported funding rounds from 2024–2026 where AI startups or AI infrastructure companies raised at least USD 100M or equivalent.
 
+This threshold intentionally captures the AI mega-round ecosystem, not the
+whole worldwide AI startup ecosystem. A USD 100M+ cutoff is useful for studying
+where large pools of capital concentrate by domain, region, investor syndicate,
+and year. It excludes most seed, Series A, and regional AI companies, so final
+claims should be phrased as claims about publicly reported AI mega-rounds.
+
 ## Goal
 
 The goal is to model and analyse relationships between:
@@ -88,6 +94,18 @@ tests/             Data validation tests
 14. Run Cypher analysis queries.
 15. Export tables/screenshots for the final portfolio.
 
+## GitHub Workflow
+
+Use pull requests, short-lived branches, source-backed data reviews, and local
+validation before merging. See `GITHUB.md` for the repository workflow,
+including branch names, commit conventions, review expectations, CI checks, and
+secret-handling rules.
+
+## Deployment
+
+The current production target is a static Vite build served by nginx. See
+`docs/DEPLOYMENT.md` for the build, Docker, and launch checklist.
+
 ## Streamlit App
 
 Streamlit is no longer the recommended product surface. Keep it only as a
@@ -111,13 +129,76 @@ For product direction beyond the Streamlit prototype, see `docs/PRODUCT_STRATEGY
 
 ## Graph Product Prototype
 
+Start the product app from the project root:
+
+```bash
+./start.sh
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5180/
+```
+
+The script installs web dependencies if needed, starts the React app, and starts
+the Ask assistant proxy when `web/.env.local` exists.
+
 Build the app graph export:
 
 ```bash
 python3 scripts/build_app_graph.py
 ```
 
-Run the React graph UI:
+Build or refresh the News event feed:
+
+```bash
+python3 scripts/build_market_events.py
+```
+
+Free automated market-event discovery from configured RSS feeds:
+
+```bash
+python3 scripts/fetch_market_events_feeds.py
+python3 scripts/build_market_events.py
+```
+
+`./start.sh` runs the RSS fetch automatically before starting the app. The RSS
+fetch also writes `data/app/market_event_fetch_report.json` with per-feed
+success/failure and candidate counts.
+
+Optional paid market-event discovery with Tavily:
+
+```bash
+export TAVILY_API_KEY=tvly-your-key
+python3 scripts/fetch_market_events_tavily.py
+python3 scripts/build_market_events.py
+```
+
+Rows discovered this way are marked `auto_ingested` and shown in News as
+unreviewed monitoring items. They are not added to the core funding graph.
+Obvious below-threshold funding items and low-signal announcements are staged in
+`data/raw/market_events_raw.csv` but hidden from the app until reviewed.
+The News JSON adds investor-facing signal tiers: `core_signal`,
+`watchlist_signal`, and `review_queue`. These help separate graph-grade evidence
+from broader market intelligence.
+
+Promote a reviewed News item into the staged funding-event workflow:
+
+```bash
+python3 scripts/promote_market_event.py <market_event_id> \
+  --lead-investors "Investor A; Investor B" \
+  --ai-domain "AI Infrastructure"
+python3 scripts/promote_market_event.py <market_event_id> \
+  --lead-investors "Investor A; Investor B" \
+  --ai-domain "AI Infrastructure" \
+  --apply
+```
+
+Then review `data/raw/new_funding_events.csv` and continue with
+`python3 scripts/ingest_funding_events.py`.
+
+Manual React graph UI startup:
 
 ```bash
 cd web
@@ -144,6 +225,20 @@ npm run ask-server
 
 The API key stays server-side in the local proxy. The React app calls `/api/ask` through the Vite proxy.
 
+For a metered Ask beta, enable access tokens in `web/.env.local`:
+
+```bash
+ASK_REQUIRE_AUTH=true
+ASK_CREDIT_USERS={"demo-token-1":{"user_id":"demo_user","credits":25,"plan":"starter"}}
+ASK_CREDITS_PER_PROMPT=1
+ASK_MAX_REQUESTS_PER_MINUTE=8
+```
+
+Users enter their Ask access token in the Ask panel. The proxy stores local
+credit state in `.ask_ledger.json` and request usage in `.ask_usage_log.jsonl`.
+These files are ignored by git. Stripe or another payment provider can later
+create/top up these user credits server-side.
+
 ## Market Event Monitoring
 
 The next product layer is public event monitoring:
@@ -161,4 +256,4 @@ See `docs/MARKET_EVENT_MONITORING.md`.
 
 ## Dataset Limitation
 
-This project does not represent the entire AI investment landscape. It represents a curated dataset of publicly reported AI mega-rounds above the selected threshold. The results are therefore suitable for analysing major investor networks and capital concentration, but not for measuring the full population of AI startups.
+This project does not represent the entire AI investment landscape. It represents a curated dataset of publicly reported AI mega-rounds above the selected threshold. The results are therefore suitable for analysing major investor networks, sector focus, and capital concentration, but not for measuring the full population of AI startups.

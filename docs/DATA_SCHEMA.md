@@ -105,6 +105,7 @@ Recommended `event_type` values:
 Recommended `status` values:
 
 - `staged`
+- `auto_ingested`
 - `approved`
 - `rejected`
 - `needs_review`

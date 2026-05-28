@@ -1,7 +1,7 @@
 company,year,round_amount,region,country,domain,status,reason,source_url
 AI21 Labs,2025,300000000,Israel,Israel,Foundation Models / LLMs,include,"Imported after event-level source review.",https://www.axios.com/newsletters/axios-pro-rata-43fef533-8d3e-4480-802d-4f9d43cac2b9
 Decart,2025,100000000,Israel,Israel,Creative / Generative Media,include,"Imported after event-level source review.",https://en.globes.co.il/en/article-1001518392
-Wonderful,2025,100000000,Needs HQ review,Israel / Netherlands,Enterprise AI,needs_region_decision,"Reported USD100M Series A; company has Israel and Netherlands footprint, so headquarters treatment must be resolved before inclusion.",https://www.calcalistech.com/ctechnews/article/hjueeajlxe
+Wonderful,2025,100000000,Israel,Israel / Netherlands,Enterprise AI,include,"Imported as Israel after event-level source review; company has Israel and Netherlands footprint, so preserve this caveat in analysis notes.",https://techcrunch.com/2025/11/11/wonderful-raised-100m-series-a-to-put-ai-agents-on-the-front-lines-of-customer-service/
 Wonderful,2026,150000000,Israel,Israel,Enterprise AI,include,"Imported as Israel after event-level source review; note international/Netherlands footprint in raw row.",https://en.globes.co.il/en/article-israeli-ai-agents-co-wonderful-raises-150m-at-2b-valuation-1001537395
 Hailo,2024,120000000,Israel,Israel,AI Chips / Semiconductors,include,"Imported after event-level source review.",https://techcrunch.com/2024/04/02/hailo-ai-chip-startup-lands-120m-to-battle-nvidia/
 MiniMax,2024,600000000,China,China,Foundation Models / LLMs,include,"Imported after event-level source review.",https://www.reuters.com/technology/chinas-minimax-raises-600-mln-alibaba-others-sources-say-2024-03-05/

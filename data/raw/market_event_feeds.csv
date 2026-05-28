@@ -1,0 +1,7 @@
+feed_id,name,url,source_type,default_confidence,is_active,notes
+techcrunch,TechCrunch,https://techcrunch.com/feed/,techcrunch,medium,true,General TechCrunch feed; filter locally for AI funding IPO and strategic-event keywords.
+sifted,Sifted,https://sifted.eu/feed/,sifted,medium,true,European startup and venture feed; useful for Europe-focused AI mega-round discovery.
+eu_startups,EU-Startups,https://www.eu-startups.com/feed/,eu_startups,medium,true,European startup feed; useful for regional funding and IPO watch items.
+venturebeat_ai,VentureBeat AI,https://venturebeat.com/category/ai/feed/,other,medium,true,AI-focused technology feed; noisy for product news so filtered conservatively.
+prnewswire_technology,PRNewswire Technology,https://www.prnewswire.com/rss/technology-latest-news/technology-latest-news-list.rss,press_release,high,true,Press-release wire feed; noisy but useful for funding partnerships and product launches.
+businesswire_technology,BusinessWire Technology,https://feed.businesswire.com/rss/home/?rss=G1QFDERJXkJeGVtQWw==,press_release,high,true,Press-release wire feed; validate source URL and company identity before final graph import.

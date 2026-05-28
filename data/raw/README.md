@@ -9,6 +9,9 @@ This directory contains the manually curated evidence layer for the AI mega-roun
 - `investor_name_mapping.csv` maps raw investor names to canonical investor names.
 - `startup_profiles.csv` contains app-facing company profile enrichment.
 - `historical_funding_events_raw.csv` can store optional older or below-threshold funding events for profile timelines.
+- `market_events_raw.csv` contains public monitoring events for the News tab,
+  including IPO/watchlist/partnership/strategic-investment items. Automated
+  rows use `status=auto_ingested`.
 
 ## Curation Notes
 

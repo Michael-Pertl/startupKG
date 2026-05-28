@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import cytoscape, { Core, ElementDefinition, NodeSingular } from "cytoscape";
-import { MarketEdge, MarketGraph, MarketNode, NodeKind } from "./types";
+import { MarketEdge, MarketEventFeed, MarketGraph, MarketNode, NodeKind } from "./types";
 import { formatCount, formatUsd } from "./format";
+import { supabase, SupabaseSession } from "./supabaseClient";
 import "./styles.css";
-
-const buildLabel = "KG-22";
 
 const kindLabels: Record<NodeKind, string> = {
   startup: "Company",
@@ -16,14 +15,59 @@ const kindLabels: Record<NodeKind, string> = {
   year: "Year",
 };
 
-const nodeColors: Record<NodeKind, string> = {
-  startup: "#3dd6bf",
-  investor: "#8da2fb",
-  round: "#f2a65a",
-  country: "#d6c7a1",
-  region: "#9ca3af",
-  domain: "#c7a86d",
-  year: "#7dd3fc",
+type ThemeMode = "dark" | "light";
+
+const nodeColors: Record<ThemeMode, Record<NodeKind, string>> = {
+  dark: {
+    startup: "#6fa89b",
+    investor: "#7f8faa",
+    round: "#b9905f",
+    country: "#a69f91",
+    region: "#878c8b",
+    domain: "#9a9274",
+    year: "#7f99a3",
+  },
+  light: {
+    startup: "#4f897d",
+    investor: "#667795",
+    round: "#9a7146",
+    country: "#837b6d",
+    region: "#747a78",
+    domain: "#7f795f",
+    year: "#607f8b",
+  },
+};
+
+const graphThemeColors: Record<
+  ThemeMode,
+  {
+    label: string;
+    outline: string;
+    selected: string;
+    baseEdge: string;
+    investorEdge: string;
+    raisedEdge: string;
+    contextEdge: string;
+  }
+> = {
+  dark: {
+    label: "#d8d4c8",
+    outline: "#111313",
+    selected: "#c8a96a",
+    baseEdge: "#3b403f",
+    investorEdge: "#69758f",
+    raisedEdge: "#b78b55",
+    contextEdge: "#7f7869",
+  },
+  light: {
+    label: "#2d302d",
+    outline: "#f2efe7",
+    selected: "#9a7146",
+    baseEdge: "#a6aaa6",
+    investorEdge: "#76839c",
+    raisedEdge: "#a57a4c",
+    contextEdge: "#918979",
+  },
 };
 
 const confidenceHelp: Record<string, string> = {
@@ -31,6 +75,8 @@ const confidenceHelp: Record<string, string> = {
   medium: "Reputable secondary startup or technology publication.",
   low: "Weak, unclear, or seed-only source. Use cautiously.",
 };
+
+const graphLegendKinds: NodeKind[] = ["startup", "investor", "round", "country", "domain", "year"];
 
 type Expansion = {
   rounds: boolean;
@@ -40,7 +86,7 @@ type Expansion = {
 };
 
 type LayoutMode = "flow" | "network";
-type AppView = "graph" | "analytics";
+type AppView = "graph" | "analytics" | "news";
 
 type GraphIndex = {
   nodeById: Map<string, MarketNode>;
@@ -111,12 +157,32 @@ function passesRoundFilters(node: MarketNode, years: string[], confidence: strin
   return true;
 }
 
+function passesRoundScope(
+  round: MarketNode,
+  index: GraphIndex,
+  years: string[],
+  countries: string[],
+  confidence: string[],
+) {
+  if (!passesRoundFilters(round, years, confidence)) return false;
+  const raised = index.raisedByRound.get(round.id);
+  const startup = raised ? index.nodeById.get(raised.source) : undefined;
+  if (startup?.country && !countries.includes(startup.country)) return false;
+  return true;
+}
+
+function passesStartupScope(startup: MarketNode, countries: string[]) {
+  if (startup.kind !== "startup") return true;
+  return !startup.country || countries.includes(startup.country);
+}
+
 function buildNeighborhood(
   selected: MarketNode,
   graph: MarketGraph,
   index: GraphIndex,
   expansion: Expansion,
   years: string[],
+  countries: string[],
   confidence: string[],
 ): { nodes: MarketNode[]; edges: MarketEdge[] } {
   const nodeIds = new Set<string>();
@@ -129,7 +195,8 @@ function buildNeighborhood(
   const incident = index.edgesByNode.get(selected.id) || [];
   const addIncidentEdge = (edge: MarketEdge) => {
     const target = index.nodeById.get(otherEnd(edge, selected.id));
-    if (!target || !passesRoundFilters(target, years, confidence)) return;
+    if (!target) return;
+    if (target.kind === "round" && !passesRoundScope(target, index, years, countries, confidence)) return;
     addNode(nodeIds, nodes, target);
     addEdge(edgeIds, edges, edge);
   };
@@ -144,7 +211,7 @@ function buildNeighborhood(
 
     for (const edge of roundEdges) {
       const round = index.nodeById.get(edge.target);
-      if (!round || !passesRoundFilters(round, years, confidence)) continue;
+      if (!round || !passesRoundScope(round, index, years, countries, confidence)) continue;
       addNode(nodeIds, nodes, round);
       addEdge(edgeIds, edges, edge);
 
@@ -163,6 +230,7 @@ function buildNeighborhood(
           (node) =>
             node.kind === "startup" &&
             node.id !== selected.id &&
+            passesStartupScope(node, countries) &&
             (node.domain === selected.domain || node.country === selected.country),
         )
         .sort((left, right) => signal(right) - signal(left))
@@ -188,7 +256,7 @@ function buildNeighborhood(
 
     for (const edge of participationEdges) {
       const round = index.nodeById.get(edge.target);
-      if (!round || !passesRoundFilters(round, years, confidence)) continue;
+      if (!round || !passesRoundScope(round, index, years, countries, confidence)) continue;
       addNode(nodeIds, nodes, round);
       addEdge(edgeIds, edges, edge);
 
@@ -204,6 +272,7 @@ function buildNeighborhood(
       .filter((edge) => edge.kind === "headquartered_in" || edge.kind === "operates_in")
       .map((edge) => ({ edge, startup: index.nodeById.get(otherEnd(edge, selected.id)) }))
       .filter((item): item is { edge: MarketEdge; startup: MarketNode } => item.startup?.kind === "startup")
+      .filter(({ startup }) => passesStartupScope(startup, countries))
       .sort((left, right) => signal(right.startup) - signal(left.startup))
       .slice(0, 42);
 
@@ -215,11 +284,42 @@ function buildNeighborhood(
           .sort((left, right) => roundValue(right, index) - roundValue(left, index))
           .find((roundEdge) => {
             const round = index.nodeById.get(roundEdge.target);
-            return round ? passesRoundFilters(round, years, confidence) : false;
+            return round ? passesRoundScope(round, index, years, countries, confidence) : false;
           });
         if (topRound) {
           addNode(nodeIds, nodes, index.nodeById.get(topRound.target));
           addEdge(edgeIds, edges, topRound);
+        }
+      }
+    }
+  } else if (selected.kind === "year") {
+    const yearRounds = graph.nodes
+      .filter((node) => node.kind === "round" && String(node.year) === selected.label)
+      .filter((round) => passesRoundScope(round, index, years, countries, confidence))
+      .sort((left, right) => Number(right.amount_usd || 0) - Number(left.amount_usd || 0))
+      .slice(0, 42);
+
+    for (const round of yearRounds) {
+      addNode(nodeIds, nodes, round);
+
+      const raised = index.raisedByRound.get(round.id);
+      const startup = raised ? index.nodeById.get(raised.source) : undefined;
+      addNode(nodeIds, nodes, startup);
+      addEdge(edgeIds, edges, raised);
+
+      if (expansion.investors) {
+        for (const roundEdge of index.edgesByNode.get(round.id) || []) {
+          if (roundEdge.kind !== "participated") continue;
+          addNode(nodeIds, nodes, index.nodeById.get(roundEdge.source));
+          addEdge(edgeIds, edges, roundEdge);
+        }
+      }
+
+      if (startup && expansion.geography) {
+        for (const startupEdge of index.edgesByNode.get(startup.id) || []) {
+          if (startupEdge.kind !== "headquartered_in" && startupEdge.kind !== "operates_in") continue;
+          addNode(nodeIds, nodes, index.nodeById.get(otherEnd(startupEdge, startup.id)));
+          addEdge(edgeIds, edges, startupEdge);
         }
       }
     }
@@ -237,38 +337,64 @@ function radialPosition(index: number, total: number, radius: number, start = -M
   return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
 }
 
-function radialOverviewPositions(nodes: MarketNode[], selectedId: string): Map<string, { x: number; y: number }> {
+function radialOverviewPositions(
+  nodes: MarketNode[],
+  edges: MarketEdge[],
+  selectedId: string,
+): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
   const ranked = [...nodes].sort((left, right) => signal(right) - signal(left));
-  const ringByKind: Record<NodeKind, number> = {
-    round: 220,
-    startup: 315,
-    investor: 445,
-    country: 185,
-    domain: 185,
-    region: 535,
-    year: 535,
-  };
-  const offsetByKind: Record<NodeKind, number> = {
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const adjacency = new Map<string, string[]>();
+  edges.forEach((edge) => {
+    if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) return;
+    adjacency.set(edge.source, [...(adjacency.get(edge.source) || []), edge.target]);
+    adjacency.set(edge.target, [...(adjacency.get(edge.target) || []), edge.source]);
+  });
+
+  const depthById = new Map<string, number>([[selectedId, 0]]);
+  const queue = [selectedId];
+  while (queue.length) {
+    const current = queue.shift();
+    if (!current) continue;
+    const depth = depthById.get(current) || 0;
+    for (const next of adjacency.get(current) || []) {
+      if (depthById.has(next)) continue;
+      depthById.set(next, depth + 1);
+      queue.push(next);
+    }
+  }
+
+  const kindOffset: Record<NodeKind, number> = {
     startup: 0.15,
-    round: 0.58,
-    investor: 1.05,
-    country: 1.65,
-    domain: 2.15,
-    region: 2.8,
-    year: 3.25,
+    round: 0.75,
+    investor: 1.55,
+    country: 2.35,
+    domain: 2.9,
+    region: 3.35,
+    year: 3.75,
   };
 
-  ranked.forEach((node, index) => {
-    if (node.id === selectedId) {
-      positions.set(node.id, { x: 0, y: 0 });
-      return;
-    }
-    const sameKindIndex = ranked.filter((item) => item.kind === node.kind).findIndex((item) => item.id === node.id);
-    const sameKindTotal = ranked.filter((item) => item.kind === node.kind).length;
-    const angle = offsetByKind[node.kind] + (sameKindIndex / Math.max(sameKindTotal, 1)) * Math.PI * 2;
-    const radius = ringByKind[node.kind] + (index % 4) * 28;
-    positions.set(node.id, { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius });
+  positions.set(selectedId, { x: 0, y: 0 });
+  const groups = new Map<string, MarketNode[]>();
+  ranked
+    .filter((node) => node.id !== selectedId)
+    .forEach((node) => {
+      const depth = Math.min(depthById.get(node.id) || 4, 4);
+      const key = `${depth}:${node.kind}`;
+      groups.set(key, [...(groups.get(key) || []), node]);
+    });
+
+  groups.forEach((group, key) => {
+    const [depthText, kind] = key.split(":") as [string, NodeKind];
+    const depth = Number(depthText);
+    const radius = 220 + (depth - 1) * 170;
+    group.forEach((node, index) => {
+      const spread = Math.PI * 1.55;
+      const base = kindOffset[kind];
+      const angle = base + (index - (group.length - 1) / 2) * (spread / Math.max(group.length, 1));
+      positions.set(node.id, { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius });
+    });
   });
 
   return positions;
@@ -333,7 +459,7 @@ function buildPositions(
   selectedId: string,
   layoutMode: LayoutMode,
 ): Map<string, { x: number; y: number }> {
-  return layoutMode === "network" ? radialOverviewPositions(nodes, selectedId) : flowPositions(nodes, edges, selectedId);
+  return layoutMode === "network" ? radialOverviewPositions(nodes, edges, selectedId) : flowPositions(nodes, edges, selectedId);
 }
 
 function buildElements(
@@ -369,6 +495,7 @@ function buildElements(
         target: edge.target,
         kind: edge.kind,
         role: edge.role || "",
+        mode: layoutMode,
       },
     })),
   ];
@@ -379,15 +506,20 @@ function GraphView({
   nodes,
   edges,
   layoutMode,
+  themeMode,
+  viewportSignal,
   onSelect,
 }: {
   selectedId: string;
   nodes: MarketNode[];
   edges: MarketEdge[];
   layoutMode: LayoutMode;
+  themeMode: ThemeMode;
+  viewportSignal: string;
   onSelect: (node: MarketNode | undefined) => void;
 }) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  const [containerReady, setContainerReady] = useState(false);
   const [hovered, setHovered] = useState<{ node: MarketNode; x: number; y: number } | null>(null);
   const cyRef = useRef<Core | null>(null);
   const nodeById = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
@@ -399,6 +531,31 @@ function GraphView({
 
   useEffect(() => {
     if (!container) return;
+    const updateReady = () => {
+      const rect = container.getBoundingClientRect();
+      setContainerReady(rect.width > 80 && rect.height > 80);
+    };
+    const resizeObserver = new ResizeObserver(() => window.requestAnimationFrame(updateReady));
+    resizeObserver.observe(container);
+    const frame = window.requestAnimationFrame(updateReady);
+    return () => {
+      resizeObserver.disconnect();
+      window.cancelAnimationFrame(frame);
+    };
+  }, [container]);
+
+  useEffect(() => {
+    if (!containerReady) {
+      cyRef.current?.destroy();
+      cyRef.current = null;
+    }
+  }, [containerReady]);
+
+  useEffect(() => {
+    if (cyRef.current || !containerReady) return;
+    if (!container) return;
+    const theme = graphThemeColors[themeMode];
+    const palette = nodeColors[themeMode];
     const cy = cytoscape({
       container,
       elements: [],
@@ -413,8 +570,8 @@ function GraphView({
           selector: "node",
           style: {
             label: "data(displayLabel)",
-            "background-color": (element: NodeSingular) => nodeColors[element.data("kind") as NodeKind],
-            color: "#d6d3c8",
+            "background-color": (element: NodeSingular) => palette[element.data("kind") as NodeKind],
+            color: theme.label,
             "font-size": 9,
             "text-valign": "bottom",
             "text-halign": "center",
@@ -424,8 +581,11 @@ function GraphView({
             height: (element: NodeSingular) =>
               Math.min(58, Math.max(10, Math.sqrt(Number(element.data("weight")) / 90_000_000))),
             "border-width": 1.2,
-            "border-color": "#101312",
-            "text-outline-color": "#101312",
+            "border-color": theme.outline,
+            "active-bg-color": themeMode === "dark" ? "#b7bfbd" : theme.selected,
+            "active-bg-opacity": themeMode === "dark" ? 0.34 : 0.2,
+            "active-bg-size": 48,
+            "text-outline-color": theme.outline,
             "text-outline-width": 2,
           },
         },
@@ -435,7 +595,7 @@ function GraphView({
             width: 76,
             height: 76,
             "border-width": 4,
-            "border-color": "#f4d58d",
+            "border-color": theme.selected,
             label: "data(label)",
           },
         },
@@ -443,49 +603,81 @@ function GraphView({
           selector: "edge",
           style: {
             width: 1,
-            "line-color": "#3d4745",
+            "line-color": theme.baseEdge,
             "curve-style": "bezier",
             "control-point-step-size": 28,
-            "target-arrow-color": "#3d4745",
+            "target-arrow-color": theme.baseEdge,
             "target-arrow-shape": "none",
             opacity: 0.3,
           },
         },
         {
+          selector: 'edge[mode = "network"]',
+          style: {
+            "curve-style": "straight",
+            "target-arrow-shape": "none",
+            opacity: 0.2,
+            width: 0.85,
+          },
+        },
+        {
           selector: 'edge[kind = "participated"]',
           style: {
-            "line-color": "#6f7cc7",
-            "target-arrow-color": "#6f7cc7",
+            "line-color": theme.investorEdge,
+            "target-arrow-color": theme.investorEdge,
             "target-arrow-shape": "triangle",
             opacity: 0.46,
           },
         },
         {
+          selector: 'edge[mode = "network"][kind = "participated"]',
+          style: {
+            opacity: 0.28,
+            width: 0.9,
+          },
+        },
+        {
           selector: 'edge[kind = "raised"]',
           style: {
-            "line-color": "#d79851",
-            "target-arrow-color": "#d79851",
+            "line-color": theme.raisedEdge,
+            "target-arrow-color": theme.raisedEdge,
             "target-arrow-shape": "triangle",
             width: 2.2,
             opacity: 0.78,
           },
         },
         {
+          selector: 'edge[mode = "network"][kind = "raised"]',
+          style: {
+            "target-arrow-shape": "triangle",
+            opacity: 0.72,
+            width: 1.8,
+          },
+        },
+        {
           selector: 'edge[kind = "operates_in"], edge[kind = "headquartered_in"]',
           style: {
-            "line-color": "#9a9079",
+            "line-color": theme.contextEdge,
             "line-style": "dashed",
-            "target-arrow-color": "#9a9079",
+            "target-arrow-color": theme.contextEdge,
             "target-arrow-shape": "triangle",
             width: 1.45,
             opacity: 0.56,
           },
         },
         {
+          selector: 'edge[mode = "network"][kind = "operates_in"], edge[mode = "network"][kind = "headquartered_in"]',
+          style: {
+            "target-arrow-shape": "none",
+            opacity: 0.42,
+            width: 1.15,
+          },
+        },
+        {
           selector: "node:selected",
           style: {
             "border-width": 4,
-            "border-color": "#f4d58d",
+            "border-color": theme.selected,
             label: "data(label)",
           },
         },
@@ -523,7 +715,7 @@ function GraphView({
       cy.destroy();
       cyRef.current = null;
     };
-  }, [container, onSelect]);
+  }, [container, containerReady, onSelect, themeMode]);
 
   useEffect(() => {
     const cy = cyRef.current;
@@ -533,14 +725,35 @@ function GraphView({
       cy.add(buildElements(nodes, edges, selectedId, layoutMode));
       cy.layout({ name: "preset", fit: false }).run();
     });
-    window.requestAnimationFrame(() => cy.fit(undefined, 54));
-  }, [edges, layoutMode, nodes, selectedId]);
+    const refresh = () => {
+      cy.resize();
+      cy.fit(undefined, 54);
+      (cy as Core & { forceRender?: () => void }).forceRender?.();
+    };
+    const frame = window.requestAnimationFrame(() => {
+      refresh();
+      window.requestAnimationFrame(refresh);
+    });
+    const settleTimers = [80, 180, 360, 720].map((delay) => window.setTimeout(refresh, delay));
+    return () => {
+      window.cancelAnimationFrame(frame);
+      settleTimers.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, [containerReady, edges, layoutMode, nodes, selectedId, viewportSignal]);
 
   return (
     <div className="graph-frame">
       <div className="graph-hud">
         <span>{formatCount(nodes.length)} entities</span>
         <span>{formatCount(edges.length)} relationships</span>
+      </div>
+      <div className="graph-legend" aria-label="Graph legend">
+        {graphLegendKinds.map((kind) => (
+          <span key={kind}>
+            <i style={{ background: nodeColors[themeMode][kind] }} />
+            {kindLabels[kind]}
+          </span>
+        ))}
       </div>
       <button
         className="graph-fit-button"
@@ -645,13 +858,9 @@ function SearchPanel({
 
 function QuickSearch({
   graph,
-  expansion,
-  setExpansion,
   onSelect,
 }: {
   graph: MarketGraph;
-  expansion: Expansion;
-  setExpansion: (expansion: Expansion) => void;
   onSelect: (node: MarketNode) => void;
 }) {
   const [query, setQuery] = useState("");
@@ -721,26 +930,6 @@ function QuickSearch({
           ))}
         </div>
       ) : null}
-      <div className="inline-controls" aria-label="Graph filters">
-        <div className="inline-group">
-          {([
-            ["rounds", "events"],
-            ["investors", "investors"],
-            ["geography", "geo"],
-            ["peers", "peers"],
-          ] as Array<[keyof Expansion, string]>).map(([key, label]) => (
-            <button
-              className={expansion[key] ? "inline-chip active" : "inline-chip"}
-              key={key}
-              onClick={() => setExpansion({ ...expansion, [key]: !expansion[key] })}
-              type="button"
-              title={`Toggle ${label}`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -748,18 +937,24 @@ function QuickSearch({
 function HighLevelFilters({
   graph,
   years,
+  countries,
   confidence,
   setYears,
+  setCountries,
   setConfidence,
 }: {
   graph: MarketGraph;
   years: string[];
+  countries: string[];
   confidence: string[];
   setYears: (years: string[]) => void;
+  setCountries: (countries: string[]) => void;
   setConfidence: (confidence: string[]) => void;
 }) {
   const confidenceValue =
     confidence.length === graph.facets.confidence.length ? "__all__" : confidence[0] || "__all__";
+  const countryValue =
+    countries.length === graph.facets.countries.length ? "__all__" : countries[0] || "__all__";
   return (
     <aside className="graph-filter-panel" aria-label="Graph filters">
       <label>
@@ -775,6 +970,23 @@ function HighLevelFilters({
           {graph.facets.years.map((year) => (
             <option key={year} value={year}>
               {year}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label>
+        <span>Country</span>
+        <select
+          onChange={(event) => {
+            const value = event.target.value;
+            setCountries(value === "__all__" ? graph.facets.countries : [value]);
+          }}
+          value={countryValue}
+        >
+          <option value="__all__">All countries</option>
+          {graph.facets.countries.map((country) => (
+            <option key={country} value={country}>
+              {country}
             </option>
           ))}
         </select>
@@ -1059,23 +1271,163 @@ function DetailContext({ nodes, edges }: { nodes: MarketNode[]; edges: MarketEdg
   );
 }
 
+function renderInlineMarkdown(text: string) {
+  const tokenPattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g;
+  return text.split(tokenPattern).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return <code key={`${part}-${index}`}>{part.slice(1, -1)}</code>;
+    }
+    const link = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+    if (link) {
+      return (
+        <a href={link[2]} key={`${part}-${index}`} rel="noreferrer" target="_blank">
+          {link[1]}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
+function AssistantMessage({ content }: { content: string }) {
+  const blocks: JSX.Element[] = [];
+  const lines = content.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+  let listItems: string[] = [];
+  let listType: "ul" | "ol" | null = null;
+
+  const flushList = () => {
+    if (!listItems.length || !listType) return;
+    const items = listItems.map((item, index) => <li key={`${item}-${index}`}>{renderInlineMarkdown(item)}</li>);
+    blocks.push(listType === "ol" ? <ol key={`list-${blocks.length}`}>{items}</ol> : <ul key={`list-${blocks.length}`}>{items}</ul>);
+    listItems = [];
+    listType = null;
+  };
+
+  lines.forEach((line) => {
+    const heading = line.match(/^#{1,3}\s+(.+)$/);
+    const bullet = line.match(/^[-*]\s+(.+)$/);
+    const numbered = line.match(/^\d+\.\s+(.+)$/);
+
+    if (heading) {
+      flushList();
+      blocks.push(<h4 key={`heading-${blocks.length}`}>{renderInlineMarkdown(heading[1])}</h4>);
+      return;
+    }
+    if (bullet || numbered) {
+      const nextType = bullet ? "ul" : "ol";
+      if (listType && listType !== nextType) flushList();
+      listType = nextType;
+      listItems.push((bullet || numbered)?.[1] || line);
+      return;
+    }
+
+    flushList();
+    blocks.push(<p key={`paragraph-${blocks.length}`}>{renderInlineMarkdown(line)}</p>);
+  });
+  flushList();
+
+  return <div className="assistant-formatted">{blocks}</div>;
+}
+
 function AskPanel({
   selected,
   nodes,
   edges,
+  session,
 }: {
   selected: MarketNode;
   nodes: MarketNode[];
   edges: MarketEdge[];
+  session: SupabaseSession | null;
 }) {
+  const [askToken, setAskToken] = useState(() => localStorage.getItem("ask_access_token") || "");
+  const [creditPacks, setCreditPacks] = useState<Record<string, { label: string; credits: number; amount_cents: number }>>({});
+  const [selectedPack, setSelectedPack] = useState("starter");
+  const [usage, setUsage] = useState<{
+    user_id?: string;
+    plan?: string;
+    credits_remaining: number;
+    credits_per_prompt: number;
+    max_requests_per_minute: number;
+  } | null>(null);
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [error, setError] = useState("");
+  const useSupabaseAuth = Boolean(supabase);
+  const authToken = useSupabaseAuth ? session?.access_token || "" : askToken.trim();
+  const isLocalDevMode = usage?.user_id === "local_dev";
+
+  useEffect(() => {
+    fetch("/api/credit-packs")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => {
+        if (payload?.packs) setCreditPacks(payload.packs);
+      })
+      .catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
+    const headers: Record<string, string> = {};
+    if (authToken) headers["x-ask-token"] = authToken;
+    fetch("/api/ask/usage", { headers })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => {
+        if (payload?.usage) setUsage(payload.usage);
+      })
+      .catch(() => undefined);
+  }, [authToken]);
+
+  const updateAskToken = (value: string) => {
+    setAskToken(value);
+    if (value.trim()) {
+      localStorage.setItem("ask_access_token", value.trim());
+    } else {
+      localStorage.removeItem("ask_access_token");
+      setUsage(null);
+    }
+  };
+
+  async function buyCredits() {
+    if (!authToken || !session) {
+      setStatus("error");
+      setError("Sign in before buying Ask credits.");
+      return;
+    }
+    setStatus("loading");
+    setError("");
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-ask-token": authToken,
+        },
+        body: JSON.stringify({
+          pack_id: selectedPack,
+          email: session.user.email,
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Checkout is not available.");
+      window.location.href = payload.url;
+    } catch (caught) {
+      setStatus("error");
+      setError(caught instanceof Error ? caught.message : "Checkout is not available.");
+    }
+  }
 
   async function ask() {
     const trimmed = question.trim();
     if (!trimmed || status === "loading") return;
+    if (useSupabaseAuth && !session) {
+      setStatus("error");
+      setError("Sign in before using Ask.");
+      return;
+    }
     setStatus("loading");
     setMessages((current) => [...current, { role: "user", content: trimmed }]);
     setQuestion("");
@@ -1083,9 +1435,13 @@ function AskPanel({
     try {
       const response = await fetch("/api/ask", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(authToken ? { "x-ask-token": authToken } : {}),
+        },
         body: JSON.stringify({
           question: trimmed,
+          messages,
           selected,
           neighborhood: {
             nodes: nodes.slice(0, 80),
@@ -1095,6 +1451,7 @@ function AskPanel({
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "The graph assistant is not available.");
+      if (payload.usage) setUsage(payload.usage);
       setMessages((current) => [...current, { role: "assistant", content: payload.answer }]);
       setStatus("idle");
     } catch (caught) {
@@ -1105,15 +1462,62 @@ function AskPanel({
 
   return (
     <section className="ask-panel">
+      <div className="ask-access">
+        {useSupabaseAuth ? (
+          <div>
+            <span>Signed in</span>
+            <strong>{session?.user.email || "Required"}</strong>
+          </div>
+        ) : isLocalDevMode ? (
+          <div>
+            <span>Ask access</span>
+            <strong>Local dev mode</strong>
+          </div>
+        ) : (
+          <label>
+            <span>Ask access</span>
+            <input
+              autoComplete="off"
+              onChange={(event) => updateAskToken(event.target.value)}
+              placeholder="Access token"
+              type="password"
+              value={askToken}
+            />
+          </label>
+        )}
+        <div>
+          <span>Credits</span>
+          <strong>
+            {isLocalDevMode ? "Unlimited" : usage ? `${formatCount(usage.credits_remaining)} left` : "Not connected"}
+          </strong>
+        </div>
+      </div>
+      {useSupabaseAuth ? (
+        <div className="credit-pack-row">
+          <label>
+            <span>Credit pack</span>
+            <select onChange={(event) => setSelectedPack(event.target.value)} value={selectedPack}>
+              {Object.entries(creditPacks).map(([packId, pack]) => (
+                <option key={packId} value={packId}>
+                  {pack.label} · {pack.credits} credits · EUR {(pack.amount_cents / 100).toFixed(0)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button disabled={!session || status === "loading"} onClick={buyCredits} type="button">
+            Buy credits
+          </button>
+        </div>
+      ) : null}
       <div className="chat-thread">
         {messages.length ? (
           messages.map((message, index) => (
             <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}>
-              {message.content}
+              {message.role === "assistant" ? <AssistantMessage content={message.content} /> : message.content}
             </div>
           ))
         ) : (
-          <div className="chat-empty">Ask about the selected entity or the currently visible graph.</div>
+          <div className="chat-empty">Ask about the graph, the selected entity, or general AI market context.</div>
         )}
         {status === "loading" ? <div className="chat-message assistant">Thinking...</div> : null}
       </div>
@@ -1126,7 +1530,7 @@ function AskPanel({
             }
           }}
           onChange={(event) => setQuestion(event.target.value)}
-          placeholder={`Ask about ${selected.label} or the visible graph context...`}
+          placeholder={`Ask about ${selected.label}, this graph, or general market context...`}
           value={question}
         />
         <button className="send-button" disabled={status === "loading" || !question.trim()} onClick={ask} type="button">
@@ -1137,7 +1541,7 @@ function AskPanel({
         <div className="assistant-error">
           {error}
           <br />
-          Start the local model proxy with <code>npm run ask-server</code>. The key is loaded from <code>web/.env.local</code>.
+          Check that the Ask API is running and that the required server environment variables are configured.
         </div>
       ) : null}
     </section>
@@ -1179,8 +1583,28 @@ function Ranking({
 type AnalyticsFilters = {
   years: string[];
   regions: string[];
+  countries: string[];
   domains: string[];
   confidence: string[];
+};
+
+type AnalyticsMetric = "funding" | "events" | "companies" | "investors";
+type AnalyticsBreakdown = "year" | "region" | "country" | "domain" | "confidence";
+type AnalyticsRow = { id: string; label: string; value: number; node?: MarketNode; rounds?: MarketNode[] };
+
+const metricLabels: Record<AnalyticsMetric, string> = {
+  funding: "Funding",
+  events: "Events",
+  companies: "Companies",
+  investors: "Investors",
+};
+
+const breakdownLabels: Record<AnalyticsBreakdown, string> = {
+  year: "Year",
+  region: "Region",
+  country: "Country",
+  domain: "Domain",
+  confidence: "Evidence",
 };
 
 function AnalyticsSelect({
@@ -1188,17 +1612,19 @@ function AnalyticsSelect({
   value,
   values,
   onChange,
+  allowAll = true,
 }: {
   label: string;
   value: string;
   values: string[];
   onChange: (value: string) => void;
+  allowAll?: boolean;
 }) {
   return (
     <label className="analytics-select">
       <span>{label}</span>
       <select onChange={(event) => onChange(event.target.value)} value={value}>
-        <option value="__all__">All</option>
+        {allowAll ? <option value="__all__">All</option> : null}
         {values.map((item) => (
           <option key={item} value={item}>
             {item}
@@ -1221,20 +1647,32 @@ function horizontalBars({
   rows,
   valueFormatter,
   onSelect,
+  onSelectRow,
+  selectedId,
 }: {
-  rows: Array<{ id: string; label: string; value: number; node?: MarketNode }>;
+  rows: AnalyticsRow[];
   valueFormatter?: (value: number) => string;
   onSelect?: (node: MarketNode) => void;
+  onSelectRow?: (row: AnalyticsRow) => void;
+  selectedId?: string;
 }) {
   const max = Math.max(...rows.map((row) => row.value), 1);
   return (
     <div className="bar-list">
       {rows.map((row) => (
         <button
-          className={row.node && onSelect ? "bar-row clickable" : "bar-row"}
-          disabled={!row.node || !onSelect}
+          className={[
+            "bar-row",
+            row.node && onSelect ? "clickable" : "",
+            onSelectRow ? "clickable" : "",
+            selectedId === row.id ? "selected" : "",
+          ].join(" ")}
+          disabled={!(row.node && onSelect) && !onSelectRow}
           key={row.id}
-          onClick={() => row.node && onSelect?.(row.node)}
+          onClick={() => {
+            if (row.node && onSelect) onSelect(row.node);
+            else onSelectRow?.(row);
+          }}
           type="button"
         >
           <span>{row.label}</span>
@@ -1253,12 +1691,19 @@ function AnalyticsPage({
   filters,
   setFilters,
   onSelectNode,
+  onSelectRound,
+  onSelectSlice,
 }: {
   graph: MarketGraph;
   filters: AnalyticsFilters;
   setFilters: (filters: AnalyticsFilters) => void;
   onSelectNode: (node: MarketNode) => void;
+  onSelectRound: (node: MarketNode) => void;
+  onSelectSlice: (kind: AnalyticsBreakdown, label: string) => void;
 }) {
+  const [activeSlice, setActiveSlice] = useState<{ kind: AnalyticsBreakdown; label: string } | null>(null);
+  const [breakdown, setBreakdown] = useState<AnalyticsBreakdown>("domain");
+
   const roundToStartup = useMemo(() => {
     const byId = new Map(graph.nodes.map((node) => [node.id, node]));
     const mapping = new Map<string, MarketNode>();
@@ -1266,6 +1711,18 @@ function AnalyticsPage({
       if (edge.kind !== "raised") return;
       const startup = byId.get(edge.source);
       if (startup?.kind === "startup") mapping.set(edge.target, startup);
+    });
+    return mapping;
+  }, [graph.edges, graph.nodes]);
+
+  const investorByRound = useMemo(() => {
+    const byId = new Map(graph.nodes.map((node) => [node.id, node]));
+    const mapping = new Map<string, MarketNode[]>();
+    graph.edges.forEach((edge) => {
+      if (edge.kind !== "participated") return;
+      const investor = byId.get(edge.source);
+      if (investor?.kind !== "investor") return;
+      mapping.set(edge.target, [...(mapping.get(edge.target) || []), investor]);
     });
     return mapping;
   }, [graph.edges, graph.nodes]);
@@ -1278,6 +1735,7 @@ function AnalyticsPage({
         if (round.year && !filters.years.includes(String(round.year))) return false;
         if (round.confidence && !filters.confidence.includes(round.confidence)) return false;
         if (startup?.region && !filters.regions.includes(startup.region)) return false;
+        if (startup?.country && !filters.countries.includes(startup.country)) return false;
         if (startup?.domain && !filters.domains.includes(startup.domain)) return false;
         return true;
       });
@@ -1295,48 +1753,93 @@ function AnalyticsPage({
   const visibleInvestors = graph.nodes.filter((node) => node.kind === "investor" && investorIds.has(node.id));
   const totalFunding = filteredRounds.reduce((sum, round) => sum + Number(round.amount_usd || 0), 0);
 
-  const aggregate = (key: "year" | "domain" | "region") => {
-    const totals = new Map<string, number>();
+  useEffect(() => {
+    setActiveSlice(null);
+  }, [filters]);
+
+  const segmentLabel = (round: MarketNode, key: AnalyticsBreakdown) => {
+    const startup = roundToStartup.get(round.id);
+    if (key === "year") return String(round.year || "Unknown");
+    if (key === "confidence") return String(round.confidence || "Unknown");
+    return String(startup?.[key] || "Unknown");
+  };
+
+  const aggregateFunding = (key: AnalyticsBreakdown): AnalyticsRow[] => {
+    const grouped = new Map<string, MarketNode[]>();
     filteredRounds.forEach((round) => {
-      const startup = roundToStartup.get(round.id);
-      const label = key === "year" ? String(round.year || "Unknown") : String(startup?.[key] || "Unknown");
-      totals.set(label, (totals.get(label) || 0) + Number(round.amount_usd || 0));
+      const label = segmentLabel(round, key);
+      grouped.set(label, [...(grouped.get(label) || []), round]);
     });
-    return [...totals.entries()]
-      .map(([label, value]) => ({ id: label, label, value }))
+    return [...grouped.entries()]
+      .map(([label, rounds]) => ({
+        id: `${key}:${label}`,
+        label,
+        value: rounds.reduce((sum, round) => sum + Number(round.amount_usd || 0), 0),
+        rounds,
+      }))
       .sort((left, right) => right.value - left.value);
   };
 
-  const topCompanies = [...filteredStartups]
-    .sort((left, right) => Number(right.visible_mega_round_funding_usd || 0) - Number(left.visible_mega_round_funding_usd || 0))
-    .slice(0, 10)
-    .map((node) => ({
+  const activeRounds = activeSlice
+    ? filteredRounds.filter((round) => segmentLabel(round, activeSlice.kind) === activeSlice.label)
+    : filteredRounds;
+
+  const activeTitle = activeSlice ? `${breakdownLabels[activeSlice.kind]}: ${activeSlice.label}` : "All visible events";
+  const activeFunding = activeRounds.reduce((sum, round) => sum + Number(round.amount_usd || 0), 0);
+  const activeCompanies = new Set(activeRounds.map((round) => roundToStartup.get(round.id)?.id).filter(Boolean)).size;
+  const activeInvestors = new Set(
+    activeRounds.flatMap((round) => (investorByRound.get(round.id) || []).map((node) => node.id)),
+  ).size;
+
+  const breakdownRows = aggregateFunding(breakdown).slice(0, breakdown === "country" ? graph.facets.countries.length : 10);
+
+  const companyFunding = new Map<string, { node: MarketNode; value: number }>();
+  filteredRounds.forEach((round) => {
+    const startup = roundToStartup.get(round.id);
+    if (!startup) return;
+    const current = companyFunding.get(startup.id)?.value || 0;
+    companyFunding.set(startup.id, { node: startup, value: current + Number(round.amount_usd || 0) });
+  });
+
+  const investorFunding = new Map<string, { node: MarketNode; value: number }>();
+  filteredRounds.forEach((round) => {
+    (investorByRound.get(round.id) || []).forEach((investor) => {
+      const current = investorFunding.get(investor.id)?.value || 0;
+      investorFunding.set(investor.id, { node: investor, value: current + Number(round.amount_usd || 0) });
+    });
+  });
+
+  const topCompanies = [...companyFunding.values()]
+    .sort((left, right) => right.value - left.value)
+    .slice(0, 8)
+    .map(({ node, value }) => ({
       id: node.id,
       label: node.label,
-      value: Number(node.visible_mega_round_funding_usd || 0),
+      value,
       node,
     }));
 
-  const topInvestors = [...visibleInvestors]
-    .sort((left, right) => Number(right.linked_funding_usd || 0) - Number(left.linked_funding_usd || 0))
-    .slice(0, 10)
-    .map((node) => ({
+  const topInvestors = [...investorFunding.values()]
+    .sort((left, right) => right.value - left.value)
+    .slice(0, 8)
+    .map(({ node, value }) => ({
       id: node.id,
       label: node.label,
-      value: Number(node.linked_funding_usd || 0),
+      value,
       node,
     }));
 
-  const yearRows = aggregate("year").sort((left, right) => left.label.localeCompare(right.label));
-  const domainRows = aggregate("domain").slice(0, 10);
-  const regionRows = aggregate("region");
+  const evidenceRows = [...activeRounds]
+    .sort((left, right) => Number(right.amount_usd || 0) - Number(left.amount_usd || 0))
+    .slice(0, 14);
+  const evidenceLimit = evidenceRows.length;
 
   return (
     <main className="analytics-page">
       <header className="analytics-header">
         <div>
-          <div className="eyebrow">Market analytics</div>
-          <h1>AI funding momentum</h1>
+          <div className="eyebrow">Market dashboard</div>
+          <h1>AI funding growth</h1>
         </div>
         <div className="analytics-filters">
           <AnalyticsSelect
@@ -1352,13 +1855,19 @@ function AnalyticsPage({
             values={graph.facets.regions}
           />
           <AnalyticsSelect
+            label="Country"
+            onChange={(value) => setFilters({ ...filters, countries: setSingleOrAll(value, graph.facets.countries) })}
+            value={selectedValue(filters.countries, graph.facets.countries)}
+            values={graph.facets.countries}
+          />
+          <AnalyticsSelect
             label="Domain"
             onChange={(value) => setFilters({ ...filters, domains: setSingleOrAll(value, graph.facets.domains) })}
             value={selectedValue(filters.domains, graph.facets.domains)}
             values={graph.facets.domains}
           />
           <AnalyticsSelect
-            label="Confidence"
+            label="Evidence"
             onChange={(value) => setFilters({ ...filters, confidence: setSingleOrAll(value, graph.facets.confidence) })}
             value={selectedValue(filters.confidence, graph.facets.confidence)}
             values={graph.facets.confidence}
@@ -1387,16 +1896,34 @@ function AnalyticsPage({
 
       <section className="analytics-grid">
         <article className="analytics-card wide">
-          <h2>Funding by year</h2>
-          {horizontalBars({ rows: yearRows, valueFormatter: formatUsd })}
-        </article>
-        <article className="analytics-card">
-          <h2>Funding by domain</h2>
-          {horizontalBars({ rows: domainRows, valueFormatter: formatUsd })}
-        </article>
-        <article className="analytics-card">
-          <h2>Funding by region</h2>
-          {horizontalBars({ rows: regionRows, valueFormatter: formatUsd })}
+          <div className="card-heading">
+            <h2>Market concentration</h2>
+            {activeSlice ? (
+              <button onClick={() => setActiveSlice(null)} type="button">Clear slice</button>
+            ) : null}
+          </div>
+          <div className="segmented-control" aria-label="Analytics breakdown">
+            {(["domain", "country", "year", "confidence"] as AnalyticsBreakdown[]).map((item) => (
+              <button
+                className={breakdown === item ? "active" : ""}
+                key={item}
+                onClick={() => setBreakdown(item)}
+                type="button"
+              >
+                {breakdownLabels[item]}
+              </button>
+            ))}
+          </div>
+          <div className="focused-breakdown">
+            {horizontalBars({
+              rows: breakdownRows,
+              valueFormatter: formatUsd,
+              selectedId: activeSlice?.kind === breakdown ? `${breakdown}:${activeSlice.label}` : "",
+              onSelectRow: (row) => {
+                setActiveSlice({ kind: breakdown, label: row.label });
+              },
+            })}
+          </div>
         </article>
         <article className="analytics-card">
           <h2>Top companies</h2>
@@ -1406,8 +1933,380 @@ function AnalyticsPage({
           <h2>Top investors</h2>
           {horizontalBars({ rows: topInvestors, valueFormatter: formatUsd, onSelect: onSelectNode })}
         </article>
+        <article className="analytics-card wide">
+          <div className="slice-summary">
+            <div>
+              <span>Selected slice</span>
+              <strong>{activeTitle}</strong>
+            </div>
+            <div>
+              <span>Funding</span>
+              <strong>{formatUsd(activeFunding)}</strong>
+            </div>
+            <div>
+              <span>Events</span>
+              <strong>{formatCount(activeRounds.length)}</strong>
+            </div>
+            <div>
+              <span>Companies</span>
+              <strong>{formatCount(activeCompanies)}</strong>
+            </div>
+            <div>
+              <span>Investors</span>
+              <strong>{formatCount(activeInvestors)}</strong>
+            </div>
+          </div>
+          <div className="evidence-table">
+            <div className="evidence-table-caption">
+              <span>Largest events in selected slice</span>
+              <strong>Showing {formatCount(evidenceLimit)} of {formatCount(activeRounds.length)}</strong>
+            </div>
+            <div className="evidence-table-head">
+              <span>Company</span>
+              <span>Country</span>
+              <span>Domain</span>
+              <span>Amount</span>
+            </div>
+            {evidenceRows.map((round) => {
+              const startup = roundToStartup.get(round.id);
+              const investors = investorByRound.get(round.id) || [];
+              return (
+                <div className="evidence-table-row" key={round.id}>
+                  <button className="evidence-row-main" onClick={() => onSelectRound(round)} type="button">
+                    <span>{startup?.label || round.startup_name || round.label}</span>
+                    <span>{startup?.country || "Unknown"}</span>
+                    <span>{startup?.domain || "Unknown"}</span>
+                    <strong>{formatUsd(Number(round.amount_usd || 0))}</strong>
+                    <small>{round.year} · {round.confidence} · {investors.slice(0, 3).map((node) => node.label).join(", ")}</small>
+                  </button>
+                  <div className="evidence-source-action">
+                    {round.source_url ? (
+                      <a
+                        aria-label="Open funding source"
+                        href={round.source_url}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        <svg aria-hidden="true" viewBox="0 0 24 24">
+                          <path d="M7 17 17 7M9 7h8v8" />
+                          <path d="M19 13v6H5V5h6" />
+                        </svg>
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </article>
       </section>
     </main>
+  );
+}
+
+const eventTypeLabels: Record<string, string> = {
+  funding_round: "Funding",
+  valuation_update: "Valuation",
+  ipo_watch: "IPO watch",
+  ipo_filing: "IPO filing",
+  ipo_pricing: "IPO pricing",
+  public_listing: "Public listing",
+  strategic_investment: "Strategic",
+  compute_commitment: "Compute",
+  acquisition_or_merger: "M&A",
+  major_partnership: "Partnership",
+  revenue_or_usage_milestone: "Milestone",
+};
+
+function eventLabel(value: string) {
+  return eventTypeLabels[value] || value.replace(/_/g, " ");
+}
+
+function signalTierLabel(value: string) {
+  const labels: Record<string, string> = {
+    core_signal: "Core",
+    watchlist_signal: "Watchlist",
+    review_queue: "Review",
+  };
+  return labels[value] || value.replace(/_/g, " ");
+}
+
+function NewsSelect({
+  label,
+  value,
+  values,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  values: string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="analytics-select">
+      <span>{label}</span>
+      <select onChange={(event) => onChange(event.target.value)} value={value}>
+        <option value="__all__">All</option>
+        {values.map((item) => (
+          <option key={item} value={item}>
+            {label === "Event" ? eventLabel(item) : label === "Signal" ? signalTierLabel(item) : item}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function NewsPage({
+  eventFeed,
+  graph,
+  onSelectCompany,
+}: {
+  eventFeed: MarketEventFeed | null;
+  graph: MarketGraph;
+  onSelectCompany: (node: MarketNode) => void;
+}) {
+  const [eventType, setEventType] = useState("__all__");
+  const [region, setRegion] = useState("__all__");
+  const [status, setStatus] = useState("__all__");
+  const [signalTier, setSignalTier] = useState("__all__");
+  const [query, setQuery] = useState("");
+  const [mode, setMode] = useState<"feed" | "ipo">("feed");
+
+  const companyByName = useMemo(() => {
+    const mapping = new Map<string, MarketNode>();
+    graph.nodes.forEach((node) => {
+      if (node.kind === "startup") mapping.set(node.label.toLowerCase(), node);
+    });
+    return mapping;
+  }, [graph.nodes]);
+
+  const events = useMemo(() => {
+    return (eventFeed?.events || []).filter((event) => {
+      if (eventType !== "__all__" && event.event_type !== eventType) return false;
+      if (region !== "__all__" && event.region !== region) return false;
+      if (status !== "__all__" && event.status !== status) return false;
+      if (signalTier !== "__all__" && event.signal_tier !== signalTier) return false;
+      const text = [
+        event.company_name,
+        eventLabel(event.event_type),
+        event.event_type,
+        signalTierLabel(event.signal_tier),
+        event.signal_label,
+        event.summary,
+        event.notes,
+        event.country,
+        event.region,
+        event.source_type,
+        event.confidence,
+        event.status,
+      ].join(" ").toLowerCase();
+      return text.includes(query.toLowerCase().trim());
+    });
+  }, [eventFeed, eventType, query, region, signalTier, status]);
+
+  const ipoEvents = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing");
+  const coreEvents = events.filter((event) => event.signal_tier === "core_signal");
+  const watchlistEvents = events.filter((event) => event.signal_tier === "watchlist_signal");
+  const reviewEvents = events.filter((event) => event.signal_tier === "review_queue");
+  const visibleFunding = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
+
+  if (!eventFeed) {
+    return <main className="news-page"><div className="loading">Loading market events...</div></main>;
+  }
+
+  return (
+    <main className="news-page">
+      <header className="analytics-header news-header">
+        <div>
+          <div className="eyebrow">Market monitor</div>
+          <h1>AI ecosystem news</h1>
+          <p>{eventFeed.metadata.scope_note}</p>
+        </div>
+        <div className="analytics-filters news-filters">
+          <NewsSelect label="Signal" onChange={setSignalTier} value={signalTier} values={eventFeed.facets.signal_tiers} />
+          <NewsSelect label="Event" onChange={setEventType} value={eventType} values={eventFeed.facets.event_types} />
+          <NewsSelect label="Region" onChange={setRegion} value={region} values={eventFeed.facets.regions} />
+          <NewsSelect label="Status" onChange={setStatus} value={status} values={eventFeed.facets.statuses} />
+        </div>
+      </header>
+
+      <section className="analytics-kpis">
+        <div>
+          <span>Core signals</span>
+          <strong>{formatCount(coreEvents.length)}</strong>
+        </div>
+        <div>
+          <span>Watchlist</span>
+          <strong>{formatCount(watchlistEvents.length)}</strong>
+        </div>
+        <div>
+          <span>Review queue</span>
+          <strong>{formatCount(reviewEvents.length)}</strong>
+        </div>
+        <div>
+          <span>Linked capital</span>
+          <strong>{formatUsd(visibleFunding)}</strong>
+        </div>
+      </section>
+
+      <div className="news-mode-row">
+        <div className="segmented-control news-mode" aria-label="News mode">
+          <button className={mode === "feed" ? "active" : ""} onClick={() => setMode("feed")} type="button">
+            Event feed
+          </button>
+          <button className={mode === "ipo" ? "active" : ""} onClick={() => setMode("ipo")} type="button">
+            IPO / DPO board
+          </button>
+        </div>
+        <label className="news-search">
+          <span>Search news</span>
+          <input
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Company, IPO, country, source..."
+            value={query}
+          />
+        </label>
+      </div>
+
+      {mode === "feed" ? (
+      <section className="news-layout single">
+        <article className="analytics-card news-feed-card">
+          <h2>Event feed</h2>
+          <div className="news-feed">
+            {events.map((event) => {
+              const company = companyByName.get(event.company_name.toLowerCase());
+              return (
+                <div className="news-item" key={event.event_id}>
+                  <div className="news-item-main">
+                    <div className="news-item-topline">
+                      <span>{event.event_date}</span>
+                      <b className={`signal-${event.signal_tier}`}>{signalTierLabel(event.signal_tier)}</b>
+                      <b>{eventLabel(event.event_type)}</b>
+                      <em
+                        className={
+                          event.status === "approved"
+                            ? "status-approved"
+                            : event.status === "auto_ingested"
+                              ? "status-auto"
+                              : "status-review"
+                        }
+                      >
+                        {event.status.replace("_", " ")}
+                      </em>
+                    </div>
+                    <h3>{event.company_name}</h3>
+                    <p>{event.summary}</p>
+                    <div className="news-metrics">
+                      {event.amount_usd ? <span>{formatUsd(Number(event.amount_usd))}</span> : null}
+                      {event.valuation_usd ? <span>{formatUsd(Number(event.valuation_usd))} valuation</span> : null}
+                      <span>{event.country}</span>
+                      <span>{event.confidence}</span>
+                    </div>
+                  </div>
+                  <div className="news-actions">
+                    {company ? (
+                      <button onClick={() => onSelectCompany(company)} type="button">Graph</button>
+                    ) : null}
+                    <a href={event.source_url} rel="noreferrer" target="_blank">Source</a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </article>
+      </section>
+      ) : (
+      <section className="news-layout single">
+        <article className="analytics-card ipo-board-card">
+          <h2>IPO / DPO watch board</h2>
+          <div className="ipo-board">
+            <div className="ipo-board-head">
+              <span>Company</span>
+              <span>Status</span>
+              <span>Region</span>
+              <span>Valuation</span>
+            </div>
+            {ipoEvents.map((event) => (
+              <div className="ipo-board-row" key={event.event_id}>
+                <span>{event.company_name}</span>
+                <strong>{eventLabel(event.event_type)}</strong>
+                <span>{event.region}</span>
+                <span>{event.valuation_usd ? formatUsd(Number(event.valuation_usd)) : "n/a"}</span>
+                <small>{event.summary}</small>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+      )}
+    </main>
+  );
+}
+
+function AuthControls({
+  session,
+  setSession,
+}: {
+  session: SupabaseSession | null;
+  setSession: (session: SupabaseSession | null) => void;
+}) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
+  const [error, setError] = useState("");
+
+  if (!supabase) return null;
+
+  async function signIn() {
+    const trimmed = email.trim();
+    if (!trimmed || status === "loading" || !supabase) return;
+    setStatus("loading");
+    setError("");
+    const { error } = await supabase.auth.signInWithOtp({
+      email: trimmed,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (error) {
+      setStatus("error");
+      setError(error.message);
+      return;
+    }
+    setStatus("sent");
+  }
+
+  async function signOut() {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    setSession(null);
+  }
+
+  if (session) {
+    return (
+      <div className="auth-controls signed-in">
+        <span>{session.user.email}</span>
+        <button onClick={signOut} type="button">Sign out</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="auth-controls">
+      <input
+        autoComplete="email"
+        onChange={(event) => setEmail(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") signIn();
+        }}
+        placeholder="Email for Ask"
+        type="email"
+        value={email}
+      />
+      <button disabled={status === "loading" || !email.trim()} onClick={signIn} type="button">
+        {status === "loading" ? "Sending" : "Sign in"}
+      </button>
+      {status === "sent" ? <small>Check your email.</small> : null}
+      {status === "error" ? <small>{error}</small> : null}
+    </div>
   );
 }
 
@@ -1418,17 +2317,24 @@ function toggle(list: string[], value: string): string[] {
 
 export default function App() {
   const [graph, setGraph] = useState<MarketGraph | null>(null);
+  const [eventFeed, setEventFeed] = useState<MarketEventFeed | null>(null);
   const [view, setView] = useState<AppView>("graph");
+  const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
+  const [session, setSession] = useState<SupabaseSession | null>(null);
+  const [graphViewportSignal, setGraphViewportSignal] = useState(0);
   const [selectedId, setSelectedId] = useState<string>("");
   const [years, setYears] = useState<string[]>([]);
+  const [countries, setCountries] = useState<string[]>([]);
   const [confidence, setConfidence] = useState<string[]>([]);
   const [analyticsFilters, setAnalyticsFilters] = useState<AnalyticsFilters>({
     years: [],
     regions: [],
+    countries: [],
     domains: [],
     confidence: [],
   });
   const [drawerMode, setDrawerMode] = useState<"details" | "ask" | null>(null);
+  const [drawerWidth, setDrawerWidth] = useState(420);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>("flow");
   const [expansion, setExpansion] = useState<Expansion>({
     rounds: true,
@@ -1443,10 +2349,12 @@ export default function App() {
       .then((payload: MarketGraph) => {
         setGraph(payload);
         setYears(payload.facets.years);
+        setCountries(payload.facets.countries);
         setConfidence(payload.facets.confidence);
         setAnalyticsFilters({
           years: payload.facets.years,
           regions: payload.facets.regions,
+          countries: payload.facets.countries,
           domains: payload.facets.domains,
           confidence: payload.facets.confidence,
         });
@@ -1459,16 +2367,55 @@ export default function App() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    fetch("/data/market_events.json")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload: MarketEventFeed | null) => {
+        if (payload) setEventFeed(payload);
+      })
+      .catch(() => setEventFeed(null));
+  }, []);
+
   const index = useMemo(() => (graph ? buildIndex(graph) : undefined), [graph]);
   const selected = graph && selectedId ? graph.nodes.find((node) => node.id === selectedId) : undefined;
   const neighborhood = useMemo(() => {
     if (!graph || !index || !selected) return { nodes: [], edges: [] };
-    return buildNeighborhood(selected, graph, index, expansion, years, confidence);
-  }, [confidence, expansion, graph, index, selected, years]);
+    return buildNeighborhood(selected, graph, index, expansion, years, countries, confidence);
+  }, [confidence, countries, expansion, graph, index, selected, years]);
 
   const handleSelect = useCallback((node: MarketNode | undefined) => {
-    if (node) setSelectedId(node.id);
+    if (!node) return;
+    setSelectedId(node.id);
+    setDrawerMode("details");
+    setGraphViewportSignal((signal) => signal + 1);
   }, []);
+
+  const startDrawerResize = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = drawerWidth;
+    const maxWidth = Math.min(760, window.innerWidth - 360);
+    const onMove = (moveEvent: PointerEvent) => {
+      const nextWidth = Math.min(maxWidth, Math.max(340, startWidth + startX - moveEvent.clientX));
+      setDrawerWidth(nextWidth);
+      setGraphViewportSignal((signal) => signal + 1);
+    };
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp, { once: true });
+  }, [drawerWidth]);
 
   if (!graph || !index || !selected) {
     return <div className="loading">Loading graph workspace...</div>;
@@ -1476,15 +2423,33 @@ export default function App() {
 
   const selectNodeAndOpenGraph = (node: MarketNode) => {
     setSelectedId(node.id);
+    setDrawerMode("details");
+    setExpansion({ rounds: true, investors: true, geography: true, peers: false });
     setView("graph");
+    setGraphViewportSignal((signal) => signal + 1);
+  };
+
+  const selectSliceAndOpenGraph = (kind: AnalyticsBreakdown, label: string) => {
+    if (kind === "confidence") return;
+    const nodeKind = kind === "year" ? "year" : kind === "country" ? "country" : kind === "domain" ? "domain" : "region";
+    const target = graph.nodes.find((node) => node.kind === nodeKind && node.label === label);
+    if (!target) return;
+    setYears(kind === "year" ? [label] : analyticsFilters.years);
+    setCountries(kind === "country" ? [label] : analyticsFilters.countries);
+    setConfidence(analyticsFilters.confidence);
+    setLayoutMode("flow");
+    selectNodeAndOpenGraph(target);
   };
 
   return (
     <div
+      data-theme={themeMode}
+      style={drawerMode ? ({ "--drawer-width": `${drawerWidth}px` } as React.CSSProperties) : undefined}
       className={[
-        "app-shell",
-        "explorer-shell",
-        view === "analytics" ? "analytics-shell" : "",
+    "app-shell",
+    "explorer-shell",
+    view === "analytics" ? "analytics-shell" : "",
+        view === "news" ? "news-shell" : "",
         drawerMode ? "has-right" : "no-right",
       ].join(" ")}
     >
@@ -1495,12 +2460,30 @@ export default function App() {
         <button className={view === "analytics" ? "active" : ""} onClick={() => setView("analytics")} type="button">
           Analytics
         </button>
+        <button className={view === "news" ? "active" : ""} onClick={() => setView("news")} type="button">
+          News
+        </button>
+        <button
+          className="theme-toggle"
+          onClick={() => {
+            setThemeMode((mode) => (mode === "dark" ? "light" : "dark"));
+            setGraphViewportSignal((signal) => signal + 1);
+          }}
+          type="button"
+        >
+          {themeMode === "dark" ? "Light" : "Dark"}
+        </button>
+        <AuthControls session={session} setSession={setSession} />
       </nav>
-      {view === "analytics" ? (
+      {view === "news" ? (
+        <NewsPage eventFeed={eventFeed} graph={graph} onSelectCompany={selectNodeAndOpenGraph} />
+      ) : view === "analytics" ? (
         <AnalyticsPage
           filters={analyticsFilters}
           graph={graph}
           onSelectNode={selectNodeAndOpenGraph}
+          onSelectRound={selectNodeAndOpenGraph}
+          onSelectSlice={selectSliceAndOpenGraph}
           setFilters={setAnalyticsFilters}
         />
       ) : (
@@ -1512,23 +2495,24 @@ export default function App() {
             <h2>{selected.label}</h2>
           </div>
           <QuickSearch
-            expansion={expansion}
             graph={graph}
-            onSelect={(node) => setSelectedId(node.id)}
-            setExpansion={setExpansion}
+            onSelect={(node) => handleSelect(node)}
           />
         </header>
         <section className="graph-section">
           <HighLevelFilters
             confidence={confidence}
+            countries={countries}
             graph={graph}
+            setCountries={setCountries}
             setConfidence={setConfidence}
             setYears={setYears}
             years={years}
           />
-          <DomainNavigator graph={graph} onSelect={(node) => setSelectedId(node.id)} />
+          <DomainNavigator graph={graph} onSelect={(node) => handleSelect(node)} />
           <div className="graph-action-rail">
-            <div className="layout-toggle" aria-label="Graph layout">
+            <div className="rail-group" aria-label="Graph layout">
+              <span>Layout</span>
               <button
                 className={layoutMode === "flow" ? "active" : ""}
                 onClick={() => setLayoutMode("flow")}
@@ -1546,36 +2530,47 @@ export default function App() {
                 Net
               </button>
             </div>
-            <button
-              aria-label="Open details"
-              className={drawerMode === "details" ? "rail-button active" : "rail-button"}
-              onClick={() => setDrawerMode(drawerMode === "details" ? null : "details")}
-              type="button"
-            >
-              Details
-            </button>
-            <button
-              aria-label="Open ask"
-              className={drawerMode === "ask" ? "rail-button active" : "rail-button"}
-              onClick={() => setDrawerMode(drawerMode === "ask" ? null : "ask")}
-              type="button"
-            >
-              Ask
-            </button>
-            <span>{buildLabel}</span>
+            <div className="rail-group" aria-label="Side panel">
+              <span>Panel</span>
+              <button
+                aria-label="Open details"
+                className={drawerMode === "details" ? "active" : ""}
+                onClick={() => setDrawerMode(drawerMode === "details" ? null : "details")}
+                type="button"
+              >
+                Details
+              </button>
+              <button
+                aria-label="Open ask"
+                className={drawerMode === "ask" ? "active" : ""}
+                onClick={() => setDrawerMode(drawerMode === "ask" ? null : "ask")}
+                type="button"
+              >
+                Ask
+              </button>
+            </div>
           </div>
           <GraphView
             edges={neighborhood.edges}
+            key={`${selected.id}:${view}:${drawerMode || "closed"}:${themeMode}:${graphViewportSignal}`}
             layoutMode={layoutMode}
             nodes={neighborhood.nodes}
             onSelect={handleSelect}
             selectedId={selected.id}
+            themeMode={themeMode}
+            viewportSignal={`${graphViewportSignal}:${drawerMode || "closed"}:${view}`}
           />
         </section>
       </main>
 
       {drawerMode ? (
       <aside className="inspector drawer">
+        <button
+          aria-label="Resize side panel"
+          className="drawer-resize-handle"
+          onPointerDown={startDrawerResize}
+          type="button"
+        />
         <div className="drawer-header">
           <span>{drawerMode === "ask" ? "Ask" : "Details"}</span>
           <button
@@ -1588,7 +2583,9 @@ export default function App() {
             </svg>
           </button>
         </div>
-        {drawerMode === "ask" ? <AskPanel edges={neighborhood.edges} nodes={neighborhood.nodes} selected={selected} /> : null}
+        {drawerMode === "ask" ? (
+          <AskPanel edges={neighborhood.edges} nodes={neighborhood.nodes} selected={selected} session={session} />
+        ) : null}
         {drawerMode === "details" ? (
         <>
         <EntityProfile node={selected} />
