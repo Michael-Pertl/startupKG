@@ -2370,6 +2370,7 @@ function AccountPage({
   const creditsPerPrompt = Number(usage?.credits_per_prompt || 1);
   const currentPlan = usage?.plan || "free";
   const subscriptionStatus = usage?.subscription_status || (currentPlan === "free" ? "trial" : "active");
+  const hasPaidPlan = currentPlan === "starter" || currentPlan === "pro";
 
   return (
     <main className="account-page">
@@ -2426,10 +2427,14 @@ function AccountPage({
         <div className="account-billing">
           <div>
             <span>Billing</span>
-            <p>Manage payment method, invoices, cancellation, and plan changes through Stripe billing.</p>
+            <p>
+              {hasPaidPlan
+                ? "Manage payment method, invoices, cancellation, and plan changes through Stripe billing."
+                : "Billing management becomes available after choosing a paid plan."}
+            </p>
           </div>
-          <button disabled={billingBusy !== null || currentPlan === "free"} onClick={openBillingPortal} type="button">
-            {billingBusy === "portal" ? "Opening..." : "Manage billing"}
+          <button disabled={billingBusy !== null || !hasPaidPlan} onClick={openBillingPortal} type="button">
+            {billingBusy === "portal" ? "Opening..." : hasPaidPlan ? "Manage billing" : "No active billing"}
           </button>
         </div>
         {billingError ? <p className="account-error">{billingError}</p> : null}
