@@ -86,7 +86,7 @@ type Expansion = {
 };
 
 type LayoutMode = "flow" | "network";
-type AppView = "graph" | "analytics" | "news";
+type AppView = "graph" | "analytics" | "news" | "login";
 
 type GraphIndex = {
   nodeById: Map<string, MarketNode>;
@@ -1337,11 +1337,13 @@ function AskPanel({
   nodes,
   edges,
   session,
+  onLoginRequired,
 }: {
   selected: MarketNode;
   nodes: MarketNode[];
   edges: MarketEdge[];
   session: SupabaseSession | null;
+  onLoginRequired: () => void;
 }) {
   const [askToken, setAskToken] = useState(() => localStorage.getItem("ask_access_token") || "");
   const [creditPacks, setCreditPacks] = useState<Record<string, { label: string; credits: number; amount_cents: number }>>({});
@@ -1393,8 +1395,7 @@ function AskPanel({
 
   async function buyCredits() {
     if (!authToken || !session) {
-      setStatus("error");
-      setError("Sign in before buying Ask credits.");
+      onLoginRequired();
       return;
     }
     setStatus("loading");
@@ -1424,8 +1425,7 @@ function AskPanel({
     const trimmed = question.trim();
     if (!trimmed || status === "loading") return;
     if (useSupabaseAuth && !session) {
-      setStatus("error");
-      setError("Sign in before using Ask.");
+      onLoginRequired();
       return;
     }
     setStatus("loading");
@@ -1504,8 +1504,8 @@ function AskPanel({
               ))}
             </select>
           </label>
-          <button disabled={!session || status === "loading"} onClick={buyCredits} type="button">
-            Buy credits
+          <button disabled={status === "loading"} onClick={buyCredits} type="button">
+            {session ? "Buy credits" : "Sign in to buy"}
           </button>
         </div>
       ) : null}
@@ -1534,7 +1534,7 @@ function AskPanel({
           value={question}
         />
         <button className="send-button" disabled={status === "loading" || !question.trim()} onClick={ask} type="button">
-          Send
+          {useSupabaseAuth && !session ? "Sign in" : "Send"}
         </button>
       </div>
       {status === "error" ? (
@@ -2247,33 +2247,12 @@ function NewsPage({
 function AuthControls({
   session,
   setSession,
+  onOpenLogin,
 }: {
   session: SupabaseSession | null;
   setSession: (session: SupabaseSession | null) => void;
+  onOpenLogin: () => void;
 }) {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
-  const [error, setError] = useState("");
-
-  if (!supabase) return null;
-
-  async function signIn() {
-    const trimmed = email.trim();
-    if (!trimmed || status === "loading" || !supabase) return;
-    setStatus("loading");
-    setError("");
-    const { error } = await supabase.auth.signInWithOtp({
-      email: trimmed,
-      options: { emailRedirectTo: window.location.origin },
-    });
-    if (error) {
-      setStatus("error");
-      setError(error.message);
-      return;
-    }
-    setStatus("sent");
-  }
-
   async function signOut() {
     if (!supabase) return;
     await supabase.auth.signOut();
@@ -2291,22 +2270,192 @@ function AuthControls({
 
   return (
     <div className="auth-controls">
-      <input
-        autoComplete="email"
-        onChange={(event) => setEmail(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") signIn();
-        }}
-        placeholder="Email for Ask"
-        type="email"
-        value={email}
-      />
-      <button disabled={status === "loading" || !email.trim()} onClick={signIn} type="button">
-        {status === "loading" ? "Sending" : "Sign in"}
-      </button>
-      {status === "sent" ? <small>Check your email.</small> : null}
-      {status === "error" ? <small>{error}</small> : null}
+      <button className="auth-primary" onClick={onOpenLogin} type="button">Sign in</button>
     </div>
+  );
+}
+
+function LoginPage({
+  onComplete,
+  onRecoveryComplete,
+  recovery,
+}: {
+  onComplete: () => void;
+  onRecoveryComplete: () => void;
+  recovery: boolean;
+}) {
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  if (!supabase) {
+    return (
+      <main className="login-page">
+        <section className="login-panel">
+          <div className="login-copy">
+            <span>Ask access</span>
+            <h1>Authentication is not configured.</h1>
+            <p>Supabase environment variables are required before user accounts can be enabled.</p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  const trimmedEmail = email.trim();
+  const canSubmit = recovery
+    ? password.length >= 8 && status !== "loading"
+    : trimmedEmail.length > 3 && password.length >= 8 && status !== "loading";
+
+  async function submitPasswordAuth(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!canSubmit || !supabase) return;
+    setStatus("loading");
+    setMessage("");
+    if (recovery) {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        setStatus("error");
+        setMessage(error.message);
+        return;
+      }
+      setStatus("success");
+      setMessage("Password updated.");
+      onRecoveryComplete();
+      onComplete();
+      return;
+    }
+
+    const result =
+      mode === "signin"
+        ? await supabase.auth.signInWithPassword({ email: trimmedEmail, password })
+        : await supabase.auth.signUp({
+            email: trimmedEmail,
+            password,
+            options: { emailRedirectTo: window.location.origin },
+          });
+
+    if (result.error) {
+      setStatus("error");
+      setMessage(result.error.message);
+      return;
+    }
+
+    setStatus("success");
+    if (mode === "signup" && !result.data.session) {
+      setMessage("Check your email to confirm the account, then return to sign in.");
+      return;
+    }
+    setMessage("Signed in.");
+    onComplete();
+  }
+
+  async function signInWithGoogle() {
+    if (!supabase || status === "loading") return;
+    setStatus("loading");
+    setMessage("");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) {
+      setStatus("error");
+      setMessage(error.message);
+    }
+  }
+
+  async function resetPassword() {
+    if (!trimmedEmail || !supabase || status === "loading") {
+      setStatus("error");
+      setMessage("Enter your email first.");
+      return;
+    }
+    setStatus("loading");
+    setMessage("");
+    const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail, {
+      redirectTo: window.location.origin,
+    });
+    if (error) {
+      setStatus("error");
+      setMessage(error.message);
+      return;
+    }
+    setStatus("success");
+    setMessage("Password reset email sent.");
+  }
+
+  return (
+    <main className="login-page">
+      <section className="login-panel">
+        <div className="login-copy">
+          <span>AI Market Graph</span>
+          <h1>Sign in to use Ask credits.</h1>
+          <p>
+            Use the graph and market intelligence freely. Sign in when you want the assistant to reason over the
+            visible network, funding rounds, investors, and sources.
+          </p>
+          <div className="login-proof">
+            <strong>What your account unlocks</strong>
+            <ul>
+              <li>Metered Ask access tied to your user account.</li>
+              <li>Credit top-ups through Stripe Checkout.</li>
+              <li>Session-based access without sharing API keys.</li>
+            </ul>
+          </div>
+        </div>
+        <form className="login-form" onSubmit={submitPasswordAuth}>
+          <div className="login-form-head">
+            <span>{recovery ? "Password recovery" : mode === "signin" ? "Welcome back" : "Create account"}</span>
+            <h2>{recovery ? "Set a new password" : mode === "signin" ? "Sign in" : "Start with an account"}</h2>
+          </div>
+          {!recovery ? <button className="google-button" onClick={signInWithGoogle} type="button">
+            Continue with Google
+          </button> : null}
+          {!recovery ? <div className="login-divider"><span>or</span></div> : null}
+          {!recovery ? <label>
+            Email
+            <input
+              autoComplete="email"
+              inputMode="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              type="email"
+              value={email}
+            />
+          </label> : null}
+          <label>
+            {recovery ? "New password" : "Password"}
+            <input
+              autoComplete={mode === "signin" && !recovery ? "current-password" : "new-password"}
+              minLength={8}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Minimum 8 characters"
+              type="password"
+              value={password}
+            />
+          </label>
+          <button className="login-submit" disabled={!canSubmit} type="submit">
+            {status === "loading" ? "Working..." : recovery ? "Update password" : mode === "signin" ? "Sign in" : "Create account"}
+          </button>
+          {!recovery ? <div className="login-secondary-actions">
+            <button
+              onClick={() => {
+                setMode((current) => (current === "signin" ? "signup" : "signin"));
+                setStatus("idle");
+                setMessage("");
+              }}
+              type="button"
+            >
+              {mode === "signin" ? "Create account" : "Use existing account"}
+            </button>
+            <button onClick={resetPassword} type="button">Reset password</button>
+          </div> : null}
+          {message ? <p className={`login-message ${status}`}>{message}</p> : null}
+        </form>
+      </section>
+    </main>
   );
 }
 
@@ -2321,6 +2470,8 @@ export default function App() {
   const [view, setView] = useState<AppView>("graph");
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
   const [session, setSession] = useState<SupabaseSession | null>(null);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
+  const [postLoginAction, setPostLoginAction] = useState<"ask" | null>(null);
   const [graphViewportSignal, setGraphViewportSignal] = useState(0);
   const [selectedId, setSelectedId] = useState<string>("");
   const [years, setYears] = useState<string[]>([]);
@@ -2370,11 +2521,25 @@ export default function App() {
   useEffect(() => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
+      if (event === "PASSWORD_RECOVERY") {
+        setPasswordRecovery(true);
+        setView("login");
+      }
     });
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (session && view === "login" && !passwordRecovery) {
+      setView("graph");
+      if (postLoginAction === "ask") {
+        setDrawerMode("ask");
+        setPostLoginAction(null);
+      }
+    }
+  }, [passwordRecovery, postLoginAction, session, view]);
 
   useEffect(() => {
     fetch("/data/market_events.json")
@@ -2398,6 +2563,20 @@ export default function App() {
     setDrawerMode("details");
     setGraphViewportSignal((signal) => signal + 1);
   }, []);
+
+  const openLogin = useCallback((afterLogin: "ask" | null = null) => {
+    setPostLoginAction(afterLogin);
+    setDrawerMode(null);
+    setView("login");
+  }, []);
+
+  const openAskPanel = useCallback(() => {
+    if (supabase && !session) {
+      openLogin("ask");
+      return;
+    }
+    setDrawerMode((current) => (current === "ask" ? null : "ask"));
+  }, [openLogin, session]);
 
   const startDrawerResize = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -2450,6 +2629,7 @@ export default function App() {
     "explorer-shell",
     view === "analytics" ? "analytics-shell" : "",
         view === "news" ? "news-shell" : "",
+        view === "login" ? "login-shell" : "",
         drawerMode ? "has-right" : "no-right",
       ].join(" ")}
     >
@@ -2473,9 +2653,21 @@ export default function App() {
         >
           {themeMode === "dark" ? "Light" : "Dark"}
         </button>
-        <AuthControls session={session} setSession={setSession} />
+        <AuthControls session={session} setSession={setSession} onOpenLogin={() => openLogin()} />
       </nav>
-      {view === "news" ? (
+      {view === "login" ? (
+        <LoginPage
+          onComplete={() => {
+            setView("graph");
+            if (postLoginAction === "ask") {
+              setDrawerMode("ask");
+              setPostLoginAction(null);
+            }
+          }}
+          onRecoveryComplete={() => setPasswordRecovery(false)}
+          recovery={passwordRecovery}
+        />
+      ) : view === "news" ? (
         <NewsPage eventFeed={eventFeed} graph={graph} onSelectCompany={selectNodeAndOpenGraph} />
       ) : view === "analytics" ? (
         <AnalyticsPage
@@ -2543,7 +2735,7 @@ export default function App() {
               <button
                 aria-label="Open ask"
                 className={drawerMode === "ask" ? "active" : ""}
-                onClick={() => setDrawerMode(drawerMode === "ask" ? null : "ask")}
+                onClick={openAskPanel}
                 type="button"
               >
                 Ask
@@ -2584,7 +2776,13 @@ export default function App() {
           </button>
         </div>
         {drawerMode === "ask" ? (
-          <AskPanel edges={neighborhood.edges} nodes={neighborhood.nodes} selected={selected} session={session} />
+          <AskPanel
+            edges={neighborhood.edges}
+            nodes={neighborhood.nodes}
+            onLoginRequired={() => openLogin("ask")}
+            selected={selected}
+            session={session}
+          />
         ) : null}
         {drawerMode === "details" ? (
         <>
