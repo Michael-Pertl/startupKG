@@ -105,9 +105,29 @@ event_id,company_name,event_type,event_date,year,country,region,amount_usd,valua
 Recommended `status` values:
 
 - `staged`
+- `auto_ingested`
 - `approved`
 - `rejected`
 - `needs_review`
+
+`auto_ingested` rows are visible in the News tab but have not been manually
+reviewed. They should not be promoted into the core funding graph until a
+source URL, date, event type, amount/valuation where applicable, and company
+identity are checked.
+
+The app also assigns visible events to investor-facing signal tiers:
+
+- `core_signal`: manually reviewed events that can support the core market
+  monitor, such as approved mega-rounds, strategic investments, IPO filings,
+  IPO pricings, and public listings.
+- `watchlist_signal`: broader investor-relevant context such as IPO watch
+  items, major partnerships, valuation updates, acquisitions, and
+  below-threshold funding signals.
+- `review_queue`: unreviewed or automatically discovered items that need manual
+  source and company checks before being used as evidence.
+
+These tiers are app metadata. They do not change the Neo4j funding graph
+inclusion rules.
 
 ### `alert_rules.csv`
 
@@ -194,6 +214,59 @@ Short term:
 - Add an admin review script for staged events.
 - Add an in-app “Updates” panel sorted by event date and severity.
 - Add watchlist rules stored locally as JSON/CSV.
+- Free automated discovery from configured RSS feeds:
+
+```bash
+python3 scripts/fetch_market_events_feeds.py
+python3 scripts/build_market_events.py
+```
+
+Feed sources are configured in `data/raw/market_event_feeds.csv`. The RSS
+script filters for AI plus market-event keywords, deduplicates by source URL
+and company/date/type, and appends new rows with `status=auto_ingested`.
+Funding items with a detected amount below USD100M and low-signal announcements
+are written with `status=staged`, which keeps the audit trail while hiding them
+from the News tab. Funding items with no detected amount are written as
+`needs_review` so the amount can be checked manually. Each RSS run writes a
+compact health report to `data/app/market_event_fetch_report.json`.
+
+- Optional paid discovery with Tavily:
+
+```bash
+export TAVILY_API_KEY=tvly-your-key
+python3 scripts/fetch_market_events_tavily.py
+python3 scripts/build_market_events.py
+```
+
+The Tavily script searches public web/news results, classifies likely market
+events, deduplicates by source URL and company/date/type, and appends new rows
+with `status=auto_ingested`. These rows are visible in News but remain separate
+from the core Neo4j funding graph.
+
+To promote a reviewed market event into the formal funding-event staging file,
+use:
+
+```bash
+python3 scripts/promote_market_event.py <market_event_id> \
+  --lead-investors "Investor A; Investor B" \
+  --ai-domain "AI Infrastructure"
+python3 scripts/promote_market_event.py <market_event_id> \
+  --lead-investors "Investor A; Investor B" \
+  --ai-domain "AI Infrastructure" \
+  --apply
+```
+
+The helper prints a funding-row dry run by default and validates it against the
+same schema as `data/raw/funding_events_raw.csv`. After `--apply`, review
+`data/raw/new_funding_events.csv`, then run `scripts/ingest_funding_events.py`
+and the normal graph rebuild pipeline.
+
+For unattended local updates, run the same commands from cron or Task Scheduler.
+For example, every six hours:
+
+```cron
+0 */6 * * * cd /path/to/project && python3 scripts/fetch_market_events_feeds.py && python3 scripts/build_market_events.py
+```
 
 Medium term:
 

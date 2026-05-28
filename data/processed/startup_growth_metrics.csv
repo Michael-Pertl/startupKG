@@ -15,6 +15,7 @@ startup_sierra,Sierra,US,USA,Enterprise AI,2024-10-29,2026-05-04,2024,2026,3,3,1
 startup_skild_ai,Skild AI,US,USA,Robotics / Physical AI,2026-01-14,2026-01-14,2026,2026,1,1,1400000000,1400000000,single_year
 startup_groq,Groq,US,USA,AI Chips / Semiconductors,2024-08-05,2025-09-17,2024,2025,2,2,1390000000,750000000,accelerating
 startup_helsing,Helsing,Europe,Germany,Defense / Security AI,2024-07-11,2025-06-17,2024,2025,2,2,1177000000,690000000,accelerating
+startup_cerebras_systems,Cerebras Systems,US,USA,AI Chips / Semiconductors,2025-09-30,2025-09-30,2025,2025,1,1,1100000000,1100000000,single_year
 startup_coreweave,CoreWeave,US,USA,AI Infrastructure,2024-05-01,2024-05-01,2024,2024,1,1,1100000000,1100000000,single_year
 startup_ineffable_intelligence,Ineffable Intelligence,Europe,United Kingdom,Foundation Models / LLMs,2026-04-27,2026-04-27,2026,2026,1,1,1100000000,1100000000,single_year
 startup_wayve,Wayve,Europe,United Kingdom,Autonomous Vehicles,2024-05-06,2024-05-06,2024,2024,1,1,1050000000,1050000000,single_year
@@ -35,6 +36,8 @@ startup_tenstorrent,Tenstorrent,Canada,Canada,AI Chips / Semiconductors,2024-12-
 startup_baichuan_ai,Baichuan AI,China,China,Foundation Models / LLMs,2024-07-25,2024-07-25,2024,2024,1,1,688000000,688000000,single_year
 startup_elevenlabs,ElevenLabs,Europe,United Kingdom,Creative / Generative Media,2025-01-30,2026-02-04,2025,2026,2,2,680000000,500000000,accelerating
 startup_figure_ai,Figure AI,US,USA,Robotics / Physical AI,2024-02-24,2024-02-24,2024,2024,1,1,675000000,675000000,single_year
+startup_openevidence,OpenEvidence,US,USA,Healthcare AI / Drug Discovery,2025-07-15,2026-01-21,2025,2026,3,2,660000000,250000000,decelerating
+startup_alphasense,AlphaSense,US,USA,Search / Knowledge Agents,2024-06-11,2024-06-11,2024,2024,1,1,650000000,650000000,single_year
 startup_recursive_superintelligence,Recursive Superintelligence,US,USA,Foundation Models / LLMs,2026-05-14,2026-05-14,2026,2026,1,1,650000000,650000000,single_year
 startup_applied_intuition,Applied Intuition,US,USA,Autonomous Vehicles,2025-06-17,2025-06-17,2025,2025,1,1,600000000,600000000,single_year
 startup_crusoe,Crusoe,US,USA,AI Infrastructure,2024-12-12,2024-12-12,2024,2024,1,1,600000000,600000000,single_year
@@ -48,62 +51,106 @@ startup_perplexity,Perplexity,US,USA,Search / Knowledge Agents,2024-12-18,2024-1
 startup_poolside,Poolside,Europe,France,Coding Agents / Developer Tools,2024-10-02,2024-10-02,2024,2024,1,1,500000000,500000000,single_year
 startup_kobold_metals,KoBold Metals,US,USA,Climate / Energy AI,2024-10-07,2024-10-07,2024,2024,1,1,491500000,491500000,single_year
 startup_humans,humans&,US,USA,Enterprise AI,2026-01-20,2026-01-20,2026,2026,1,1,480000000,480000000,single_year
+startup_unconventional_ai,Unconventional AI,US,USA,AI Chips / Semiconductors,2025-12-08,2025-12-08,2025,2025,1,1,475000000,475000000,single_year
+startup_baseten,Baseten,US,USA,AI Infrastructure,2025-09-05,2026-02-05,2025,2026,2,2,450000000,300000000,accelerating
 startup_mercor,Mercor,US,USA,Data / Analytics,2025-02-20,2025-10-27,2025,2025,2,1,450000000,350000000,single_year
+startup_celestial_ai,Celestial AI,US,USA,AI Chips / Semiconductors,2024-03-27,2025-03-11,2024,2025,2,2,425000000,250000000,accelerating
 startup_zhipu_ai,Zhipu AI,China,China,Foundation Models / LLMs,2024-12-17,2024-12-17,2024,2024,1,1,420000000,420000000,single_year
 startup_together_ai,Together AI,US,USA,AI Infrastructure,2024-03-13,2025-02-20,2024,2025,2,2,411000000,305000000,accelerating
 startup_glean,Glean,US,USA,Search / Knowledge Agents,2024-09-10,2025-06-10,2024,2025,2,2,410000000,260000000,decelerating
 startup_cognition,Cognition,US,USA,Coding Agents / Developer Tools,2025-09-08,2025-09-08,2025,2025,1,1,400000000,400000000,single_year
+startup_lightmatter,Lightmatter,US,USA,AI Chips / Semiconductors,2024-10-16,2024-10-16,2024,2024,1,1,400000000,400000000,single_year
 startup_synthesia,Synthesia,Europe,United Kingdom,Creative / Generative Media,2025-01-15,2025-10-29,2025,2025,2,1,380000000,200000000,single_year
 startup_constant,Constant,US,USA,AI Infrastructure,2024-12-18,2024-12-18,2024,2024,1,1,333000000,333000000,single_year
 startup_magic,Magic,US,USA,Coding Agents / Developer Tools,2024-08-29,2024-08-29,2024,2024,1,1,320000000,320000000,single_year
 startup_runway,Runway,US,USA,Creative / Generative Media,2026-02-10,2026-02-10,2026,2026,1,1,315000000,315000000,single_year
 startup_fieldai,FieldAI,US,USA,Robotics / Physical AI,2025-08-20,2025-08-20,2025,2025,1,1,314000000,314000000,single_year
 startup_ai21_labs,AI21 Labs,Israel,Israel,Foundation Models / LLMs,2025-05-14,2025-05-14,2025,2025,1,1,300000000,300000000,single_year
-startup_baseten,Baseten,US,USA,AI Infrastructure,2026-02-05,2026-02-05,2026,2026,1,1,300000000,300000000,single_year
 startup_black_forest_labs,Black Forest Labs,Europe,Germany,Creative / Generative Media,2025-12-01,2025-12-01,2025,2025,1,1,300000000,300000000,single_year
 startup_deepl,DeepL,Europe,Germany,Enterprise AI,2024-05-22,2024-05-22,2024,2024,1,1,300000000,300000000,single_year
+startup_periodic_labs,Periodic Labs,US,USA,Climate / Energy AI,2025-09-30,2025-09-30,2025,2025,1,1,300000000,300000000,single_year
 startup_sandboxaq,SandboxAQ,US,USA,Enterprise AI,2024-12-18,2024-12-18,2024,2024,1,1,300000000,300000000,single_year
+startup_evenup,EvenUp,US,USA,Enterprise AI,2024-10-08,2025-10-07,2024,2025,2,2,285000000,150000000,accelerating
+startup_genspark,Genspark,US,USA,Search / Knowledge Agents,2025-11-20,2025-11-20,2025,2025,1,1,275000000,275000000,single_year
+startup_hippocratic_ai,Hippocratic AI,US,USA,Healthcare AI / Drug Discovery,2025-01-09,2025-11-03,2025,2025,2,1,267000000,141000000,single_year
 startup_fal,Fal,US,USA,Creative / Generative Media,2025-07-31,2025-12-09,2025,2025,2,1,265000000,140000000,single_year
 startup_uniphore,Uniphore,US,USA,Enterprise AI,2025-10-22,2025-10-22,2025,2025,1,1,260000000,260000000,single_year
+startup_abnormal_security,Abnormal Security,US,USA,Defense / Security AI,2024-08-06,2024-08-06,2024,2024,1,1,250000000,250000000,single_year
+startup_axelera_ai,Axelera AI,Europe,Netherlands,AI Chips / Semiconductors,2026-02-20,2026-02-20,2026,2026,1,1,250000000,250000000,single_year
+startup_decagon,Decagon,US,USA,Enterprise AI,2026-01-28,2026-01-28,2026,2026,1,1,250000000,250000000,single_year
+startup_eliseai,EliseAI,US,USA,Enterprise AI,2025-08-20,2025-08-20,2025,2025,1,1,250000000,250000000,single_year
 startup_fireworks_ai,Fireworks AI,US,USA,AI Infrastructure,2025-10-28,2025-10-28,2025,2025,1,1,250000000,250000000,single_year
 startup_lmarena,LMArena,US,USA,Data / Analytics,2025-05-21,2026-01-06,2025,2026,2,2,250000000,150000000,accelerating
 startup_liquid_ai,Liquid AI,US,USA,Foundation Models / LLMs,2024-12-13,2024-12-13,2024,2024,1,1,250000000,250000000,single_year
 startup_merge_labs,Merge Labs,US,USA,Healthcare AI / Drug Discovery,2026-01-15,2026-01-15,2026,2026,1,1,250000000,250000000,single_year
+startup_modular,Modular,US,USA,AI Infrastructure,2025-09-24,2025-09-24,2025,2025,1,1,250000000,250000000,single_year
+startup_sesame,Sesame,US,USA,Creative / Generative Media,2025-10-21,2025-10-21,2025,2025,1,1,250000000,250000000,single_year
+startup_wonderful,Wonderful,Israel,Israel,Enterprise AI,2025-11-11,2026-03-12,2025,2026,2,2,250000000,150000000,accelerating
+startup_ambience_healthcare,Ambience Healthcare,US,USA,Healthcare AI / Drug Discovery,2025-07-23,2025-07-23,2025,2025,1,1,243000000,243000000,single_year
+startup_krutrim,Krutrim,India,India,Foundation Models / LLMs,2025-02-04,2025-02-04,2025,2025,1,1,230000000,230000000,single_year
 startup_augment,Augment,US,USA,Coding Agents / Developer Tools,2024-04-24,2024-04-24,2024,2024,1,1,227000000,227000000,single_year
 startup_fundamental,Fundamental,US,USA,Data / Analytics,2026-02-05,2026-02-05,2026,2026,1,1,225000000,225000000,single_year
 startup_fractile,Fractile,Europe,United Kingdom,AI Chips / Semiconductors,2026-05-14,2026-05-14,2026,2026,1,1,220000000,220000000,single_year
 startup_h_company,H Company,Europe,France,Foundation Models / LLMs,2024-05-21,2024-05-21,2024,2024,1,1,220000000,220000000,single_year
 startup_multiverse_computing,Multiverse Computing,Europe,Spain,AI Infrastructure,2025-06-12,2025-06-12,2025,2025,1,1,215000000,215000000,single_year
-startup_openevidence,OpenEvidence,US,USA,Healthcare AI / Drug Discovery,2025-07-15,2025-07-15,2025,2025,1,1,210000000,210000000,single_year
 startup_harmattan_ai,Harmattan AI,Europe,France,Defense / Security AI,2026-01-12,2026-01-12,2026,2026,1,1,200000000,200000000,single_year
 startup_lovable,Lovable,Europe,Sweden,Coding Agents / Developer Tools,2025-07-17,2025-07-17,2025,2025,1,1,200000000,200000000,single_year
 startup_writer,Writer,US,USA,Enterprise AI,2024-11-12,2024-11-12,2024,2024,1,1,200000000,200000000,single_year
+startup_flapping_airplanes,Flapping Airplanes,US,USA,Foundation Models / LLMs,2026-01-28,2026-01-28,2026,2026,1,1,180000000,180000000,single_year
+startup_distyl_ai,Distyl AI,US,USA,Enterprise AI,2025-09-23,2025-09-23,2025,2025,1,1,175000000,175000000,single_year
 startup_ori,Ori,Europe,United Kingdom,AI Infrastructure,2025-02-17,2025-02-17,2025,2025,1,1,175000000,175000000,single_year
 startup_quantexa,Quantexa,Europe,United Kingdom,Data / Analytics,2025-03-05,2025-03-05,2025,2025,1,1,175000000,175000000,single_year
 startup_codeium,Codeium,US,USA,Coding Agents / Developer Tools,2024-08-29,2024-08-29,2024,2024,1,1,150000000,150000000,single_year
+startup_goodfire,Goodfire,US,USA,Foundation Models / LLMs,2026-02-05,2026-02-05,2026,2026,1,1,150000000,150000000,single_year
 startup_inferact,Inferact,US,USA,AI Infrastructure,2026-01-22,2026-01-22,2026,2026,1,1,150000000,150000000,single_year
+startup_kore_ai,Kore.ai,US,USA,Enterprise AI,2024-01-30,2024-01-30,2024,2024,1,1,150000000,150000000,single_year
 startup_palebluedot_ai,PaleBlueDot AI,US,USA,AI Infrastructure,2026-01-28,2026-01-28,2026,2026,1,1,150000000,150000000,single_year
-startup_wonderful,Wonderful,Israel,Israel,Enterprise AI,2026-03-12,2026-03-12,2026,2026,1,1,150000000,150000000,single_year
 startup_evolutionaryscale,EvolutionaryScale,US,USA,Healthcare AI / Drug Discovery,2024-06-25,2024-06-25,2024,2024,1,1,142000000,142000000,single_year
-startup_hippocratic_ai,Hippocratic AI,US,USA,Healthcare AI / Drug Discovery,2025-01-09,2025-01-09,2025,2025,1,1,141000000,141000000,single_year
+startup_weka,Weka,US,USA,AI Infrastructure,2024-05-13,2024-05-13,2024,2024,1,1,140000000,140000000,single_year
 startup_physicsx,PhysicsX,Europe,United Kingdom,Robotics / Physical AI,2025-06-23,2025-06-23,2025,2025,1,1,135000000,135000000,single_year
+startup_7ai,7AI,US,USA,Defense / Security AI,2025-12-04,2025-12-04,2025,2025,1,1,130000000,130000000,single_year
+startup_chai_discovery,Chai Discovery,US,USA,Healthcare AI / Drug Discovery,2025-12-15,2025-12-15,2025,2025,1,1,130000000,130000000,single_year
 startup_deepgram,Deepgram,US,USA,Enterprise AI,2026-01-13,2026-01-13,2026,2026,1,1,130000000,130000000,single_year
 startup_hebbia,Hebbia,US,USA,Search / Knowledge Agents,2024-07-08,2024-07-08,2024,2024,1,1,130000000,130000000,single_year
+startup_mythic,Mythic,US,USA,AI Chips / Semiconductors,2025-12-17,2025-12-17,2025,2025,1,1,125000000,125000000,single_year
 startup_suno,Suno,US,USA,Creative / Generative Media,2024-05-22,2024-05-22,2024,2024,1,1,125000000,125000000,single_year
+startup_akasa,AKASA,US,USA,Healthcare AI / Drug Discovery,2024-06-18,2024-06-18,2024,2024,1,1,120000000,120000000,single_year
 startup_etched,Etched,US,USA,AI Chips / Semiconductors,2024-06-25,2024-06-25,2024,2024,1,1,120000000,120000000,single_year
 startup_hailo,Hailo,Israel,Israel,AI Chips / Semiconductors,2024-04-02,2024-04-02,2024,2024,1,1,120000000,120000000,single_year
 startup_parloa,Parloa,Europe,Germany,Enterprise AI,2025-05-06,2025-05-06,2025,2025,1,1,120000000,120000000,single_year
+startup_tractian,Tractian,US,USA,Enterprise AI,2024-12-05,2024-12-05,2024,2024,1,1,120000000,120000000,single_year
+startup_enfabrica,Enfabrica,US,USA,AI Chips / Semiconductors,2024-11-19,2024-11-19,2024,2024,1,1,115000000,115000000,single_year
+startup_turing,Turing,US,USA,Coding Agents / Developer Tools,2025-03-07,2025-03-07,2025,2025,1,1,111000000,111000000,single_year
+startup_zephyr_ai,Zephyr AI,US,USA,Healthcare AI / Drug Discovery,2024-03-13,2024-03-13,2024,2024,1,1,111000000,111000000,single_year
+startup_insilico_medicine,Insilico Medicine,US,USA,Healthcare AI / Drug Discovery,2025-03-13,2025-03-13,2025,2025,1,1,110000000,110000000,single_year
+startup_nexthop_ai,Nexthop AI,US,USA,AI Infrastructure,2025-03-25,2025-03-25,2025,2025,1,1,110000000,110000000,single_year
+startup_reka_ai,Reka AI,US,USA,Foundation Models / LLMs,2025-07-22,2025-07-22,2025,2025,1,1,110000000,110000000,single_year
+startup_blaize,Blaize,US,USA,AI Chips / Semiconductors,2024-04-29,2024-04-29,2024,2024,1,1,106000000,106000000,single_year
+startup_bright_machines,Bright Machines,US,USA,Robotics / Physical AI,2024-06-25,2024-06-25,2024,2024,1,1,106000000,106000000,single_year
+startup_nimble_robotics,Nimble Robotics,US,USA,Robotics / Physical AI,2024-10-23,2024-10-23,2024,2024,1,1,106000000,106000000,single_year
 startup_atlan,Atlan,US,USA,Data / Analytics,2024-05-08,2024-05-08,2024,2024,1,1,105000000,105000000,single_year
 startup_eudia,Eudia,US,USA,Enterprise AI,2025-02-13,2025-02-13,2025,2025,1,1,105000000,105000000,single_year
+startup_recogni,Recogni,US,USA,AI Chips / Semiconductors,2024-02-20,2024-02-20,2024,2024,1,1,102000000,102000000,single_year
+startup_tennr,Tennr,US,USA,Healthcare AI / Drug Discovery,2025-06-17,2025-06-17,2025,2025,1,1,101000000,101000000,single_year
 startup_basis,Basis,US,USA,Enterprise AI,2026-02-24,2026-02-24,2026,2026,1,1,100000000,100000000,single_year
 startup_decart,Decart,Israel,Israel,Creative / Generative Media,2025-08-07,2025-08-07,2025,2025,1,1,100000000,100000000,single_year
+startup_devrev,DevRev,US,USA,Enterprise AI,2024-08-27,2024-08-27,2024,2024,1,1,100000000,100000000,single_year
 startup_dream_security,Dream Security,Israel,Israel,Defense / Security AI,2025-02-18,2025-02-18,2025,2025,1,1,100000000,100000000,single_year
 startup_epg_singapore,EPG Singapore,Singapore,Singapore,AI Infrastructure,2026-04-01,2026-04-01,2026,2026,1,1,100000000,100000000,single_year
 startup_encharge_ai,EnCharge AI,US,USA,AI Chips / Semiconductors,2024-11-21,2024-11-21,2024,2024,1,1,100000000,100000000,single_year
+startup_fundguard,FundGuard,US,USA,Fintech AI,2024-03-25,2024-03-25,2024,2024,1,1,100000000,100000000,single_year
+startup_harmonic,Harmonic,US,USA,Foundation Models / LLMs,2025-07-10,2025-07-10,2025,2025,1,1,100000000,100000000,single_year
+startup_invisible_technologies,Invisible Technologies,US,USA,Data / Analytics,2025-09-16,2025-09-16,2025,2025,1,1,100000000,100000000,single_year
 startup_livekit,LiveKit,US,USA,AI Infrastructure,2026-01-22,2026-01-22,2026,2026,1,1,100000000,100000000,single_year
 startup_majestic_labs,Majestic Labs,Israel,Israel,AI Infrastructure,2025-11-22,2025-11-22,2025,2025,1,1,100000000,100000000,single_year
 startup_neural_concept,Neural Concept,Europe,Switzerland,Robotics / Physical AI,2025-12-18,2025-12-18,2025,2025,1,1,100000000,100000000,single_year
+startup_parallel,Parallel,US,USA,AI Infrastructure,2025-11-12,2025-11-12,2025,2025,1,1,100000000,100000000,single_year
+startup_path_robotics,Path Robotics,US,USA,Robotics / Physical AI,2024-10-14,2024-10-14,2024,2024,1,1,100000000,100000000,single_year
 startup_render,Render,US,USA,AI Infrastructure,2026-02-17,2026-02-17,2026,2026,1,1,100000000,100000000,single_year
 startup_sakana_ai,Sakana AI,Other Global,Japan,Foundation Models / LLMs,2024-09-05,2024-09-05,2024,2024,1,1,100000000,100000000,single_year
 startup_simile,Simile,US,USA,Enterprise AI,2026-02-12,2026-02-12,2026,2026,1,1,100000000,100000000,single_year
+startup_snorkel_ai,Snorkel AI,US,USA,Data / Analytics,2025-05-29,2025-05-29,2025,2025,1,1,100000000,100000000,single_year
+startup_tensorwave,TensorWave,US,USA,AI Infrastructure,2025-05-14,2025-05-14,2025,2025,1,1,100000000,100000000,single_year
 startup_tessl,Tessl,Europe,United Kingdom,Coding Agents / Developer Tools,2024-11-14,2024-11-14,2024,2024,1,1,100000000,100000000,single_year
+startup_upscale_ai,Upscale AI,US,USA,AI Infrastructure,2025-09-17,2025-09-17,2025,2025,1,1,100000000,100000000,single_year
+startup_you_com,You.com,US,USA,Search / Knowledge Agents,2025-09-03,2025-09-03,2025,2025,1,1,100000000,100000000,single_year

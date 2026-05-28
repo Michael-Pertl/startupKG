@@ -21,6 +21,8 @@ web/.env.*
 
 # Runtime outputs
 *.log
+.ask_ledger.json
+.ask_usage_log.jsonl
 tmp/
 cache/
 dist/

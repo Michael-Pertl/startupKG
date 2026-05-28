@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import unittest
 from pathlib import Path
 
@@ -72,6 +73,41 @@ class AppDataContractTest(unittest.TestCase):
         path = ROOT / "web" / "public" / "data" / "market_graph.json"
         if path.exists():
             self.assertGreater(path.stat().st_size, 10_000)
+
+    def test_market_events_contract(self) -> None:
+        rows = read_csv(ROOT / "data" / "raw" / "market_events_raw.csv")
+        self.assertGreaterEqual(len(rows), 5)
+        required_columns = {
+            "event_id",
+            "company_name",
+            "event_type",
+            "event_date",
+            "year",
+            "source_url",
+            "source_type",
+            "confidence",
+            "status",
+            "summary",
+        }
+        self.assertTrue(required_columns.issubset(rows[0].keys()))
+        self.assertTrue(all(row["source_url"].startswith(("http://", "https://")) for row in rows))
+        self.assertTrue(all(row["event_date"][:4] == row["year"] for row in rows))
+        self.assertTrue(set(row["status"] for row in rows).issubset({
+            "staged",
+            "auto_ingested",
+            "approved",
+            "rejected",
+            "needs_review",
+        }))
+
+    def test_market_event_export_exists_when_built(self) -> None:
+        path = ROOT / "web" / "public" / "data" / "market_events.json"
+        if not path.exists():
+            return
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        self.assertGreaterEqual(payload["metadata"]["event_count"], 5)
+        self.assertTrue(payload["metadata"]["scope_note"])
+        self.assertTrue(all(event["source_url"] for event in payload["events"]))
 
 
 if __name__ == "__main__":
