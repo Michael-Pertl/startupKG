@@ -51,7 +51,7 @@ Free
 - Selected analytics and news
 - 10 Ask questions total
 
-Starter, EUR 4.99/month
+Starter, EUR 3.99/month
 - Full graph access
 - Full analytics and news
 - 75 Ask questions/month
@@ -67,29 +67,18 @@ questions/month, so model costs and abuse risk remain bounded.
 
 ## Current Stripe Flow
 
-The current backend still supports one-time credit-style Checkout sessions. This
-is useful for testing Stripe webhooks and credit granting, but it is not the
-target subscription product.
+The backend uses Stripe Checkout in subscription mode and grants Ask allowance
+when Stripe confirms a paid invoice.
 
-1. User selects a legacy credit pack in the app.
-2. Backend creates a Stripe Checkout Session.
+1. User selects Starter or Pro from the profile page.
+2. Backend creates a Stripe Checkout Session with `mode: subscription`.
 3. Stripe redirects the user to payment.
-4. Stripe webhook sends `checkout.session.completed`.
+4. Stripe webhook sends `checkout.session.completed` and `invoice.paid`.
 5. Backend verifies the webhook signature.
 6. Backend checks `stripe_events` to avoid double-processing.
-7. Backend calls `grant_ask_credits`.
-8. User sees the new balance after refresh or realtime update.
-
-Legacy test packs:
-
-```text
-Starter:  €5  ->  50 credits
-Research: €15 -> 200 credits
-Team:     €49 -> 800 credits
-```
-
-The next billing implementation should replace these packs with Stripe
-subscriptions and grant monthly Ask allowance on successful invoice payment.
+7. Backend stores the Stripe customer/subscription IDs on `profiles`.
+8. Backend calls `grant_ask_credits` for the monthly allowance on `invoice.paid`.
+9. Users manage cancellation and payment methods through the Stripe billing portal.
 
 ## Required Production Environment
 
@@ -101,6 +90,8 @@ VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
+STRIPE_STARTER_PRICE_ID=
+STRIPE_PRO_PRICE_ID=
 APP_PUBLIC_URL=
 NEBIUS_API_KEY=
 NEBIUS_MODEL=moonshotai/Kimi-K2.5

@@ -687,7 +687,8 @@ a {
 }
 
 .account-primary,
-.plan-card button {
+.plan-card button,
+.account-billing button {
   background: var(--accent);
   border: 1px solid var(--accent);
   border-radius: 2px;
@@ -698,7 +699,8 @@ a {
   padding: 8px 14px;
 }
 
-.plan-card button:disabled {
+.plan-card button:disabled,
+.account-billing button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }

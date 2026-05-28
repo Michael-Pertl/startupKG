@@ -45,11 +45,24 @@ const SUPABASE_URL = process.env.SUPABASE_URL || "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
+const STRIPE_STARTER_PRICE_ID = process.env.STRIPE_STARTER_PRICE_ID || "";
+const STRIPE_PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID || "";
 const APP_PUBLIC_URL = process.env.APP_PUBLIC_URL || "http://127.0.0.1:5173";
-const ASK_CREDIT_PACKS = {
-  starter: { label: "Starter", credits: 50, amount_cents: 500 },
-  research: { label: "Research", credits: 200, amount_cents: 1500 },
-  team: { label: "Team", credits: 800, amount_cents: 4900 },
+const SUBSCRIPTION_PLANS = {
+  starter: {
+    label: "Starter",
+    price_id: STRIPE_STARTER_PRICE_ID,
+    amount_cents: 399,
+    currency: "eur",
+    monthly_credits: 75,
+  },
+  pro: {
+    label: "Pro",
+    price_id: STRIPE_PRO_PRICE_ID,
+    amount_cents: 999,
+    currency: "eur",
+    monthly_credits: 500,
+  },
 };
 const supabaseAdmin =
   SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
@@ -57,7 +70,7 @@ const supabaseAdmin =
         auth: { autoRefreshToken: false, persistSession: false },
       })
     : null;
-const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" }) : null;
+const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2026-02-25.clover" }) : null;
 const rateBuckets = new Map();
 
 function configStatus() {
@@ -67,6 +80,7 @@ function configStatus() {
     nebius_configured: Boolean(process.env.NEBIUS_API_KEY),
     supabase_configured: Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY),
     stripe_configured: Boolean(STRIPE_SECRET_KEY && STRIPE_WEBHOOK_SECRET),
+    stripe_subscription_prices_configured: Boolean(STRIPE_STARTER_PRICE_ID && STRIPE_PRO_PRICE_ID),
     app_public_url: APP_PUBLIC_URL,
     static_dir: DIST_DIR,
   };
@@ -167,6 +181,20 @@ function checkRateLimit(key) {
   return true;
 }
 
+async function getSupabaseProfile(userId) {
+  if (!supabaseAdmin) return null;
+  const { data, error } = await supabaseAdmin
+    .from("profiles")
+    .select("plan, subscription_status, stripe_customer_id, stripe_subscription_id, current_period_end, monthly_ask_limit")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) {
+    console.warn(`Could not read Supabase profile for ${userId}: ${error.message}`);
+    return null;
+  }
+  return data || null;
+}
+
 async function ensureSupabaseUser(request) {
   if (!supabaseAdmin) {
     return { error: { status: 503, message: "Supabase backend credentials are not configured." } };
@@ -180,6 +208,7 @@ async function ensureSupabaseUser(request) {
     return { error: { status: 401, message: "Supabase session token is invalid." } };
   }
   const userId = userData.user.id;
+  const profile = await getSupabaseProfile(userId);
   const { data: balanceData, error: balanceError } = await supabaseAdmin.rpc("get_ask_credit_balance", {
     target_user_id: userId,
   });
@@ -191,7 +220,13 @@ async function ensureSupabaseUser(request) {
     accessToken,
     user: {
       user_id: userId,
-      plan: "supabase",
+      email: userData.user.email,
+      plan: profile?.plan || "free",
+      subscription_status: profile?.subscription_status || "trial",
+      stripe_customer_id: profile?.stripe_customer_id || null,
+      stripe_subscription_id: profile?.stripe_subscription_id || null,
+      current_period_end: profile?.current_period_end || null,
+      monthly_ask_limit: profile?.monthly_ask_limit || null,
       credits_remaining: Number(balanceData || 0),
       request_timestamps: [],
     },
@@ -281,6 +316,9 @@ function publicUsage(user) {
   return {
     user_id: user.user_id,
     plan: user.plan,
+    subscription_status: user.subscription_status,
+    current_period_end: user.current_period_end,
+    monthly_ask_limit: user.monthly_ask_limit,
     credits_remaining: Number(user.credits_remaining || 0),
     credits_per_prompt: ASK_CREDITS_PER_PROMPT,
     requests_last_minute: (user.request_timestamps || []).filter((timestamp) => Date.now() - timestamp < 60_000).length,
@@ -298,39 +336,159 @@ async function createCheckoutSession(request) {
   const auth = await ensureSupabaseUser(request);
   if (auth.error) return auth;
   const body = JSON.parse(await readBody(request));
-  const packId = String(body.pack_id || "starter");
-  const pack = ASK_CREDIT_PACKS[packId];
-  if (!pack) {
-    return { error: { status: 400, message: "Unknown credit pack." } };
+  const planId = String(body.plan_id || body.pack_id || "starter");
+  const plan = SUBSCRIPTION_PLANS[planId];
+  if (!plan) {
+    return { error: { status: 400, message: "Unknown subscription plan." } };
+  }
+  if (!plan.price_id) {
+    return { error: { status: 503, message: `Stripe price ID is not configured for the ${plan.label} plan.` } };
   }
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
+  const sessionParams = {
+    mode: "subscription",
     success_url: `${APP_PUBLIC_URL}/?checkout=success`,
     cancel_url: `${APP_PUBLIC_URL}/?checkout=cancelled`,
     client_reference_id: auth.user.user_id,
-    customer_email: body.email || undefined,
+    allow_promotion_codes: true,
     line_items: [
       {
-        price_data: {
-          currency: "eur",
-          product_data: {
-            name: `${pack.label} Ask credits`,
-            description: `${pack.credits} AI market assistant credits`,
-          },
-          unit_amount: pack.amount_cents,
-        },
+        price: plan.price_id,
         quantity: 1,
       },
     ],
     metadata: {
       user_id: auth.user.user_id,
-      pack_id: packId,
-      credits: String(pack.credits),
+      plan_id: planId,
+      monthly_credits: String(plan.monthly_credits),
     },
-  });
+    subscription_data: {
+      metadata: {
+        user_id: auth.user.user_id,
+        plan_id: planId,
+        monthly_credits: String(plan.monthly_credits),
+      },
+    },
+  };
+
+  if (auth.user.stripe_customer_id) {
+    sessionParams.customer = auth.user.stripe_customer_id;
+  } else if (auth.user.email || body.email) {
+    sessionParams.customer_email = body.email || auth.user.email;
+  }
+
+  const session = await stripe.checkout.sessions.create(sessionParams);
 
   return { session };
+}
+
+async function createBillingPortalSession(request) {
+  if (!stripe) {
+    return { error: { status: 503, message: "Stripe is not configured." } };
+  }
+  const auth = await ensureSupabaseUser(request);
+  if (auth.error) return auth;
+  if (!auth.user.stripe_customer_id) {
+    return { error: { status: 400, message: "No Stripe customer is linked to this account yet." } };
+  }
+  const session = await stripe.billingPortal.sessions.create({
+    customer: auth.user.stripe_customer_id,
+    return_url: `${APP_PUBLIC_URL}/account`,
+  });
+  return { session };
+}
+
+function planIdFromPriceId(priceId) {
+  for (const [planId, plan] of Object.entries(SUBSCRIPTION_PLANS)) {
+    if (plan.price_id && plan.price_id === priceId) return planId;
+  }
+  return "";
+}
+
+function subscriptionIdFromInvoice(invoice) {
+  if (typeof invoice.subscription === "string") return invoice.subscription;
+  if (invoice.subscription?.id) return invoice.subscription.id;
+  if (typeof invoice.parent?.subscription_details?.subscription === "string") {
+    return invoice.parent.subscription_details.subscription;
+  }
+  return "";
+}
+
+function customerIdFromStripeObject(object) {
+  if (typeof object.customer === "string") return object.customer;
+  if (object.customer?.id) return object.customer.id;
+  return "";
+}
+
+async function stripeEventAlreadyProcessed(eventId) {
+  const { data } = await supabaseAdmin
+    .from("stripe_events")
+    .select("stripe_event_id")
+    .eq("stripe_event_id", eventId)
+    .maybeSingle();
+  return Boolean(data);
+}
+
+async function recordStripeEvent(event, { userId = null, creditsGranted = null, amountTotal = null, currency = null } = {}) {
+  const { error } = await supabaseAdmin.from("stripe_events").insert({
+    stripe_event_id: event.id,
+    event_type: event.type,
+    user_id: userId,
+    credits_granted: creditsGranted,
+    amount_total_cents: amountTotal,
+    currency,
+    payload: event,
+  });
+  if (error) throw new Error(`Could not record Stripe event: ${error.message}`);
+}
+
+async function updateSubscriptionProfile({
+  userId,
+  planId,
+  status,
+  customerId,
+  subscriptionId,
+  currentPeriodEnd,
+}) {
+  if (!userId) return;
+  const normalizedStatus = status || "active";
+  const nextPlan = normalizedStatus === "active" || normalizedStatus === "trialing" || normalizedStatus === "past_due"
+    ? planId || "free"
+    : "free";
+  const effectivePlan = SUBSCRIPTION_PLANS[nextPlan];
+  const { error } = await supabaseAdmin
+    .from("profiles")
+    .update({
+      plan: nextPlan,
+      subscription_status: normalizedStatus,
+      stripe_customer_id: customerId || null,
+      stripe_subscription_id: subscriptionId || null,
+      current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null,
+      monthly_ask_limit: effectivePlan?.monthly_credits || 10,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", userId);
+  if (error) throw new Error(`Could not update subscription profile: ${error.message}`);
+}
+
+async function resolveSubscriptionContext({ subscriptionId, customerId, priceId }) {
+  let subscription = null;
+  if (subscriptionId) {
+    subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  }
+  const firstItem = subscription?.items?.data?.[0];
+  const resolvedPriceId = priceId || firstItem?.price?.id || "";
+  const planId = subscription?.metadata?.plan_id || planIdFromPriceId(resolvedPriceId);
+  const userId = subscription?.metadata?.user_id || "";
+  return {
+    subscription,
+    userId,
+    planId,
+    customerId: customerId || customerIdFromStripeObject(subscription || {}),
+    subscriptionId: subscription?.id || subscriptionId,
+    status: subscription?.status || "",
+    currentPeriodEnd: subscription?.current_period_end || null,
+  };
 }
 
 async function handleStripeWebhook(request) {
@@ -349,56 +507,102 @@ async function handleStripeWebhook(request) {
     return { error: { status: 400, message: error instanceof Error ? error.message : "Invalid Stripe webhook." } };
   }
 
-  if (event.type !== "checkout.session.completed") {
-    return { ok: true, ignored: true };
-  }
-
-  const session = event.data.object;
-  const userId = session.metadata?.user_id || session.client_reference_id;
-  const credits = Number(session.metadata?.credits || 0);
-  if (!userId || !credits) {
-    return { error: { status: 400, message: "Stripe session is missing user_id or credits metadata." } };
-  }
-
-  const { data: existing } = await supabaseAdmin
-    .from("stripe_events")
-    .select("stripe_event_id")
-    .eq("stripe_event_id", event.id)
-    .maybeSingle();
-  if (existing) {
+  if (await stripeEventAlreadyProcessed(event.id)) {
     return { ok: true, duplicate: true };
   }
 
-  const { error: eventError } = await supabaseAdmin.from("stripe_events").insert({
-    stripe_event_id: event.id,
-    event_type: event.type,
-    user_id: userId,
-    credits_granted: credits,
-    amount_total_cents: session.amount_total,
-    currency: session.currency,
-    payload: event,
-  });
-  if (eventError) {
-    return { error: { status: 500, message: `Could not record Stripe event: ${eventError.message}` } };
-  }
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+      const userId = session.metadata?.user_id || session.client_reference_id;
+      const planId = session.metadata?.plan_id || "";
+      const customerId = customerIdFromStripeObject(session);
+      const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id || "";
+      const context = await resolveSubscriptionContext({ subscriptionId, customerId });
+      await updateSubscriptionProfile({
+        userId,
+        planId: context.planId || planId,
+        status: context.status || "active",
+        customerId,
+        subscriptionId,
+        currentPeriodEnd: context.currentPeriodEnd,
+      });
+      await recordStripeEvent(event, {
+        userId,
+        amountTotal: session.amount_total,
+        currency: session.currency,
+      });
+      return { ok: true };
+    }
 
-  const { error: grantError } = await supabaseAdmin.rpc("grant_ask_credits", {
-    target_user_id: userId,
-    credit_amount: credits,
-    grant_reason: "stripe_purchase",
-    stripe_event_id: event.id,
-    grant_metadata: {
-      checkout_session_id: session.id,
-      pack_id: session.metadata?.pack_id || "",
-      amount_total_cents: session.amount_total,
-      currency: session.currency,
-    },
-  });
-  if (grantError) {
-    return { error: { status: 500, message: `Could not grant Ask credits: ${grantError.message}` } };
-  }
+    if (event.type === "invoice.paid") {
+      const invoice = event.data.object;
+      const subscriptionId = subscriptionIdFromInvoice(invoice);
+      const customerId = customerIdFromStripeObject(invoice);
+      const priceId = invoice.lines?.data?.[0]?.price?.id || "";
+      const context = await resolveSubscriptionContext({ subscriptionId, customerId, priceId });
+      const plan = SUBSCRIPTION_PLANS[context.planId];
+      if (!context.userId || !plan) {
+        await recordStripeEvent(event, {
+          amountTotal: invoice.amount_paid,
+          currency: invoice.currency,
+        });
+        return { ok: true, ignored: true };
+      }
+      await updateSubscriptionProfile({
+        userId: context.userId,
+        planId: context.planId,
+        status: context.status || "active",
+        customerId: context.customerId,
+        subscriptionId: context.subscriptionId,
+        currentPeriodEnd: context.currentPeriodEnd,
+      });
+      const { error: grantError } = await supabaseAdmin.rpc("grant_ask_credits", {
+        target_user_id: context.userId,
+        credit_amount: plan.monthly_credits,
+        grant_reason: "stripe_purchase",
+        stripe_event_id: event.id,
+        grant_metadata: {
+          source: "subscription_invoice",
+          plan_id: context.planId,
+          invoice_id: invoice.id,
+          subscription_id: context.subscriptionId,
+          amount_paid_cents: invoice.amount_paid,
+          currency: invoice.currency,
+        },
+      });
+      if (grantError) throw new Error(`Could not grant Ask credits: ${grantError.message}`);
+      await recordStripeEvent(event, {
+        userId: context.userId,
+        creditsGranted: plan.monthly_credits,
+        amountTotal: invoice.amount_paid,
+        currency: invoice.currency,
+      });
+      return { ok: true };
+    }
 
-  return { ok: true };
+    if (event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object;
+      const priceId = subscription.items?.data?.[0]?.price?.id || "";
+      const planId = subscription.metadata?.plan_id || planIdFromPriceId(priceId);
+      const userId = subscription.metadata?.user_id || "";
+      await updateSubscriptionProfile({
+        userId,
+        planId,
+        status: subscription.status,
+        customerId: customerIdFromStripeObject(subscription),
+        subscriptionId: subscription.id,
+        currentPeriodEnd: subscription.current_period_end,
+      });
+      await recordStripeEvent(event, { userId });
+      return { ok: true };
+    }
+
+    await recordStripeEvent(event);
+    return { ok: true, ignored: true };
+  } catch (error) {
+    return { error: { status: 500, message: error instanceof Error ? error.message : "Stripe webhook failed." } };
+  }
 }
 
 function sendJson(response, status, payload) {
@@ -572,8 +776,20 @@ createServer(async (request, response) => {
     return;
   }
 
-  if (request.method === "GET" && request.url === "/api/credit-packs") {
-    sendJson(response, 200, { packs: ASK_CREDIT_PACKS });
+  if (request.method === "GET" && (request.url === "/api/subscription-plans" || request.url === "/api/credit-packs")) {
+    sendJson(response, 200, {
+      plans: Object.fromEntries(
+        Object.entries(SUBSCRIPTION_PLANS).map(([planId, plan]) => [
+          planId,
+          {
+            label: plan.label,
+            amount_cents: plan.amount_cents,
+            currency: plan.currency,
+            monthly_credits: plan.monthly_credits,
+          },
+        ]),
+      ),
+    });
     return;
   }
 
@@ -587,6 +803,20 @@ createServer(async (request, response) => {
       sendJson(response, 200, { url: result.session.url });
     } catch (error) {
       sendJson(response, 500, { error: error instanceof Error ? error.message : "Checkout failed." });
+    }
+    return;
+  }
+
+  if (request.method === "POST" && request.url === "/api/billing-portal") {
+    try {
+      const result = await createBillingPortalSession(request);
+      if (result.error) {
+        sendJson(response, result.error.status, { error: result.error.message });
+        return;
+      }
+      sendJson(response, 200, { url: result.session.url });
+    } catch (error) {
+      sendJson(response, 500, { error: error instanceof Error ? error.message : "Billing portal failed." });
     }
     return;
   }

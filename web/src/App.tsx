@@ -91,6 +91,9 @@ type AppView = "graph" | "analytics" | "news" | "login" | "account";
 type AskUsage = {
   user_id?: string;
   plan?: string;
+  subscription_status?: string;
+  current_period_end?: string | null;
+  monthly_ask_limit?: number | null;
   credits_remaining: number;
   credits_per_prompt: number;
   max_requests_per_minute: number;
@@ -118,7 +121,7 @@ const subscriptionPlans: SubscriptionPlan[] = [
   {
     id: "starter",
     label: "Starter",
-    price: "€4.99 / month",
+    price: "€3.99 / month",
     askAllowance: "75 Ask questions / month",
     description: "For regular market exploration without a high monthly commitment.",
     features: ["Full graph access", "Full analytics and news", "Monthly Ask allowance"],
@@ -2281,6 +2284,8 @@ function AccountPage({
   onLoginRequired: () => void;
 }) {
   const [usage, setUsage] = useState<AskUsage | null>(null);
+  const [billingError, setBillingError] = useState("");
+  const [billingBusy, setBillingBusy] = useState<string | null>(null);
   const authToken = session?.access_token || "";
 
   useEffect(() => {
@@ -2295,6 +2300,56 @@ function AccountPage({
       })
       .catch(() => undefined);
   }, [authToken]);
+
+  const openCheckout = async (planId: "starter" | "pro") => {
+    if (!authToken) {
+      onLoginRequired();
+      return;
+    }
+    setBillingError("");
+    setBillingBusy(planId);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-ask-token": authToken,
+        },
+        body: JSON.stringify({ plan_id: planId, email: session?.user.email }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || "Checkout could not be started.");
+      }
+      window.location.href = payload.url;
+    } catch (error) {
+      setBillingError(error instanceof Error ? error.message : "Checkout could not be started.");
+      setBillingBusy(null);
+    }
+  };
+
+  const openBillingPortal = async () => {
+    if (!authToken) {
+      onLoginRequired();
+      return;
+    }
+    setBillingError("");
+    setBillingBusy("portal");
+    try {
+      const response = await fetch("/api/billing-portal", {
+        method: "POST",
+        headers: { "x-ask-token": authToken },
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || "Billing portal could not be opened.");
+      }
+      window.location.href = payload.url;
+    } catch (error) {
+      setBillingError(error instanceof Error ? error.message : "Billing portal could not be opened.");
+      setBillingBusy(null);
+    }
+  };
 
   if (!session) {
     return (
@@ -2313,6 +2368,8 @@ function AccountPage({
 
   const creditsRemaining = Number(usage?.credits_remaining || 0);
   const creditsPerPrompt = Number(usage?.credits_per_prompt || 1);
+  const currentPlan = usage?.plan || "free";
+  const subscriptionStatus = usage?.subscription_status || (currentPlan === "free" ? "trial" : "active");
 
   return (
     <main className="account-page">
@@ -2333,11 +2390,11 @@ function AccountPage({
         <div className="profile-summary">
           <div>
             <span>Current plan</span>
-            <strong>Free</strong>
+            <strong>{subscriptionPlans.find((plan) => plan.id === currentPlan)?.label || "Free"}</strong>
           </div>
           <div>
             <span>Status</span>
-            <strong>Trial</strong>
+            <strong>{subscriptionStatus.replace(/_/g, " ")}</strong>
           </div>
         </div>
 
@@ -2353,8 +2410,14 @@ function AccountPage({
                   <li key={feature}>{feature}</li>
                 ))}
               </ul>
-              <button disabled type="button">
-                {plan.id === "free" ? "Current" : "Coming soon"}
+              <button
+                disabled={billingBusy !== null || plan.id === currentPlan}
+                onClick={() => {
+                  if (plan.id === "starter" || plan.id === "pro") openCheckout(plan.id);
+                }}
+                type="button"
+              >
+                {plan.id === currentPlan ? "Current" : billingBusy === plan.id ? "Opening..." : plan.id === "free" ? "Included" : "Choose plan"}
               </button>
             </article>
           ))}
@@ -2363,9 +2426,13 @@ function AccountPage({
         <div className="account-billing">
           <div>
             <span>Billing</span>
-            <p>Subscription checkout is not active yet. Current Ask usage runs on the trial allowance.</p>
+            <p>Manage payment method, invoices, cancellation, and plan changes through Stripe billing.</p>
           </div>
+          <button disabled={billingBusy !== null || currentPlan === "free"} onClick={openBillingPortal} type="button">
+            {billingBusy === "portal" ? "Opening..." : "Manage billing"}
+          </button>
         </div>
+        {billingError ? <p className="account-error">{billingError}</p> : null}
       </section>
     </main>
   );
