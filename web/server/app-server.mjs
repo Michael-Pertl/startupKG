@@ -48,18 +48,24 @@ const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
 const STRIPE_STARTER_PRICE_ID = process.env.STRIPE_STARTER_PRICE_ID || "";
 const STRIPE_PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID || "";
 const APP_PUBLIC_URL = process.env.APP_PUBLIC_URL || "http://127.0.0.1:5173";
+const ADMIN_EMAILS = new Set(
+  (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean),
+);
 const SUBSCRIPTION_PLANS = {
   starter: {
     label: "Starter",
     price_id: STRIPE_STARTER_PRICE_ID,
-    amount_cents: 399,
+    amount_cents: 499,
     currency: "eur",
     monthly_credits: 75,
   },
   pro: {
     label: "Pro",
     price_id: STRIPE_PRO_PRICE_ID,
-    amount_cents: 999,
+    amount_cents: 1999,
     currency: "eur",
     monthly_credits: 500,
   },
@@ -81,6 +87,7 @@ function configStatus() {
     supabase_configured: Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY),
     stripe_configured: Boolean(STRIPE_SECRET_KEY && STRIPE_WEBHOOK_SECRET),
     stripe_subscription_prices_configured: Boolean(STRIPE_STARTER_PRICE_ID && STRIPE_PRO_PRICE_ID),
+    admin_review_configured: ADMIN_EMAILS.size > 0,
     app_public_url: APP_PUBLIC_URL,
     static_dir: DIST_DIR,
   };
@@ -261,6 +268,16 @@ function ensureLocalUser(request) {
 async function ensureUser(request) {
   if (ASK_AUTH_PROVIDER === "supabase") return ensureSupabaseUser(request);
   return ensureLocalUser(request);
+}
+
+async function ensureAdminUser(request) {
+  const auth = await ensureSupabaseUser(request);
+  if (auth.error) return auth;
+  const email = String(auth.user.email || "").toLowerCase();
+  if (!ADMIN_EMAILS.size || !ADMIN_EMAILS.has(email)) {
+    return { error: { status: 403, message: "Admin access is not enabled for this account." } };
+  }
+  return auth;
 }
 
 function checkCreditsAndRateLimit(user, provider = "local") {
@@ -488,6 +505,122 @@ async function resolveSubscriptionContext({ subscriptionId, customerId, priceId 
     subscriptionId: subscription?.id || subscriptionId,
     status: subscription?.status || "",
     currentPeriodEnd: subscription?.current_period_end || null,
+  };
+}
+
+async function listAdminEvents(request) {
+  const auth = await ensureAdminUser(request);
+  if (auth.error) return auth;
+  const url = new URL(request.url || "/", "http://127.0.0.1");
+  const status = url.searchParams.get("status") || "";
+  const limit = Math.min(Number(url.searchParams.get("limit") || 100), 250);
+  let query = supabaseAdmin
+    .from("market_event_candidates")
+    .select("*")
+    .order("event_date", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (status) query = query.eq("status", status);
+  const { data, error } = await query;
+  if (error) {
+    return { error: { status: 500, message: `Could not list market event candidates: ${error.message}` } };
+  }
+  return { events: data || [] };
+}
+
+async function updateAdminEventReview(request, candidateId) {
+  const auth = await ensureAdminUser(request);
+  if (auth.error) return auth;
+  const body = JSON.parse(await readBody(request));
+  const nextStatus = String(body.status || "").trim();
+  const reviewNotes = String(body.review_notes || body.notes || "").trim();
+  const allowed = new Set(["auto_ingested", "needs_review", "approved", "rejected", "promotion_ready", "promoted"]);
+  if (!allowed.has(nextStatus)) {
+    return { error: { status: 400, message: "Invalid review status." } };
+  }
+  const { data: existing, error: readError } = await supabaseAdmin
+    .from("market_event_candidates")
+    .select("candidate_id,status")
+    .eq("candidate_id", candidateId)
+    .maybeSingle();
+  if (readError) {
+    return { error: { status: 500, message: `Could not read candidate: ${readError.message}` } };
+  }
+  if (!existing) {
+    return { error: { status: 404, message: "Market event candidate was not found." } };
+  }
+  const now = new Date().toISOString();
+  const { data, error } = await supabaseAdmin
+    .from("market_event_candidates")
+    .update({
+      status: nextStatus,
+      reviewed_by: auth.user.user_id,
+      reviewed_at: now,
+      review_notes: reviewNotes || null,
+      updated_at: now,
+    })
+    .eq("candidate_id", candidateId)
+    .select("*")
+    .single();
+  if (error) {
+    return { error: { status: 500, message: `Could not update candidate: ${error.message}` } };
+  }
+  const { error: reviewError } = await supabaseAdmin.from("market_event_reviews").insert({
+    candidate_id: candidateId,
+    reviewer_user_id: auth.user.user_id,
+    reviewer_email: auth.user.email || null,
+    previous_status: existing.status,
+    next_status: nextStatus,
+    review_notes: reviewNotes || null,
+  });
+  if (reviewError) {
+    return { error: { status: 500, message: `Could not record review: ${reviewError.message}` } };
+  }
+  return { event: data };
+}
+
+async function markAdminEventPromotionReady(request, candidateId) {
+  const auth = await ensureAdminUser(request);
+  if (auth.error) return auth;
+  const { data: candidate, error } = await supabaseAdmin
+    .from("market_event_candidates")
+    .select("*")
+    .eq("candidate_id", candidateId)
+    .maybeSingle();
+  if (error) {
+    return { error: { status: 500, message: `Could not read candidate: ${error.message}` } };
+  }
+  if (!candidate) {
+    return { error: { status: 404, message: "Market event candidate was not found." } };
+  }
+  const now = new Date().toISOString();
+  const { data, error: updateError } = await supabaseAdmin
+    .from("market_event_candidates")
+    .update({
+      status: "promotion_ready",
+      reviewed_by: auth.user.user_id,
+      reviewed_at: now,
+      review_notes: "Marked ready for CSV promotion from admin review.",
+      updated_at: now,
+    })
+    .eq("candidate_id", candidateId)
+    .select("*")
+    .single();
+  if (updateError) {
+    return { error: { status: 500, message: `Could not mark candidate ready: ${updateError.message}` } };
+  }
+  await supabaseAdmin.from("market_event_reviews").insert({
+    candidate_id: candidateId,
+    reviewer_user_id: auth.user.user_id,
+    reviewer_email: auth.user.email || null,
+    previous_status: candidate.status,
+    next_status: "promotion_ready",
+    review_notes: "Ready for CSV promotion.",
+  });
+  return {
+    event: data,
+    promotion_hint:
+      "Export promotion_ready candidates, validate them against funding_events_raw.csv, then rebuild graph artifacts.",
   };
 }
 
@@ -773,6 +906,46 @@ createServer(async (request, response) => {
       return;
     }
     sendJson(response, 200, { usage: publicUsage(auth.user) });
+    return;
+  }
+
+  if (request.method === "GET" && request.url?.startsWith("/api/admin/events")) {
+    const result = await listAdminEvents(request);
+    if (result.error) {
+      sendJson(response, result.error.status, { error: result.error.message });
+      return;
+    }
+    sendJson(response, 200, { events: result.events });
+    return;
+  }
+
+  const reviewMatch = request.url?.match(/^\/api\/admin\/events\/([^/]+)\/review$/);
+  if (request.method === "POST" && reviewMatch) {
+    try {
+      const result = await updateAdminEventReview(request, decodeURIComponent(reviewMatch[1]));
+      if (result.error) {
+        sendJson(response, result.error.status, { error: result.error.message });
+        return;
+      }
+      sendJson(response, 200, { event: result.event });
+    } catch (error) {
+      sendJson(response, 500, { error: error instanceof Error ? error.message : "Admin review failed." });
+    }
+    return;
+  }
+
+  const promoteMatch = request.url?.match(/^\/api\/admin\/events\/([^/]+)\/promote$/);
+  if (request.method === "POST" && promoteMatch) {
+    try {
+      const result = await markAdminEventPromotionReady(request, decodeURIComponent(promoteMatch[1]));
+      if (result.error) {
+        sendJson(response, result.error.status, { error: result.error.message });
+        return;
+      }
+      sendJson(response, 200, { event: result.event, promotion_hint: result.promotion_hint });
+    } catch (error) {
+      sendJson(response, 500, { error: error instanceof Error ? error.message : "Admin promotion failed." });
+    }
     return;
   }
 

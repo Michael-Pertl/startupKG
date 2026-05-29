@@ -1,11 +1,12 @@
 {
   "metadata": {
     "title": "AI Market Event Monitor",
-    "event_count": 24,
+    "event_count": 30,
     "scope_note": "Curated public monitoring events for AI market intelligence. These are research alerts and not investment recommendations."
   },
   "facets": {
     "event_types": [
+      "acquisition_or_merger",
       "funding_round",
       "ipo_filing",
       "ipo_pricing",
@@ -37,6 +38,44 @@
     ]
   },
   "events": [
+    {
+      "event_id": "rss_clarivate_introduces_ipone_20260529_ipo_watch",
+      "company_name": "Clarivate Introduces IPOne",
+      "event_type": "ipo_watch",
+      "event_date": "2026-05-29",
+      "year": "2026",
+      "country": "",
+      "region": "",
+      "amount_usd": null,
+      "valuation_usd": null,
+      "source_url": "https://www.prnewswire.com/news-releases/clarivate-introduces-ipone-302784619.html",
+      "source_type": "press_release",
+      "confidence": "high",
+      "status": "auto_ingested",
+      "signal_tier": "watchlist_signal",
+      "signal_label": "Broader investor watchlist signal",
+      "summary": "Clarivate Introduces IPOne",
+      "notes": "Auto-ingested from RSS feed: PRNewswire Technology."
+    },
+    {
+      "event_id": "rss_barcelona_s_mafer_ai_20260529_funding_round",
+      "company_name": "Barcelona’s Mafer AI",
+      "event_type": "funding_round",
+      "event_date": "2026-05-29",
+      "year": "2026",
+      "country": "",
+      "region": "",
+      "amount_usd": 2000000,
+      "valuation_usd": null,
+      "source_url": "https://www.eu-startups.com/2026/05/barcelonas-mafer-ai-raises-e2-million-to-build-an-ai-operating-system-for-rd-teams-in-formulation-industries/",
+      "source_type": "eu_startups",
+      "confidence": "medium",
+      "status": "staged",
+      "signal_tier": "watchlist_signal",
+      "signal_label": "Below-threshold funding signal",
+      "summary": "Barcelona’s Mafer AI raises €2 million to build an AI operating system for R&D teams in formulation industries",
+      "notes": "Auto-ingested from RSS feed: EU-Startups. Hidden from News because detected amount is below USD100,000,000."
+    },
     {
       "event_id": "rss_webedia_elephant_group_and_google_cloud_expand_strategic_partnership_to_accelera_20260528_major_partnership",
       "company_name": "Webedia-Elephant Group and Google Cloud Expand Strategic Partnership to Accelera",
@@ -76,6 +115,25 @@
       "notes": "Auto-ingested from RSS feed: EU-Startups. Hidden from News because detected amount is below USD100,000,000."
     },
     {
+      "event_id": "rss_london_based_geordie_ai_20260528_funding_round",
+      "company_name": "London-based Geordie AI",
+      "event_type": "funding_round",
+      "event_date": "2026-05-28",
+      "year": "2026",
+      "country": "",
+      "region": "",
+      "amount_usd": 25000000,
+      "valuation_usd": null,
+      "source_url": "https://www.eu-startups.com/2026/05/london-based-geordie-ai-secures-e25-million-to-help-enterprises-govern-ai-agents/",
+      "source_type": "eu_startups",
+      "confidence": "medium",
+      "status": "staged",
+      "signal_tier": "watchlist_signal",
+      "signal_label": "Below-threshold funding signal",
+      "summary": "London-based Geordie AI secures €25 million to help enterprises govern AI agents",
+      "notes": "Auto-ingested from RSS feed: EU-Startups. Hidden from News because detected amount is below USD100,000,000."
+    },
+    {
       "event_id": "rss_lithuania_s_kopa_ai_20260528_funding_round",
       "company_name": "Lithuania’s Kopa.ai",
       "event_type": "funding_round",
@@ -95,6 +153,25 @@
       "notes": "Auto-ingested from RSS feed: EU-Startups. Hidden from News because detected amount is below USD100,000,000."
     },
     {
+      "event_id": "rss_kleinschmidt_and_upwell_partner_to_accelerate_carrier_payments_and_automate_frei_20260528_major_partnership",
+      "company_name": "Kleinschmidt and Upwell Partner to Accelerate Carrier Payments and Automate Frei",
+      "event_type": "major_partnership",
+      "event_date": "2026-05-28",
+      "year": "2026",
+      "country": "",
+      "region": "",
+      "amount_usd": null,
+      "valuation_usd": null,
+      "source_url": "https://www.prnewswire.com/news-releases/kleinschmidt-and-upwell-partner-to-accelerate-carrier-payments-and-automate-freight-billing-302784448.html",
+      "source_type": "press_release",
+      "confidence": "high",
+      "status": "auto_ingested",
+      "signal_tier": "watchlist_signal",
+      "signal_label": "Broader investor watchlist signal",
+      "summary": "Kleinschmidt and Upwell Partner to Accelerate Carrier Payments and Automate Freight Billing",
+      "notes": "Auto-ingested from RSS feed: PRNewswire Technology."
+    },
+    {
       "event_id": "rss_infosys_and_roland_garros_serve_up_ai_powered_digital_fan_experiences_extend_pa_20260528_major_partnership",
       "company_name": "Infosys and Roland-Garros Serve Up AI-Powered Digital Fan Experiences, Extend Pa",
       "event_type": "major_partnership",
@@ -112,6 +189,44 @@
       "signal_label": "Broader investor watchlist signal",
       "summary": "Infosys and Roland-Garros Serve Up AI-Powered Digital Fan Experiences, Extend Partnership Through 2031",
       "notes": "Auto-ingested from RSS feed: PRNewswire Technology."
+    },
+    {
+      "event_id": "rss_asana_20260528_acquisition_or_merger",
+      "company_name": "Asana",
+      "event_type": "acquisition_or_merger",
+      "event_date": "2026-05-28",
+      "year": "2026",
+      "country": "",
+      "region": "",
+      "amount_usd": null,
+      "valuation_usd": null,
+      "source_url": "https://techcrunch.com/2026/05/28/asana-acquires-no-code-agent-builder-stack-ai/",
+      "source_type": "techcrunch",
+      "confidence": "medium",
+      "status": "auto_ingested",
+      "signal_tier": "watchlist_signal",
+      "signal_label": "Broader investor watchlist signal",
+      "summary": "Asana acquires no-code agent-builder StackAI",
+      "notes": "Auto-ingested from RSS feed: TechCrunch."
+    },
+    {
+      "event_id": "rss_anthropic_20260528_ipo_watch",
+      "company_name": "Anthropic",
+      "event_type": "ipo_watch",
+      "event_date": "2026-05-28",
+      "year": "2026",
+      "country": "USA",
+      "region": "US",
+      "amount_usd": 65000000000,
+      "valuation_usd": null,
+      "source_url": "https://techcrunch.com/2026/05/28/anthropic-raises-65-billion-nears-1t-valuation-ahead-of-ipo/",
+      "source_type": "techcrunch",
+      "confidence": "medium",
+      "status": "auto_ingested",
+      "signal_tier": "watchlist_signal",
+      "signal_label": "Broader investor watchlist signal",
+      "summary": "Anthropic raises $65 billion, nears $1T valuation ahead of IPO",
+      "notes": "Auto-ingested from RSS feed: TechCrunch."
     },
     {
       "event_id": "rss_triomics_nabs_22m_to_bring_oncology_specific_ai_to_cancer_centers_20260527_funding_round",

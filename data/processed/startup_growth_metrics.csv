@@ -1,6 +1,6 @@
 startup_id,name,region,country,primary_domain,first_mega_round_date,last_mega_round_date,first_mega_round_year,last_mega_round_year,mega_round_count,active_mega_round_years,total_mega_round_amount_usd,largest_round_usd,trajectory_label
 startup_openai,OpenAI,US,USA,Foundation Models / LLMs,2024-10-02,2026-02-27,2024,2026,3,3,156600000000,110000000000,accelerating
-startup_anthropic,Anthropic,US,USA,Foundation Models / LLMs,2025-03-03,2026-02-12,2025,2026,3,2,46500000000,30000000000,accelerating
+startup_anthropic,Anthropic,US,USA,Foundation Models / LLMs,2025-03-03,2026-05-28,2025,2026,4,2,111500000000,65000000000,accelerating
 startup_xai,xAI,US,USA,Foundation Models / LLMs,2024-05-26,2026-01-06,2024,2026,3,2,32000000000,20000000000,accelerating
 startup_databricks,Databricks,US,USA,AI Infrastructure,2024-12-17,2024-12-17,2024,2024,1,1,10000000000,10000000000,single_year
 startup_mistral_ai,Mistral AI,Europe,France,Foundation Models / LLMs,2024-06-11,2026-03-30,2024,2026,3,3,3465000000,1990000000,multi_year_mixed
@@ -12,6 +12,7 @@ startup_thinking_machines_lab,Thinking Machines Lab,US,USA,Foundation Models / L
 startup_g42,G42,UAE / Gulf,United Arab Emirates,AI Infrastructure,2024-04-16,2024-04-16,2024,2024,1,1,1500000000,1500000000,single_year
 startup_shield_ai,Shield AI,US,USA,Defense / Security AI,2026-03-26,2026-03-26,2026,2026,1,1,1500000000,1500000000,single_year
 startup_sierra,Sierra,US,USA,Enterprise AI,2024-10-29,2026-05-04,2024,2026,3,3,1475000000,950000000,accelerating
+startup_cognition,Cognition,US,USA,Coding Agents / Developer Tools,2025-09-08,2026-05-27,2025,2026,2,2,1400000000,1000000000,accelerating
 startup_skild_ai,Skild AI,US,USA,Robotics / Physical AI,2026-01-14,2026-01-14,2026,2026,1,1,1400000000,1400000000,single_year
 startup_groq,Groq,US,USA,AI Chips / Semiconductors,2024-08-05,2025-09-17,2024,2025,2,2,1390000000,750000000,accelerating
 startup_helsing,Helsing,Europe,Germany,Defense / Security AI,2024-07-11,2025-06-17,2024,2025,2,2,1177000000,690000000,accelerating
@@ -30,6 +31,7 @@ startup_luma_ai,Luma AI,US,USA,Creative / Generative Media,2025-11-19,2025-11-19
 startup_mind_robotics,Mind Robotics,US,USA,Robotics / Physical AI,2026-03-11,2026-05-13,2026,2026,2,1,900000000,500000000,single_year
 startup_lambda,Lambda,US,USA,AI Infrastructure,2024-02-15,2025-02-19,2024,2025,2,2,800000000,480000000,accelerating
 startup_clickhouse,ClickHouse,US,USA,AI Infrastructure,2025-05-29,2026-01-16,2025,2026,2,2,750000000,400000000,accelerating
+startup_hark,Hark,US,USA,Foundation Models / LLMs,2026-05-21,2026-05-21,2026,2026,1,1,700000000,700000000,single_year
 startup_harvey,Harvey,US,USA,Enterprise AI,2024-07-23,2025-06-23,2024,2025,3,2,700000000,300000000,accelerating
 startup_nebius,Nebius,Europe,Netherlands,AI Infrastructure,2024-12-02,2024-12-02,2024,2024,1,1,700000000,700000000,single_year
 startup_tenstorrent,Tenstorrent,Canada,Canada,AI Chips / Semiconductors,2024-12-02,2024-12-02,2024,2024,1,1,693000000,693000000,single_year
@@ -58,9 +60,9 @@ startup_celestial_ai,Celestial AI,US,USA,AI Chips / Semiconductors,2024-03-27,20
 startup_zhipu_ai,Zhipu AI,China,China,Foundation Models / LLMs,2024-12-17,2024-12-17,2024,2024,1,1,420000000,420000000,single_year
 startup_together_ai,Together AI,US,USA,AI Infrastructure,2024-03-13,2025-02-20,2024,2025,2,2,411000000,305000000,accelerating
 startup_glean,Glean,US,USA,Search / Knowledge Agents,2024-09-10,2025-06-10,2024,2025,2,2,410000000,260000000,decelerating
-startup_cognition,Cognition,US,USA,Coding Agents / Developer Tools,2025-09-08,2025-09-08,2025,2025,1,1,400000000,400000000,single_year
 startup_lightmatter,Lightmatter,US,USA,AI Chips / Semiconductors,2024-10-16,2024-10-16,2024,2024,1,1,400000000,400000000,single_year
 startup_synthesia,Synthesia,Europe,United Kingdom,Creative / Generative Media,2025-01-15,2025-10-29,2025,2025,2,1,380000000,200000000,single_year
+startup_modal,Modal,US,USA,AI Infrastructure,2026-05-21,2026-05-21,2026,2026,1,1,355000000,355000000,single_year
 startup_constant,Constant,US,USA,AI Infrastructure,2024-12-18,2024-12-18,2024,2024,1,1,333000000,333000000,single_year
 startup_magic,Magic,US,USA,Coding Agents / Developer Tools,2024-08-29,2024-08-29,2024,2024,1,1,320000000,320000000,single_year
 startup_runway,Runway,US,USA,Creative / Generative Media,2026-02-10,2026-02-10,2026,2026,1,1,315000000,315000000,single_year
@@ -140,14 +142,17 @@ startup_epg_singapore,EPG Singapore,Singapore,Singapore,AI Infrastructure,2026-0
 startup_encharge_ai,EnCharge AI,US,USA,AI Chips / Semiconductors,2024-11-21,2024-11-21,2024,2024,1,1,100000000,100000000,single_year
 startup_fundguard,FundGuard,US,USA,Fintech AI,2024-03-25,2024-03-25,2024,2024,1,1,100000000,100000000,single_year
 startup_harmonic,Harmonic,US,USA,Foundation Models / LLMs,2025-07-10,2025-07-10,2025,2025,1,1,100000000,100000000,single_year
+startup_havoc,Havoc,US,USA,Defense / Security AI,2026-05-12,2026-05-12,2026,2026,1,1,100000000,100000000,single_year
 startup_invisible_technologies,Invisible Technologies,US,USA,Data / Analytics,2025-09-16,2025-09-16,2025,2025,1,1,100000000,100000000,single_year
 startup_livekit,LiveKit,US,USA,AI Infrastructure,2026-01-22,2026-01-22,2026,2026,1,1,100000000,100000000,single_year
 startup_majestic_labs,Majestic Labs,Israel,Israel,AI Infrastructure,2025-11-22,2025-11-22,2025,2025,1,1,100000000,100000000,single_year
 startup_neural_concept,Neural Concept,Europe,Switzerland,Robotics / Physical AI,2025-12-18,2025-12-18,2025,2025,1,1,100000000,100000000,single_year
+startup_oro_labs,ORO Labs,US,USA,Enterprise AI,2026-03-12,2026-03-12,2026,2026,1,1,100000000,100000000,single_year
 startup_parallel,Parallel,US,USA,AI Infrastructure,2025-11-12,2025-11-12,2025,2025,1,1,100000000,100000000,single_year
 startup_path_robotics,Path Robotics,US,USA,Robotics / Physical AI,2024-10-14,2024-10-14,2024,2024,1,1,100000000,100000000,single_year
 startup_render,Render,US,USA,AI Infrastructure,2026-02-17,2026-02-17,2026,2026,1,1,100000000,100000000,single_year
 startup_sakana_ai,Sakana AI,Other Global,Japan,Foundation Models / LLMs,2024-09-05,2024-09-05,2024,2024,1,1,100000000,100000000,single_year
+startup_scout_ai,Scout AI,US,USA,Defense / Security AI,2026-04-29,2026-04-29,2026,2026,1,1,100000000,100000000,single_year
 startup_simile,Simile,US,USA,Enterprise AI,2026-02-12,2026-02-12,2026,2026,1,1,100000000,100000000,single_year
 startup_snorkel_ai,Snorkel AI,US,USA,Data / Analytics,2025-05-29,2025-05-29,2025,2025,1,1,100000000,100000000,single_year
 startup_tensorwave,TensorWave,US,USA,AI Infrastructure,2025-05-14,2025-05-14,2025,2025,1,1,100000000,100000000,single_year

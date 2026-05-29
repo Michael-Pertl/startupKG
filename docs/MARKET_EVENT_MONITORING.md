@@ -285,6 +285,37 @@ Long term:
 - Entity-level public-market exposure graph, clearly marked as research context
   rather than investment advice.
 
+
+## Production Funding Refresh Workflow
+
+Use a semi-automatic workflow for production data instead of importing news
+directly into the core funding graph. The current safe path is:
+
+1. Poll configured public feeds with `scripts/fetch_market_events_feeds.py`.
+2. Rebuild visible monitoring events with `scripts/build_market_events.py`.
+3. Sync candidates to Supabase review tables with `scripts/sync_market_events_to_supabase.py`.
+4. Review candidates in the app admin page and keep rejected/approved decisions in Supabase.
+5. Promote only verified funding rounds with `scripts/promote_market_event.py` or by
+   staging rows in `data/raw/new_funding_events.csv`.
+6. Validate and apply staged rows with `scripts/ingest_funding_events.py --apply`.
+7. Rebuild production graph artifacts:
+
+```bash
+python3 scripts/fetch_market_events_feeds.py
+python3 scripts/build_market_events.py
+python3 scripts/sync_market_events_to_supabase.py
+python3 scripts/validate_raw_data.py
+python3 scripts/normalize_raw_data.py
+python3 scripts/build_growth_metrics.py
+python3 scripts/build_app_graph.py
+```
+
+For Render or another hosted deployment, run steps 1-3 as a scheduled job and
+keep steps 4-7 as a human approval workflow. Configure `ADMIN_EMAILS` on the
+web service so only trusted Supabase Auth users can use `/admin/events`. This prevents low-confidence news
+from entering `funding_events_raw.csv` without the required amount, date/year,
+investor, source URL, AI relevance, region, and confidence checks.
+
 ## Compliance Guardrails
 
 The product can help users discover public market-moving information, but it

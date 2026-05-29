@@ -11,8 +11,10 @@ export type MarketNode = {
   amount_usd?: number;
   visible_mega_round_funding_usd?: number;
   linked_funding_usd?: number;
+  importance_score?: number;
   mega_round_count?: number;
   participated_rounds?: number;
+  lead_rounds?: number;
   confidence?: string;
   source_url?: string;
   source_type?: string;

@@ -71,6 +71,42 @@ create table if not exists public.stripe_events (
   payload jsonb not null
 );
 
+create table if not exists public.market_event_candidates (
+  candidate_id text primary key,
+  company_name text not null,
+  event_type text not null,
+  event_date date,
+  year integer,
+  country text,
+  region text,
+  amount_usd bigint,
+  valuation_usd bigint,
+  source_url text not null,
+  source_type text not null,
+  confidence text not null default 'medium',
+  status text not null default 'needs_review'
+    check (status in ('auto_ingested', 'needs_review', 'approved', 'rejected', 'promotion_ready', 'promoted')),
+  summary text,
+  notes text,
+  raw_payload jsonb not null default '{}'::jsonb,
+  reviewed_by uuid references auth.users(id) on delete set null,
+  reviewed_at timestamptz,
+  review_notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.market_event_reviews (
+  review_id uuid primary key default gen_random_uuid(),
+  candidate_id text not null references public.market_event_candidates(candidate_id) on delete cascade,
+  reviewer_user_id uuid references auth.users(id) on delete set null,
+  reviewer_email text,
+  previous_status text,
+  next_status text not null,
+  review_notes text,
+  created_at timestamptz not null default now()
+);
+
 create index if not exists idx_ask_credit_ledger_user_created
   on public.ask_credit_ledger (user_id, created_at desc);
 
@@ -85,11 +121,19 @@ create index if not exists idx_profiles_stripe_subscription
   on public.profiles (stripe_subscription_id)
   where stripe_subscription_id is not null;
 
+create index if not exists idx_market_event_candidates_status_date
+  on public.market_event_candidates (status, event_date desc);
+
+create index if not exists idx_market_event_reviews_candidate_created
+  on public.market_event_reviews (candidate_id, created_at desc);
+
 alter table public.profiles enable row level security;
 alter table public.ask_credit_accounts enable row level security;
 alter table public.ask_credit_ledger enable row level security;
 alter table public.ask_usage_events enable row level security;
 alter table public.stripe_events enable row level security;
+alter table public.market_event_candidates enable row level security;
+alter table public.market_event_reviews enable row level security;
 
 drop policy if exists "profiles_select_own" on public.profiles;
 create policy "profiles_select_own"

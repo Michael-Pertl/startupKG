@@ -37,6 +37,7 @@ configured. It should pass on the deployment host.
   - `SUPABASE_SERVICE_ROLE_KEY`
   - `VITE_SUPABASE_URL`
   - `VITE_SUPABASE_ANON_KEY`
+  - `ADMIN_EMAILS`
 
 ## 3. Stripe
 

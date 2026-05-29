@@ -51,12 +51,12 @@ Free
 - Selected analytics and news
 - 10 Ask questions total
 
-Starter, EUR 3.99/month
+Starter, EUR 4.99/month
 - Full graph access
 - Full analytics and news
 - 75 Ask questions/month
 
-Pro, EUR 9.99/month
+Pro, EUR 19.99/month
 - Full graph access
 - Full analytics and news
 - Unlimited Ask under fair use
