@@ -2194,6 +2194,17 @@ a {
   margin: 4px 0 0;
 }
 
+.preview-note {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+
+.graph-note {
+  padding: 0 6px 2px;
+}
+
 .analytics-filters {
   display: grid;
   gap: 8px;
