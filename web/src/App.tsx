@@ -99,6 +99,12 @@ type AskUsage = {
   max_requests_per_minute: number;
 };
 
+type UpgradePrompt = {
+  title: string;
+  body: string;
+  feature: string;
+};
+
 type AdminMarketEvent = {
   candidate_id: string;
   company_name: string;
@@ -163,6 +169,56 @@ const FREE_PREVIEW_LIMITS = {
   newsFeedRows: 6,
   newsIpoRows: 5,
 };
+
+function LockedUpgradeRow({
+  label,
+  onUpgrade,
+}: {
+  label: string;
+  onUpgrade: () => void;
+}) {
+  return (
+    <button className="locked-upgrade-row" onClick={onUpgrade} type="button">
+      <span>{label}</span>
+      <strong>Upgrade</strong>
+    </button>
+  );
+}
+
+function UpgradePromptModal({
+  prompt,
+  onClose,
+  onViewPlans,
+}: {
+  prompt: UpgradePrompt;
+  onClose: () => void;
+  onViewPlans: () => void;
+}) {
+  return (
+    <div className="upgrade-backdrop" role="presentation" onMouseDown={onClose}>
+      <section
+        aria-labelledby="upgrade-title"
+        aria-modal="true"
+        className="upgrade-modal"
+        onMouseDown={(event) => event.stopPropagation()}
+        role="dialog"
+      >
+        <button aria-label="Close upgrade prompt" className="upgrade-close" onClick={onClose} type="button">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+        <span>{prompt.feature}</span>
+        <h2 id="upgrade-title">{prompt.title}</h2>
+        <p>{prompt.body}</p>
+        <div className="upgrade-actions">
+          <button className="upgrade-primary" onClick={onViewPlans} type="button">View Starter</button>
+          <button onClick={onClose} type="button">Keep previewing</button>
+        </div>
+      </section>
+    </div>
+  );
+}
 
 type GraphIndex = {
   nodeById: Map<string, MarketNode>;
@@ -1727,6 +1783,77 @@ function AnalyticsSelect({
   );
 }
 
+function SinglePopoverSelect({
+  label,
+  value,
+  values,
+  onChange,
+  formatValue = (item: string) => item,
+}: {
+  label: string;
+  value: string;
+  values: string[];
+  onChange: (value: string) => void;
+  formatValue?: (value: string) => string;
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const options = ["__all__", ...values];
+  const selectionLabel = value === "__all__" ? "All" : formatValue(value);
+
+  useEffect(() => {
+    if (!open) return;
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (wrapperRef.current && target && !wrapperRef.current.contains(target)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={wrapperRef} className="analytics-select">
+      <span>{label}</span>
+      <button
+        aria-expanded={open}
+        className="analytics-multi-trigger"
+        onClick={() => setOpen((current) => !current)}
+        type="button"
+      >
+        {selectionLabel}
+      </button>
+      {open ? (
+        <div className="analytics-multi-menu single-select-menu">
+          <div className="analytics-multi-options">
+            {options.map((item) => (
+              <button
+                className={item === value ? "selected" : ""}
+                key={item}
+                onClick={() => {
+                  onChange(item);
+                  setOpen(false);
+                }}
+                type="button"
+              >
+                {item === "__all__" ? "All" : formatValue(item)}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function horizontalBars({
   rows,
   valueFormatter,
@@ -1778,6 +1905,7 @@ function AnalyticsPage({
   onSelectRound,
   onSelectSlice,
   isFreePreview,
+  onUpgrade,
 }: {
   graph: MarketGraph;
   filters: AnalyticsFilters;
@@ -1786,6 +1914,7 @@ function AnalyticsPage({
   onSelectRound: (node: MarketNode) => void;
   onSelectSlice: (kind: AnalyticsBreakdown, label: string) => void;
   isFreePreview: boolean;
+  onUpgrade: (prompt: UpgradePrompt) => void;
 }) {
   const [activeSlice, setActiveSlice] = useState<{ kind: AnalyticsBreakdown; label: string } | null>(null);
   const [breakdown, setBreakdown] = useState<AnalyticsBreakdown>("domain");
@@ -1923,6 +2052,12 @@ function AnalyticsPage({
     .sort((left, right) => Number(right.amount_usd || 0) - Number(left.amount_usd || 0))
     .slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.analyticsEvidenceRows : 14);
   const evidenceLimit = evidenceRows.length;
+  const hasLockedAnalyticsRows = isFreePreview && activeRounds.length > evidenceRows.length;
+  const openAnalyticsUpgrade = () => onUpgrade({
+    feature: "Full analytics",
+    title: "Unlock the complete market view",
+    body: "Starter opens the full rankings, deeper slices, and the complete evidence table so investors can move past the preview.",
+  });
 
   return (
     <main className="analytics-page">
@@ -1930,7 +2065,6 @@ function AnalyticsPage({
         <div>
           <div className="eyebrow">Market dashboard</div>
           <h1>AI funding growth</h1>
-          {isFreePreview ? <p className="preview-note">Free preview: top slices only. Upgrade to unlock deeper analytics.</p> : null}
         </div>
         <div className="analytics-filters">
           <AnalyticsSelect
@@ -2014,15 +2148,18 @@ function AnalyticsPage({
                 setActiveSlice({ kind: breakdown, label: row.label });
               },
             })}
+            {isFreePreview ? <LockedUpgradeRow label="Unlock all slices" onUpgrade={openAnalyticsUpgrade} /> : null}
           </div>
         </article>
         <article className="analytics-card">
           <h2>Top companies</h2>
           {horizontalBars({ rows: topCompanies, valueFormatter: formatUsd, onSelect: onSelectNode })}
+          {isFreePreview ? <LockedUpgradeRow label="Show full company ranking" onUpgrade={openAnalyticsUpgrade} /> : null}
         </article>
         <article className="analytics-card">
           <h2>Top investors</h2>
           {horizontalBars({ rows: topInvestors, valueFormatter: formatUsd, onSelect: onSelectNode })}
+          {isFreePreview ? <LockedUpgradeRow label="Show full investor ranking" onUpgrade={openAnalyticsUpgrade} /> : null}
         </article>
         <article className="analytics-card wide">
           <div className="slice-summary">
@@ -2088,6 +2225,12 @@ function AnalyticsPage({
                 </div>
               );
             })}
+            {hasLockedAnalyticsRows ? (
+              <LockedUpgradeRow
+                label={`Unlock ${formatCount(activeRounds.length - evidenceRows.length)} more events`}
+                onUpgrade={openAnalyticsUpgrade}
+              />
+            ) : null}
           </div>
         </article>
       </section>
@@ -2134,17 +2277,13 @@ function NewsSelect({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="analytics-select">
-      <span>{label}</span>
-      <select onChange={(event) => onChange(event.target.value)} value={value}>
-        <option value="__all__">All</option>
-        {values.map((item) => (
-          <option key={item} value={item}>
-            {label === "Event" ? eventLabel(item) : label === "Signal" ? signalTierLabel(item) : item}
-          </option>
-        ))}
-      </select>
-    </label>
+    <SinglePopoverSelect
+      formatValue={(item) => (label === "Event" ? eventLabel(item) : label === "Signal" ? signalTierLabel(item) : item)}
+      label={label}
+      onChange={onChange}
+      value={value}
+      values={values}
+    />
   );
 }
 
@@ -2153,11 +2292,13 @@ function NewsPage({
   graph,
   onSelectCompany,
   isFreePreview,
+  onUpgrade,
 }: {
   eventFeed: MarketEventFeed | null;
   graph: MarketGraph;
   onSelectCompany: (node: MarketNode) => void;
   isFreePreview: boolean;
+  onUpgrade: (prompt: UpgradePrompt) => void;
 }) {
   const [eventType, setEventType] = useState("__all__");
   const [region, setRegion] = useState("__all__");
@@ -2205,6 +2346,11 @@ function NewsPage({
   const visibleFunding = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
   const visibleEvents = isFreePreview ? events.slice(0, FREE_PREVIEW_LIMITS.newsFeedRows) : events;
   const visibleIpoEvents = isFreePreview ? ipoEvents.slice(0, FREE_PREVIEW_LIMITS.newsIpoRows) : ipoEvents;
+  const openNewsUpgrade = () => onUpgrade({
+    feature: "Full market feed",
+    title: "Follow every signal, not just the highlights",
+    body: "Starter unlocks the full event feed, IPO board, and deeper monitoring signals for regular market tracking.",
+  });
 
   if (!eventFeed) {
     return <main className="news-page"><div className="loading">Loading market events...</div></main>;
@@ -2217,7 +2363,6 @@ function NewsPage({
           <div className="eyebrow">Market monitor</div>
           <h1>AI ecosystem news</h1>
           <p>{eventFeed.metadata.scope_note}</p>
-          {isFreePreview ? <p className="preview-note">Free preview: featured events only. Upgrade for the full feed and search depth.</p> : null}
         </div>
         <div className="analytics-filters news-filters">
           <NewsSelect label="Signal" onChange={setSignalTier} value={signalTier} values={eventFeed.facets.signal_tiers} />
@@ -2309,6 +2454,12 @@ function NewsPage({
                 </div>
               );
             })}
+            {isFreePreview && events.length > visibleEvents.length ? (
+              <LockedUpgradeRow
+                label={`Unlock ${formatCount(events.length - visibleEvents.length)} more signals`}
+                onUpgrade={openNewsUpgrade}
+              />
+            ) : null}
           </div>
         </article>
       </section>
@@ -2332,6 +2483,12 @@ function NewsPage({
                 <small>{event.summary}</small>
               </div>
             ))}
+            {isFreePreview && ipoEvents.length > visibleIpoEvents.length ? (
+              <LockedUpgradeRow
+                label={`Unlock ${formatCount(ipoEvents.length - visibleIpoEvents.length)} more IPO signals`}
+                onUpgrade={openNewsUpgrade}
+              />
+            ) : null}
           </div>
         </article>
       </section>
@@ -2457,8 +2614,8 @@ function AccountPage({
 
   if (!session) {
     return (
-      <main className="account-page">
-        <section className="account-panel">
+      <main className="account-page" onMouseDown={onBack}>
+        <section className="account-panel" onMouseDown={(event) => event.stopPropagation()}>
           <div>
             <span>Profile</span>
             <h1>Sign in to manage your plan.</h1>
@@ -2477,17 +2634,14 @@ function AccountPage({
   const hasPaidPlan = currentPlan === "starter" || currentPlan === "pro";
 
   return (
-    <main className="account-page">
-      <section className="account-panel">
+    <main className="account-page" onMouseDown={onBack}>
+      <section className="account-panel" onMouseDown={(event) => event.stopPropagation()}>
         <div className="account-header">
           <div>
             <span>Profile</span>
             <h1>Your account</h1>
             <p>{session.user.email}</p>
           </div>
-          <button className="account-back" onClick={onBack} type="button">
-            Back to graph
-          </button>
           <div className="account-balance">
             <span>Ask allowance</span>
             <strong>{usage ? formatCount(creditsRemaining) : "..."}</strong>
@@ -2893,6 +3047,7 @@ export default function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
   const [session, setSession] = useState<SupabaseSession | null>(null);
   const [usage, setUsage] = useState<AskUsage | null>(null);
+  const [upgradePrompt, setUpgradePrompt] = useState<UpgradePrompt | null>(null);
   const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [postLoginAction, setPostLoginAction] = useState<"ask" | null>(null);
   const [graphViewportSignal, setGraphViewportSignal] = useState(0);
@@ -3017,6 +3172,12 @@ export default function App() {
     setDrawerMode((current) => (current === "ask" ? null : "ask"));
   }, [openLogin, session]);
 
+  const openGraphUpgrade = () => setUpgradePrompt({
+    feature: "Full graph",
+    title: "Unlock the full network",
+    body: "Starter removes preview caps so you can expand peers, investors, rounds, and regional relationships without the shallow preview limit.",
+  });
+
   const startDrawerResize = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const startX = event.clientX;
@@ -3123,7 +3284,13 @@ export default function App() {
       ) : view === "admin" ? (
         <AdminEventsPage session={session} onLoginRequired={() => openLogin()} />
       ) : view === "news" ? (
-        <NewsPage eventFeed={eventFeed} graph={graph} isFreePreview={isFreePreview} onSelectCompany={selectNodeAndOpenGraph} />
+        <NewsPage
+          eventFeed={eventFeed}
+          graph={graph}
+          isFreePreview={isFreePreview}
+          onSelectCompany={selectNodeAndOpenGraph}
+          onUpgrade={setUpgradePrompt}
+        />
       ) : view === "analytics" ? (
         <AnalyticsPage
           filters={analyticsFilters}
@@ -3132,6 +3299,7 @@ export default function App() {
           onSelectNode={selectNodeAndOpenGraph}
           onSelectRound={selectNodeAndOpenGraph}
           onSelectSlice={selectSliceAndOpenGraph}
+          onUpgrade={setUpgradePrompt}
           setFilters={setAnalyticsFilters}
         />
       ) : (
@@ -3158,7 +3326,6 @@ export default function App() {
             years={years}
           />
           <DomainNavigator graph={graph} onSelect={(node) => handleSelect(node)} />
-          {isFreePreview ? <div className="preview-note graph-note">Free preview mode: the graph stays shallow until you upgrade.</div> : null}
           <div className="graph-action-rail">
             <div className="rail-group" aria-label="Graph layout">
               <span>View</span>
@@ -3215,6 +3382,14 @@ export default function App() {
                 ASK AI
               </button>
             </div>
+            {isFreePreview ? (
+              <div className="rail-group" aria-label="Locked graph features">
+                <span>Unlock</span>
+                <button onClick={openGraphUpgrade} title="Unlock full graph exploration" type="button">
+                  Full network
+                </button>
+              </div>
+            ) : null}
           </div>
           <GraphView
             edges={neighborhood.edges}
@@ -3270,6 +3445,16 @@ export default function App() {
       ) : null}
       </>
       )}
+      {upgradePrompt ? (
+        <UpgradePromptModal
+          prompt={upgradePrompt}
+          onClose={() => setUpgradePrompt(null)}
+          onViewPlans={() => {
+            setUpgradePrompt(null);
+            setView("account");
+          }}
+        />
+      ) : null}
     </div>
   );
 }
