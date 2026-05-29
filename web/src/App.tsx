@@ -2331,10 +2331,8 @@ function NewsPage({
 }) {
   const [eventType, setEventType] = useState("__all__");
   const [region, setRegion] = useState("__all__");
-  const [status, setStatus] = useState("__all__");
   const [signalTier, setSignalTier] = useState("__all__");
   const [query, setQuery] = useState("");
-  const [mode, setMode] = useState<"feed" | "ipo">("feed");
 
   const companyByName = useMemo(() => {
     const mapping = new Map<string, MarketNode>();
@@ -2346,9 +2344,9 @@ function NewsPage({
 
   const events = useMemo(() => {
     return (eventFeed?.events || []).filter((event) => {
+      if (event.status === "staged" || event.status === "rejected") return false;
       if (eventType !== "__all__" && event.event_type !== eventType) return false;
       if (region !== "__all__" && event.region !== region) return false;
-      if (status !== "__all__" && event.status !== status) return false;
       if (signalTier !== "__all__" && event.signal_tier !== signalTier) return false;
       const text = [
         event.company_name,
@@ -2365,20 +2363,20 @@ function NewsPage({
         event.status,
       ].join(" ").toLowerCase();
       return text.includes(query.toLowerCase().trim());
-    });
-  }, [eventFeed, eventType, query, region, signalTier, status]);
+    }).sort((left, right) => String(right.event_date || "").localeCompare(String(left.event_date || "")));
+  }, [eventFeed, eventType, query, region, signalTier]);
 
   const ipoEvents = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing");
   const coreEvents = events.filter((event) => event.signal_tier === "core_signal");
   const watchlistEvents = events.filter((event) => event.signal_tier === "watchlist_signal");
-  const reviewEvents = events.filter((event) => event.signal_tier === "review_queue");
+  const fundingEvents = events.filter((event) => event.event_type === "funding_round" || event.event_type === "strategic_investment");
   const visibleFunding = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
+  const latestSignalDate = events[0]?.event_date || "n/a";
   const visibleEvents = isFreePreview ? events.slice(0, FREE_PREVIEW_LIMITS.newsFeedRows) : events;
-  const visibleIpoEvents = isFreePreview ? ipoEvents.slice(0, FREE_PREVIEW_LIMITS.newsIpoRows) : ipoEvents;
   const openNewsUpgrade = () => onUpgrade({
     feature: "Full market feed",
-    title: "Follow every signal, not just the highlights",
-    body: "Starter unlocks the full event feed, IPO board, and deeper monitoring signals for regular market tracking.",
+    title: "Follow the full signal stream",
+    body: "Starter unlocks the complete market feed, source links, graph jumps, and deeper monitoring signals for regular market tracking.",
   });
 
   if (!eventFeed) {
@@ -2390,29 +2388,28 @@ function NewsPage({
       <header className="analytics-header news-header">
         <div>
           <div className="eyebrow">Market monitor</div>
-          <h1>AI ecosystem news</h1>
+          <h1>Market signals</h1>
           <p>{eventFeed.metadata.scope_note}</p>
         </div>
         <div className="analytics-filters news-filters">
           <NewsSelect label="Signal" onChange={setSignalTier} value={signalTier} values={eventFeed.facets.signal_tiers} />
           <NewsSelect label="Event" onChange={setEventType} value={eventType} values={eventFeed.facets.event_types} />
           <NewsSelect label="Region" onChange={setRegion} value={region} values={eventFeed.facets.regions} />
-          <NewsSelect label="Status" onChange={setStatus} value={status} values={eventFeed.facets.statuses} />
         </div>
       </header>
 
       <section className="analytics-kpis">
         <div>
+          <span>Latest signal</span>
+          <strong>{latestSignalDate}</strong>
+        </div>
+        <div>
           <span>Core signals</span>
           <strong>{formatCount(coreEvents.length)}</strong>
         </div>
         <div>
-          <span>Watchlist</span>
-          <strong>{formatCount(watchlistEvents.length)}</strong>
-        </div>
-        <div>
-          <span>Review queue</span>
-          <strong>{formatCount(reviewEvents.length)}</strong>
+          <span>Funding signals</span>
+          <strong>{formatCount(fundingEvents.length)}</strong>
         </div>
         <div>
           <span>Linked capital</span>
@@ -2421,13 +2418,9 @@ function NewsPage({
       </section>
 
       <div className="news-mode-row">
-        <div className="segmented-control news-mode" aria-label="News mode">
-          <button className={mode === "feed" ? "active" : ""} onClick={() => setMode("feed")} type="button">
-            Event feed
-          </button>
-          <button className={mode === "ipo" ? "active" : ""} onClick={() => setMode("ipo")} type="button">
-            IPO / DPO board
-          </button>
+        <div className="news-feed-summary">
+          <strong>{formatCount(events.length)} signals</strong>
+          <span>{formatCount(ipoEvents.length)} IPO/public-market items · {formatCount(watchlistEvents.length)} watchlist items</span>
         </div>
         <label className="news-search">
           <span>Search news</span>
@@ -2439,12 +2432,11 @@ function NewsPage({
         </label>
       </div>
 
-      {mode === "feed" ? (
       <section className="news-layout single">
         <article className="analytics-card news-feed-card">
-          <h2>Event feed</h2>
+          <h2>Latest signals</h2>
           <div className="news-feed">
-            {visibleEvents.map((event) => {
+            {visibleEvents.length ? visibleEvents.map((event) => {
               const company = companyByName.get(event.company_name.toLowerCase());
               return (
                 <div className="news-item" key={event.event_id}>
@@ -2453,17 +2445,7 @@ function NewsPage({
                       <span>{event.event_date}</span>
                       <b className={`signal-${event.signal_tier}`}>{signalTierLabel(event.signal_tier)}</b>
                       <b>{eventLabel(event.event_type)}</b>
-                      <em
-                        className={
-                          event.status === "approved"
-                            ? "status-approved"
-                            : event.status === "auto_ingested"
-                              ? "status-auto"
-                              : "status-review"
-                        }
-                      >
-                        {event.status.replace("_", " ")}
-                      </em>
+                      <em>{event.source_type.replace("_", " ")}</em>
                     </div>
                     <h3>{event.company_name}</h3>
                     <p>{event.summary}</p>
@@ -2482,7 +2464,7 @@ function NewsPage({
                   </div>
                 </div>
               );
-            })}
+            }) : <p className="news-empty">No market signals match the current filters.</p>}
             {isFreePreview && events.length > visibleEvents.length ? (
               <LockedUpgradeRow
                 label={`Unlock ${formatCount(events.length - visibleEvents.length)} more signals`}
@@ -2492,36 +2474,6 @@ function NewsPage({
           </div>
         </article>
       </section>
-      ) : (
-      <section className="news-layout single">
-        <article className="analytics-card ipo-board-card">
-          <h2>IPO / DPO watch board</h2>
-          <div className="ipo-board">
-            <div className="ipo-board-head">
-              <span>Company</span>
-              <span>Status</span>
-              <span>Region</span>
-              <span>Valuation</span>
-            </div>
-            {visibleIpoEvents.map((event) => (
-              <div className="ipo-board-row" key={event.event_id}>
-                <span>{event.company_name}</span>
-                <strong>{eventLabel(event.event_type)}</strong>
-                <span>{event.region}</span>
-                <span>{event.valuation_usd ? formatUsd(Number(event.valuation_usd)) : "n/a"}</span>
-                <small>{event.summary}</small>
-              </div>
-            ))}
-            {isFreePreview && ipoEvents.length > visibleIpoEvents.length ? (
-              <LockedUpgradeRow
-                label={`Unlock ${formatCount(ipoEvents.length - visibleIpoEvents.length)} more IPO signals`}
-                onUpgrade={openNewsUpgrade}
-              />
-            ) : null}
-          </div>
-        </article>
-      </section>
-      )}
     </main>
   );
 }
@@ -3198,12 +3150,23 @@ export default function App() {
   }, [session?.access_token]);
 
   useEffect(() => {
-    fetch("/data/market_events.json")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload: MarketEventFeed | null) => {
-        if (payload) setEventFeed(payload);
-      })
-      .catch(() => setEventFeed(null));
+    let active = true;
+    const loadMarketEvents = () => {
+      fetch(`/data/market_events.json?ts=${Date.now()}`, { cache: "no-store" })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((payload: MarketEventFeed | null) => {
+          if (active && payload) setEventFeed(payload);
+        })
+        .catch(() => {
+          if (active) setEventFeed(null);
+        });
+    };
+    loadMarketEvents();
+    const interval = window.setInterval(loadMarketEvents, 5 * 60 * 1000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
   }, []);
 
   const index = useMemo(() => (graph ? buildIndex(graph) : undefined), [graph]);
