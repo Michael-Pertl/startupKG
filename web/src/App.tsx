@@ -1189,9 +1189,13 @@ function DomainNavigator({
 function ExpansionControls({
   expansion,
   setExpansion,
+  locked,
+  onLocked,
 }: {
   expansion: Expansion;
   setExpansion: (expansion: Expansion) => void;
+  locked: boolean;
+  onLocked: () => void;
 }) {
   const controls: Array<[keyof Expansion, string]> = [
     ["rounds", "Funding events"],
@@ -1205,9 +1209,15 @@ function ExpansionControls({
       <div className="chip-row">
         {controls.map(([key, label]) => (
           <button
-            className={expansion[key] ? "chip selected" : "chip"}
+            className={[expansion[key] ? "chip selected" : "chip", locked ? "locked" : ""].join(" ")}
             key={key}
-            onClick={() => setExpansion({ ...expansion, [key]: !expansion[key] })}
+            onClick={() => {
+              if (locked) {
+                onLocked();
+                return;
+              }
+              setExpansion({ ...expansion, [key]: !expansion[key] });
+            }}
             type="button"
           >
             {label}
@@ -2788,6 +2798,17 @@ function AdminEventsPage({ session, onLoginRequired }: { session: SupabaseSessio
     }
   };
 
+  const statusOptions = [
+    "needs_review",
+    "auto_ingested",
+    "approved",
+    "promotion_ready",
+    "rejected",
+  ];
+  const statusLabel = (value: string) => value ? value.replace(/_/g, " ") : "All";
+  const fundingInView = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
+  const highConfidenceCount = events.filter((event) => event.confidence === "high").length;
+
   if (!session) {
     return (
       <main className="admin-page">
@@ -2810,38 +2831,62 @@ function AdminEventsPage({ session, onLoginRequired }: { session: SupabaseSessio
             <h1>Market event candidates</h1>
             <p>Review auto-ingested events before they are promoted into the curated CSV graph dataset.</p>
           </div>
-          <label>
-            Status
-            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-              <option value="needs_review">Needs review</option>
-              <option value="auto_ingested">Auto ingested</option>
-              <option value="approved">Approved</option>
-              <option value="promotion_ready">Promotion ready</option>
-              <option value="rejected">Rejected</option>
-              <option value="">All</option>
-            </select>
-          </label>
+          <div className="admin-filter">
+            <SinglePopoverSelect
+              formatValue={statusLabel}
+              label="Status"
+              onChange={setStatusFilter}
+              value={statusFilter}
+              values={statusOptions}
+            />
+          </div>
+        </div>
+        <div className="admin-summary">
+          <div>
+            <span>Queue</span>
+            <strong>{formatCount(events.length)}</strong>
+          </div>
+          <div>
+            <span>High confidence</span>
+            <strong>{formatCount(highConfidenceCount)}</strong>
+          </div>
+          <div>
+            <span>Linked amount</span>
+            <strong>{formatUsd(fundingInView)}</strong>
+          </div>
         </div>
         {message ? <p className="admin-message">{message}</p> : null}
         <div className="admin-event-list">
           {events.length ? events.map((event) => (
             <article className="admin-event-card" key={event.candidate_id}>
-              <div>
-                <span>{eventLabel(event.event_type)} · {event.confidence}</span>
+              <div className="admin-event-main">
+                <div className="admin-event-kicker">
+                  <span>{eventLabel(event.event_type)}</span>
+                  <span>{event.confidence}</span>
+                  <span>{event.status.replace(/_/g, " ")}</span>
+                </div>
                 <h2>{event.company_name}</h2>
                 <p>{event.summary || event.notes || "No summary available."}</p>
               </div>
               <div className="admin-event-meta">
-                <span>{event.event_date || event.year || "No date"}</span>
-                <span>{event.region || event.country || "No region"}</span>
-                <span>{event.amount_usd ? formatUsd(Number(event.amount_usd)) : "No amount"}</span>
-                <strong>{event.status.replace(/_/g, " ")}</strong>
+                <div>
+                  <span>Date</span>
+                  <strong>{event.event_date || event.year || "No date"}</strong>
+                </div>
+                <div>
+                  <span>Region</span>
+                  <strong>{event.region || event.country || "No region"}</strong>
+                </div>
+                <div>
+                  <span>Amount</span>
+                  <strong>{event.amount_usd ? formatUsd(Number(event.amount_usd)) : "No amount"}</strong>
+                </div>
               </div>
               <div className="admin-event-actions">
-                <a href={event.source_url} rel="noreferrer" target="_blank">Source</a>
-                <button disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "approved")} type="button">Approve</button>
+                <button className="admin-action-primary" disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "approved")} type="button">Approve</button>
                 <button disabled={Boolean(busyId)} onClick={() => markPromotionReady(event)} type="button">Ready for CSV</button>
-                <button disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "rejected")} type="button">Reject</button>
+                <a href={event.source_url} rel="noreferrer" target="_blank">Source</a>
+                <button className="admin-action-muted" disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "rejected")} type="button">Reject</button>
               </div>
             </article>
           )) : <p className="admin-empty">No candidates for this filter.</p>}
@@ -3175,7 +3220,7 @@ export default function App() {
   const openGraphUpgrade = () => setUpgradePrompt({
     feature: "Full graph",
     title: "Unlock the full network",
-    body: "Starter removes preview caps so you can expand peers, investors, rounds, and regional relationships without the shallow preview limit.",
+    body: "Starter unlocks graph context controls for rounds, investors, geography, and peer companies, with preview caps removed across the network.",
   });
 
   const startDrawerResize = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
@@ -3383,13 +3428,22 @@ export default function App() {
               </button>
             </div>
             {isFreePreview ? (
-              <div className="rail-group" aria-label="Locked graph features">
-                <span>Unlock</span>
-                <button onClick={openGraphUpgrade} title="Unlock full graph exploration" type="button">
+              <div className="rail-group graph-context-locked" aria-label="Locked graph context">
+                <span>Context</span>
+                <button onClick={openGraphUpgrade} title="Unlock graph context controls with Starter" type="button">
                   Full network
                 </button>
               </div>
-            ) : null}
+            ) : (
+              <div className="rail-context-panel">
+                <ExpansionControls
+                  expansion={expansion}
+                  locked={false}
+                  onLocked={openGraphUpgrade}
+                  setExpansion={setExpansion}
+                />
+              </div>
+            )}
           </div>
           <GraphView
             edges={neighborhood.edges}
