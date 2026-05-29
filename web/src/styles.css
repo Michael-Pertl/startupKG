@@ -1620,12 +1620,13 @@ a {
 }
 
 .graph-action-rail {
-  align-items: center;
+  align-items: stretch;
   background: rgba(14, 16, 15, 0.82);
   border: 1px solid var(--border-soft);
   border-radius: 3px;
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
   padding: 7px;
   position: absolute;
   right: 24px;
@@ -1633,12 +1634,21 @@ a {
   z-index: 4;
 }
 
+.rail-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
 .rail-group {
   align-items: center;
-  border-right: 1px solid var(--border-soft);
   display: flex;
   gap: 3px;
-  padding-right: 8px;
+}
+
+.rail-row .rail-group + .rail-group {
+  border-left: 1px solid var(--border-soft);
+  padding-left: 8px;
 }
 
 .rail-group span {
@@ -1686,13 +1696,7 @@ a {
   color: var(--text-strong);
 }
 
-.rail-context-panel .filter-block {
-  border-top: 0;
-  margin-top: 0;
-  padding-top: 0;
-}
-
-.rail-context-panel .filter-title {
+.rail-context-title {
   color: var(--muted-2);
   display: inline-block;
   font-size: 9px;
@@ -1703,10 +1707,16 @@ a {
 
 .rail-context-panel {
   align-items: center;
-  border-right: 1px solid var(--border-soft);
+  border-top: 1px solid var(--border-soft);
   display: flex;
   gap: 4px;
-  padding-right: 8px;
+  padding-top: 6px;
+}
+
+.rail-context-controls {
+  align-items: center;
+  display: flex;
+  gap: 0;
 }
 
 .rail-context-panel .chip-row {
@@ -1721,6 +1731,13 @@ a {
   min-height: 28px;
   padding: 4px 8px;
   text-transform: uppercase;
+}
+
+.rail-context-panel .chip.disabled,
+.rail-context-panel .chip:disabled {
+  color: var(--muted-2);
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .rail-group.graph-context-locked button {

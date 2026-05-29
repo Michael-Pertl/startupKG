@@ -323,6 +323,10 @@ function buildNeighborhood(
   const edgeIds = new Set<string>();
   const nodes: MarketNode[] = [];
   const edges: MarketEdge[] = [];
+  const showRounds = expansion.rounds;
+  const showInvestors = expansion.rounds && expansion.investors;
+  const showGeography = expansion.geography;
+  const showPeers = expansion.geography && expansion.peers;
 
   addNode(nodeIds, nodes, selected);
 
@@ -337,11 +341,11 @@ function buildNeighborhood(
 
   if (selected.kind === "startup") {
     const startupEdges = incident.filter((edge) => edge.kind === "headquartered_in" || edge.kind === "operates_in");
-    if (expansion.geography) startupEdges.forEach(addIncidentEdge);
+    if (showGeography) startupEdges.forEach(addIncidentEdge);
 
     const roundEdges = (index.startupRounds.get(selected.id) || [])
       .sort((left, right) => roundValue(right, index) - roundValue(left, index))
-      .slice(0, expansion.rounds ? (isFreePreview ? FREE_PREVIEW_LIMITS.graphRounds : 12) : 0);
+      .slice(0, showRounds ? (isFreePreview ? FREE_PREVIEW_LIMITS.graphRounds : 12) : 0);
 
     for (const edge of roundEdges) {
       const round = index.nodeById.get(edge.target);
@@ -349,7 +353,7 @@ function buildNeighborhood(
       addNode(nodeIds, nodes, round);
       addEdge(edgeIds, edges, edge);
 
-      if (expansion.investors) {
+      if (showInvestors) {
         for (const roundEdge of index.edgesByNode.get(round.id) || []) {
           if (roundEdge.kind !== "participated") continue;
           if (isFreePreview && nodes.filter((node) => node.kind === "investor").length >= FREE_PREVIEW_LIMITS.graphInvestors) {
@@ -361,7 +365,7 @@ function buildNeighborhood(
       }
     }
 
-    if (expansion.peers && !isFreePreview) {
+    if (showPeers && !isFreePreview) {
       const peers = graph.nodes
         .filter(
           (node) =>
@@ -416,7 +420,7 @@ function buildNeighborhood(
     for (const { edge, startup } of startupEdges) {
       addNode(nodeIds, nodes, startup);
       addEdge(edgeIds, edges, edge);
-      if (expansion.rounds) {
+      if (showRounds) {
         const topRound = (index.startupRounds.get(startup.id) || [])
           .sort((left, right) => roundValue(right, index) - roundValue(left, index))
           .find((roundEdge) => {
@@ -444,7 +448,7 @@ function buildNeighborhood(
       addNode(nodeIds, nodes, startup);
       addEdge(edgeIds, edges, raised);
 
-      if (expansion.investors) {
+      if (showInvestors) {
         for (const roundEdge of index.edgesByNode.get(round.id) || []) {
           if (roundEdge.kind !== "participated") continue;
           addNode(nodeIds, nodes, index.nodeById.get(roundEdge.source));
@@ -452,7 +456,7 @@ function buildNeighborhood(
         }
       }
 
-      if (startup && expansion.geography) {
+      if (startup && showGeography) {
         for (const startupEdge of index.edgesByNode.get(startup.id) || []) {
           if (startupEdge.kind !== "headquartered_in" && startupEdge.kind !== "operates_in") continue;
           addNode(nodeIds, nodes, index.nodeById.get(otherEnd(startupEdge, startup.id)));
@@ -1197,32 +1201,47 @@ function ExpansionControls({
   locked: boolean;
   onLocked: () => void;
 }) {
-  const controls: Array<[keyof Expansion, string]> = [
-    ["rounds", "Funding events"],
-    ["investors", "Investors"],
-    ["geography", "Country/domain"],
-    ["peers", "Peers"],
+  const controls: Array<{ key: keyof Expansion; label: string; dependsOn?: keyof Expansion; title: string }> = [
+    { key: "rounds", label: "Rounds", title: "Show funding rounds connected to the selected entity" },
+    { key: "investors", label: "Investors", dependsOn: "rounds", title: "Requires funding rounds because investors connect through rounds" },
+    { key: "geography", label: "Country/domain", title: "Show country and domain context" },
+    { key: "peers", label: "Peers", dependsOn: "geography", title: "Requires country/domain context for comparable companies" },
   ];
+  const toggleExpansion = (key: keyof Expansion) => {
+    const next = { ...expansion, [key]: !expansion[key] };
+    if (key === "rounds" && !next.rounds) next.investors = false;
+    if (key === "geography" && !next.geography) next.peers = false;
+    setExpansion(next);
+  };
   return (
-    <section className="filter-block">
-      <div className="filter-title">Expand neighborhood</div>
+    <section className="rail-context-controls">
+      <div className="rail-context-title">Context</div>
       <div className="chip-row">
-        {controls.map(([key, label]) => (
+        {controls.map(({ key, label, dependsOn, title }) => {
+          const disabled = Boolean(dependsOn && !expansion[dependsOn]);
+          return (
           <button
-            className={[expansion[key] ? "chip selected" : "chip", locked ? "locked" : ""].join(" ")}
+            className={[
+              expansion[key] ? "chip selected" : "chip",
+              locked ? "locked" : "",
+              disabled ? "disabled" : "",
+            ].join(" ")}
+            disabled={!locked && disabled}
             key={key}
             onClick={() => {
               if (locked) {
                 onLocked();
                 return;
               }
-              setExpansion({ ...expansion, [key]: !expansion[key] });
+              if (!disabled) toggleExpansion(key);
             }}
+            title={disabled && dependsOn ? title : undefined}
             type="button"
           >
             {label}
           </button>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -3372,63 +3391,65 @@ export default function App() {
           />
           <DomainNavigator graph={graph} onSelect={(node) => handleSelect(node)} />
           <div className="graph-action-rail">
-            <div className="rail-group" aria-label="Graph layout">
-              <span>View</span>
-              <button
-                className={layoutMode === "flow" ? "active" : ""}
-                onClick={() => setLayoutMode("flow")}
-                aria-label="Guided map layout"
-                title="Arrange companies, investors, and rounds in readable layers"
-                type="button"
-              >
-                <svg aria-hidden="true" viewBox="0 0 24 24">
-                  <g transform="rotate(180 12 12)">
-                  <circle cx="5" cy="6" r="1.8" />
-                  <circle cx="5" cy="12" r="1.8" />
-                  <circle cx="5" cy="18" r="1.8" />
-                  <path d="M7 6h5c2.8 0 4.6 1.3 5.8 3.7M7 12h9.5M7 18h5c2.8 0 4.6-1.3 5.8-3.7" />
-                  <path d="M16 8l3.2 4-3.2 4" />
-                  </g>
-                </svg>
-              </button>
-              <button
-                className={layoutMode === "network" ? "active" : ""}
-                onClick={() => setLayoutMode("network")}
-                aria-label="Network map layout"
-                title="Show the graph as a force-directed relationship network"
-                type="button"
-              >
-                <svg aria-hidden="true" viewBox="0 0 24 24">
-                  <circle cx="6" cy="7" r="2.5" />
-                  <circle cx="18" cy="8" r="2.5" />
-                  <circle cx="10" cy="18" r="2.5" />
-                  <path d="M8.3 8.1l7.4-.2M7.1 9.2l2 6.5M16.4 10.2l-4.8 6" />
-                </svg>
-              </button>
-            </div>
-            <div className="rail-group" aria-label="Side panel">
-              <span>Panel</span>
-              <button
-                aria-label="Open selected entity details"
-                className={drawerMode === "details" ? "active" : ""}
-                onClick={() => setDrawerMode(drawerMode === "details" ? null : "details")}
-                title="Show facts, connected entities, and evidence for the selected item"
-                type="button"
-              >
-                Details
-              </button>
-              <button
-                aria-label="Ask questions about the selected graph context"
-                className={drawerMode === "ask" ? "active" : ""}
-                onClick={openAskPanel}
-                title="Ask the assistant about the selected entity and visible graph"
-                type="button"
-              >
-                ASK AI
-              </button>
+            <div className="rail-row">
+              <div className="rail-group" aria-label="Graph layout">
+                <span>View</span>
+                <button
+                  className={layoutMode === "flow" ? "active" : ""}
+                  onClick={() => setLayoutMode("flow")}
+                  aria-label="Guided map layout"
+                  title="Arrange companies, investors, and rounds in readable layers"
+                  type="button"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <g transform="rotate(180 12 12)">
+                    <circle cx="5" cy="6" r="1.8" />
+                    <circle cx="5" cy="12" r="1.8" />
+                    <circle cx="5" cy="18" r="1.8" />
+                    <path d="M7 6h5c2.8 0 4.6 1.3 5.8 3.7M7 12h9.5M7 18h5c2.8 0 4.6-1.3 5.8-3.7" />
+                    <path d="M16 8l3.2 4-3.2 4" />
+                    </g>
+                  </svg>
+                </button>
+                <button
+                  className={layoutMode === "network" ? "active" : ""}
+                  onClick={() => setLayoutMode("network")}
+                  aria-label="Network map layout"
+                  title="Show the graph as a force-directed relationship network"
+                  type="button"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <circle cx="6" cy="7" r="2.5" />
+                    <circle cx="18" cy="8" r="2.5" />
+                    <circle cx="10" cy="18" r="2.5" />
+                    <path d="M8.3 8.1l7.4-.2M7.1 9.2l2 6.5M16.4 10.2l-4.8 6" />
+                  </svg>
+                </button>
+              </div>
+              <div className="rail-group" aria-label="Side panel">
+                <span>Panel</span>
+                <button
+                  aria-label="Open selected entity details"
+                  className={drawerMode === "details" ? "active" : ""}
+                  onClick={() => setDrawerMode(drawerMode === "details" ? null : "details")}
+                  title="Show facts, connected entities, and evidence for the selected item"
+                  type="button"
+                >
+                  Details
+                </button>
+                <button
+                  aria-label="Ask questions about the selected graph context"
+                  className={drawerMode === "ask" ? "active" : ""}
+                  onClick={openAskPanel}
+                  title="Ask the assistant about the selected entity and visible graph"
+                  type="button"
+                >
+                  ASK AI
+                </button>
+              </div>
             </div>
             {isFreePreview ? (
-              <div className="rail-group graph-context-locked" aria-label="Locked graph context">
+              <div className="rail-group graph-context-locked rail-row" aria-label="Locked graph context">
                 <span>Context</span>
                 <button onClick={openGraphUpgrade} title="Unlock graph context controls with Starter" type="button">
                   Full network
