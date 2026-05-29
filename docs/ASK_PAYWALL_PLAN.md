@@ -47,19 +47,20 @@ Initial public-facing plans:
 
 ```text
 Free
-- Limited graph preview
+- Graph preview
 - Selected analytics and news
-- 10 Ask questions total
+- 5 Ask questions total
 
 Starter, EUR 4.99/month
 - Full graph access
 - Full analytics and news
 - 75 Ask questions/month
+- Recommended for most users
 
 Pro, EUR 19.99/month
-- Full graph access
-- Full analytics and news
+- Everything in Starter
 - Unlimited Ask under fair use
+- Priority access to new market-event signals
 ```
 
 The Pro plan should still have an internal fair-use cap, for example 500 Ask

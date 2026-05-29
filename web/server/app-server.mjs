@@ -481,7 +481,7 @@ async function updateSubscriptionProfile({
       stripe_customer_id: customerId || null,
       stripe_subscription_id: subscriptionId || null,
       current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null,
-      monthly_ask_limit: effectivePlan?.monthly_credits || 10,
+      monthly_ask_limit: effectivePlan?.monthly_credits || 5,
       updated_at: new Date().toISOString(),
     })
     .eq("user_id", userId);
