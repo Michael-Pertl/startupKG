@@ -12,7 +12,7 @@ create table if not exists public.profiles (
   stripe_customer_id text,
   stripe_subscription_id text,
   current_period_end timestamptz,
-  monthly_ask_limit integer not null default 10 check (monthly_ask_limit >= 0),
+  monthly_ask_limit integer not null default 5 check (monthly_ask_limit >= 0),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -22,7 +22,7 @@ alter table public.profiles
   add column if not exists stripe_customer_id text,
   add column if not exists stripe_subscription_id text,
   add column if not exists current_period_end timestamptz,
-  add column if not exists monthly_ask_limit integer not null default 10;
+  add column if not exists monthly_ask_limit integer not null default 5;
 
 create table if not exists public.ask_credit_accounts (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -168,7 +168,7 @@ security definer
 set search_path = public
 as $$
 declare
-  trial_credits integer := 10;
+  trial_credits integer := 5;
 begin
   insert into public.profiles (user_id, email, display_name)
   values (new.id, new.email, coalesce(new.raw_user_meta_data->>'name', new.email))

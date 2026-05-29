@@ -132,25 +132,25 @@ const subscriptionPlans: SubscriptionPlan[] = [
     id: "free",
     label: "Free",
     price: "€0",
-    askAllowance: "10 Ask questions total",
-    description: "A focused preview for evaluating the graph and assistant.",
-    features: ["Limited graph preview", "Selected analytics and news", "Trial Ask allowance"],
+    askAllowance: "5 Ask questions total",
+    description: "A focused preview for evaluating the graph before upgrading.",
+    features: ["Graph preview", "Selected analytics and news", "Small Ask trial"],
   },
   {
     id: "starter",
     label: "Starter",
     price: "€4.99 / month",
     askAllowance: "75 Ask questions / month",
-    description: "For regular market exploration without a high monthly commitment.",
-    features: ["Full graph access", "Full analytics and news", "Monthly Ask allowance"],
+    description: "The best entry plan for regular AI market exploration.",
+    features: ["Full graph access", "Full analytics and news", "Monthly Ask allowance", "Recommended for most users"],
   },
   {
     id: "pro",
     label: "Pro",
     price: "€19.99 / month",
     askAllowance: "Unlimited Ask under fair use",
-    description: "For active users who want broad graph exploration and frequent Ask usage.",
-    features: ["Full graph access", "Full analytics and news", "Fair-use protected Ask access"],
+    description: "For power users who follow market signals frequently.",
+    features: ["Everything in Starter", "Fair-use protected Ask access", "Priority access to new market-event signals"],
   },
 ];
 
@@ -1633,38 +1633,61 @@ const breakdownLabels: Record<AnalyticsBreakdown, string> = {
 
 function AnalyticsSelect({
   label,
-  value,
+  selected,
   values,
   onChange,
-  allowAll = true,
 }: {
   label: string;
-  value: string;
+  selected: string[];
   values: string[];
-  onChange: (value: string) => void;
-  allowAll?: boolean;
+  onChange: (value: string[]) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const allSelected = selected.length === values.length;
+  const selectionLabel = allSelected
+    ? "All"
+    : selected.length === 1
+      ? selected[0]
+      : `${selected.length} selected`;
+  const toggleValue = (value: string) => {
+    const next = selected.includes(value)
+      ? selected.filter((item) => item !== value)
+      : [...selected, value];
+    onChange(next.length ? next : values);
+  };
   return (
-    <label className="analytics-select">
+    <div className="analytics-select">
       <span>{label}</span>
-      <select onChange={(event) => onChange(event.target.value)} value={value}>
-        {allowAll ? <option value="__all__">All</option> : null}
-        {values.map((item) => (
-          <option key={item} value={item}>
-            {item}
-          </option>
-        ))}
-      </select>
-    </label>
+      <button
+        aria-expanded={open}
+        className="analytics-multi-trigger"
+        onClick={() => setOpen((current) => !current)}
+        type="button"
+      >
+        {selectionLabel}
+      </button>
+      {open ? (
+        <div className="analytics-multi-menu">
+          <div className="analytics-multi-actions">
+            <button onClick={() => onChange(values)} type="button">All</button>
+            <button onClick={() => onChange(values.slice(0, 1))} type="button">One</button>
+          </div>
+          <div className="analytics-multi-options">
+            {values.map((item) => (
+              <label key={item}>
+                <input
+                  checked={selected.includes(item)}
+                  onChange={() => toggleValue(item)}
+                  type="checkbox"
+                />
+                <span>{item}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
-}
-
-function setSingleOrAll(value: string, allValues: string[]): string[] {
-  return value === "__all__" ? allValues : [value];
-}
-
-function selectedValue(values: string[], allValues: string[]): string {
-  return values.length === allValues.length ? "__all__" : values[0] || "__all__";
 }
 
 function horizontalBars({
@@ -1868,32 +1891,32 @@ function AnalyticsPage({
         <div className="analytics-filters">
           <AnalyticsSelect
             label="Year"
-            onChange={(value) => setFilters({ ...filters, years: setSingleOrAll(value, graph.facets.years) })}
-            value={selectedValue(filters.years, graph.facets.years)}
+            onChange={(values) => setFilters({ ...filters, years: values })}
+            selected={filters.years}
             values={graph.facets.years}
           />
           <AnalyticsSelect
             label="Region"
-            onChange={(value) => setFilters({ ...filters, regions: setSingleOrAll(value, graph.facets.regions) })}
-            value={selectedValue(filters.regions, graph.facets.regions)}
+            onChange={(values) => setFilters({ ...filters, regions: values })}
+            selected={filters.regions}
             values={graph.facets.regions}
           />
           <AnalyticsSelect
             label="Country"
-            onChange={(value) => setFilters({ ...filters, countries: setSingleOrAll(value, graph.facets.countries) })}
-            value={selectedValue(filters.countries, graph.facets.countries)}
+            onChange={(values) => setFilters({ ...filters, countries: values })}
+            selected={filters.countries}
             values={graph.facets.countries}
           />
           <AnalyticsSelect
             label="Domain"
-            onChange={(value) => setFilters({ ...filters, domains: setSingleOrAll(value, graph.facets.domains) })}
-            value={selectedValue(filters.domains, graph.facets.domains)}
+            onChange={(values) => setFilters({ ...filters, domains: values })}
+            selected={filters.domains}
             values={graph.facets.domains}
           />
           <AnalyticsSelect
             label="Evidence"
-            onChange={(value) => setFilters({ ...filters, confidence: setSingleOrAll(value, graph.facets.confidence) })}
-            value={selectedValue(filters.confidence, graph.facets.confidence)}
+            onChange={(values) => setFilters({ ...filters, confidence: values })}
+            selected={filters.confidence}
             values={graph.facets.confidence}
           />
         </div>
@@ -2436,7 +2459,14 @@ function AccountPage({
 
         <div className="plan-grid">
           {subscriptionPlans.map((plan) => (
-            <article className={plan.id === currentPlan ? "plan-card highlighted" : "plan-card"} key={plan.id}>
+            <article
+              className={[
+                "plan-card",
+                plan.id === currentPlan ? "current" : "",
+                plan.id === "starter" && currentPlan !== "starter" ? "recommended" : "",
+              ].join(" ")}
+              key={plan.id}
+            >
               <span>{plan.label}</span>
               <h2>{plan.price}</h2>
               <strong>{plan.askAllowance}</strong>

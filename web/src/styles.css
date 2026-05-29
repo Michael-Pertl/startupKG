@@ -770,9 +770,26 @@ a {
   gap: 8px;
 }
 
-.plan-card.highlighted {
+.plan-card.current {
   border-color: var(--accent-border);
   background: var(--accent-soft);
+}
+
+.plan-card.recommended {
+  border-color: var(--accent-border);
+  position: relative;
+}
+
+.plan-card.recommended::before {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  content: "Recommended";
+  font-size: 9px;
+  font-weight: 900;
+  justify-self: start;
+  padding: 3px 6px;
+  text-transform: uppercase;
 }
 
 .plan-card:hover,
@@ -2187,6 +2204,7 @@ a {
   display: grid;
   gap: 5px;
   min-width: 0;
+  position: relative;
 }
 
 .analytics-select span {
@@ -2196,14 +2214,17 @@ a {
   text-transform: uppercase;
 }
 
-.analytics-select select {
+.analytics-select select,
+.analytics-multi-trigger {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 2px;
   color: var(--text);
+  cursor: pointer;
   min-height: 34px;
   outline: none;
   padding: 6px 28px 6px 8px;
+  text-align: left;
   width: 100%;
 }
 
@@ -2219,8 +2240,73 @@ a {
 }
 
 .analytics-select select:focus,
-.analytics-select input:focus {
+.analytics-select input:focus,
+.analytics-multi-trigger:focus,
+.analytics-multi-trigger:hover {
   border-color: var(--accent-border);
+}
+
+.analytics-multi-menu {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 42px var(--shadow);
+  display: grid;
+  gap: 8px;
+  left: 0;
+  max-height: 330px;
+  min-width: min(320px, 84vw);
+  overflow: auto;
+  padding: 8px;
+  position: absolute;
+  right: auto;
+  top: calc(100% + 6px);
+  z-index: 20;
+}
+
+.analytics-multi-actions {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.analytics-multi-actions button {
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 900;
+  min-height: 28px;
+  text-transform: uppercase;
+}
+
+.analytics-multi-options {
+  display: grid;
+  gap: 4px;
+}
+
+.analytics-multi-options label {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 28px;
+}
+
+.analytics-multi-options input {
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.analytics-multi-options span {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
 }
 
 .lens-toolbar {
