@@ -133,15 +133,15 @@ const subscriptionPlans: SubscriptionPlan[] = [
     label: "Free",
     price: "€0",
     askAllowance: "5 Ask questions total",
-    description: "A focused preview for evaluating the graph before upgrading.",
-    features: ["Graph preview", "Selected analytics and news", "Small Ask trial"],
+    description: "A focused preview for evaluating the product before upgrading.",
+    features: ["Graph preview", "Top analytics and featured news", "Small Ask trial"],
   },
   {
     id: "starter",
     label: "Starter",
     price: "€4.99 / month",
     askAllowance: "75 Ask questions / month",
-    description: "The best entry plan for regular AI market exploration.",
+    description: "Unlock the full graph, analytics, and news for regular exploration.",
     features: ["Full graph access", "Full analytics and news", "Monthly Ask allowance", "Recommended for most users"],
   },
   {
@@ -153,6 +153,16 @@ const subscriptionPlans: SubscriptionPlan[] = [
     features: ["Everything in Starter", "Fair-use protected Ask access", "Priority access to new market-event signals"],
   },
 ];
+
+const FREE_PREVIEW_LIMITS = {
+  graphRounds: 4,
+  graphInvestors: 6,
+  graphPeers: 0,
+  analyticsBars: 3,
+  analyticsEvidenceRows: 5,
+  newsFeedRows: 6,
+  newsIpoRows: 5,
+};
 
 type GraphIndex = {
   nodeById: Map<string, MarketNode>;
@@ -251,6 +261,7 @@ function buildNeighborhood(
   years: string[],
   countries: string[],
   confidence: string[],
+  isFreePreview: boolean,
 ): { nodes: MarketNode[]; edges: MarketEdge[] } {
   const nodeIds = new Set<string>();
   const edgeIds = new Set<string>();
@@ -274,7 +285,7 @@ function buildNeighborhood(
 
     const roundEdges = (index.startupRounds.get(selected.id) || [])
       .sort((left, right) => roundValue(right, index) - roundValue(left, index))
-      .slice(0, expansion.rounds ? 12 : 0);
+      .slice(0, expansion.rounds ? (isFreePreview ? FREE_PREVIEW_LIMITS.graphRounds : 12) : 0);
 
     for (const edge of roundEdges) {
       const round = index.nodeById.get(edge.target);
@@ -285,13 +296,16 @@ function buildNeighborhood(
       if (expansion.investors) {
         for (const roundEdge of index.edgesByNode.get(round.id) || []) {
           if (roundEdge.kind !== "participated") continue;
+          if (isFreePreview && nodes.filter((node) => node.kind === "investor").length >= FREE_PREVIEW_LIMITS.graphInvestors) {
+            break;
+          }
           addNode(nodeIds, nodes, index.nodeById.get(roundEdge.source));
           addEdge(edgeIds, edges, roundEdge);
         }
       }
     }
 
-    if (expansion.peers) {
+    if (expansion.peers && !isFreePreview) {
       const peers = graph.nodes
         .filter(
           (node) =>
@@ -319,7 +333,7 @@ function buildNeighborhood(
     const participationEdges = incident
       .filter((edge) => edge.kind === "participated")
       .sort((left, right) => roundValue(right, index) - roundValue(left, index))
-      .slice(0, 18);
+      .slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.graphInvestors : 18);
 
     for (const edge of participationEdges) {
       const round = index.nodeById.get(edge.target);
@@ -341,7 +355,7 @@ function buildNeighborhood(
       .filter((item): item is { edge: MarketEdge; startup: MarketNode } => item.startup?.kind === "startup")
       .filter(({ startup }) => passesStartupScope(startup, countries))
       .sort((left, right) => signal(right.startup) - signal(left.startup))
-      .slice(0, 42);
+      .slice(0, isFreePreview ? 18 : 42);
 
     for (const { edge, startup } of startupEdges) {
       addNode(nodeIds, nodes, startup);
@@ -364,7 +378,7 @@ function buildNeighborhood(
       .filter((node) => node.kind === "round" && String(node.year) === selected.label)
       .filter((round) => passesRoundScope(round, index, years, countries, confidence))
       .sort((left, right) => Number(right.amount_usd || 0) - Number(left.amount_usd || 0))
-      .slice(0, 42);
+      .slice(0, isFreePreview ? 18 : 42);
 
     for (const round of yearRounds) {
       addNode(nodeIds, nodes, round);
@@ -1643,12 +1657,35 @@ function AnalyticsSelect({
   onChange: (value: string[]) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const allSelected = selected.length === values.length;
   const selectionLabel = allSelected
     ? "All"
     : selected.length === 1
       ? selected[0]
       : `${selected.length} selected`;
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (wrapperRef.current && target && !wrapperRef.current.contains(target)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
   const toggleValue = (value: string) => {
     const next = selected.includes(value)
       ? selected.filter((item) => item !== value)
@@ -1656,7 +1693,7 @@ function AnalyticsSelect({
     onChange(next.length ? next : values);
   };
   return (
-    <div className="analytics-select">
+    <div ref={wrapperRef} className="analytics-select">
       <span>{label}</span>
       <button
         aria-expanded={open}
@@ -1740,6 +1777,7 @@ function AnalyticsPage({
   onSelectNode,
   onSelectRound,
   onSelectSlice,
+  isFreePreview,
 }: {
   graph: MarketGraph;
   filters: AnalyticsFilters;
@@ -1747,6 +1785,7 @@ function AnalyticsPage({
   onSelectNode: (node: MarketNode) => void;
   onSelectRound: (node: MarketNode) => void;
   onSelectSlice: (kind: AnalyticsBreakdown, label: string) => void;
+  isFreePreview: boolean;
 }) {
   const [activeSlice, setActiveSlice] = useState<{ kind: AnalyticsBreakdown; label: string } | null>(null);
   const [breakdown, setBreakdown] = useState<AnalyticsBreakdown>("domain");
@@ -1838,7 +1877,11 @@ function AnalyticsPage({
     activeRounds.flatMap((round) => (investorByRound.get(round.id) || []).map((node) => node.id)),
   ).size;
 
-  const breakdownRows = aggregateFunding(breakdown).slice(0, breakdown === "country" ? graph.facets.countries.length : 10);
+  const breakdownRows = aggregateFunding(breakdown).slice(0, breakdown === "country"
+    ? graph.facets.countries.length
+    : isFreePreview
+      ? FREE_PREVIEW_LIMITS.analyticsBars
+      : 10);
 
   const companyFunding = new Map<string, { node: MarketNode; value: number }>();
   filteredRounds.forEach((round) => {
@@ -1858,7 +1901,7 @@ function AnalyticsPage({
 
   const topCompanies = [...companyFunding.values()]
     .sort((left, right) => right.value - left.value)
-    .slice(0, 8)
+    .slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.analyticsBars : 8)
     .map(({ node, value }) => ({
       id: node.id,
       label: node.label,
@@ -1868,7 +1911,7 @@ function AnalyticsPage({
 
   const topInvestors = [...investorFunding.values()]
     .sort((left, right) => right.value - left.value)
-    .slice(0, 8)
+    .slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.analyticsBars : 8)
     .map(({ node, value }) => ({
       id: node.id,
       label: node.label,
@@ -1878,7 +1921,7 @@ function AnalyticsPage({
 
   const evidenceRows = [...activeRounds]
     .sort((left, right) => Number(right.amount_usd || 0) - Number(left.amount_usd || 0))
-    .slice(0, 14);
+    .slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.analyticsEvidenceRows : 14);
   const evidenceLimit = evidenceRows.length;
 
   return (
@@ -1887,6 +1930,7 @@ function AnalyticsPage({
         <div>
           <div className="eyebrow">Market dashboard</div>
           <h1>AI funding growth</h1>
+          {isFreePreview ? <p className="preview-note">Free preview: top slices only. Upgrade to unlock deeper analytics.</p> : null}
         </div>
         <div className="analytics-filters">
           <AnalyticsSelect
@@ -2108,10 +2152,12 @@ function NewsPage({
   eventFeed,
   graph,
   onSelectCompany,
+  isFreePreview,
 }: {
   eventFeed: MarketEventFeed | null;
   graph: MarketGraph;
   onSelectCompany: (node: MarketNode) => void;
+  isFreePreview: boolean;
 }) {
   const [eventType, setEventType] = useState("__all__");
   const [region, setRegion] = useState("__all__");
@@ -2157,6 +2203,8 @@ function NewsPage({
   const watchlistEvents = events.filter((event) => event.signal_tier === "watchlist_signal");
   const reviewEvents = events.filter((event) => event.signal_tier === "review_queue");
   const visibleFunding = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
+  const visibleEvents = isFreePreview ? events.slice(0, FREE_PREVIEW_LIMITS.newsFeedRows) : events;
+  const visibleIpoEvents = isFreePreview ? ipoEvents.slice(0, FREE_PREVIEW_LIMITS.newsIpoRows) : ipoEvents;
 
   if (!eventFeed) {
     return <main className="news-page"><div className="loading">Loading market events...</div></main>;
@@ -2169,6 +2217,7 @@ function NewsPage({
           <div className="eyebrow">Market monitor</div>
           <h1>AI ecosystem news</h1>
           <p>{eventFeed.metadata.scope_note}</p>
+          {isFreePreview ? <p className="preview-note">Free preview: featured events only. Upgrade for the full feed and search depth.</p> : null}
         </div>
         <div className="analytics-filters news-filters">
           <NewsSelect label="Signal" onChange={setSignalTier} value={signalTier} values={eventFeed.facets.signal_tiers} />
@@ -2221,7 +2270,7 @@ function NewsPage({
         <article className="analytics-card news-feed-card">
           <h2>Event feed</h2>
           <div className="news-feed">
-            {events.map((event) => {
+            {visibleEvents.map((event) => {
               const company = companyByName.get(event.company_name.toLowerCase());
               return (
                 <div className="news-item" key={event.event_id}>
@@ -2274,7 +2323,7 @@ function NewsPage({
               <span>Region</span>
               <span>Valuation</span>
             </div>
-            {ipoEvents.map((event) => (
+            {visibleIpoEvents.map((event) => (
               <div className="ipo-board-row" key={event.event_id}>
                 <span>{event.company_name}</span>
                 <strong>{eventLabel(event.event_type)}</strong>
@@ -2843,6 +2892,7 @@ export default function App() {
   const [view, setView] = useState<AppView>("graph");
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
   const [session, setSession] = useState<SupabaseSession | null>(null);
+  const [usage, setUsage] = useState<AskUsage | null>(null);
   const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [postLoginAction, setPostLoginAction] = useState<"ask" | null>(null);
   const [graphViewportSignal, setGraphViewportSignal] = useState(0);
@@ -2915,6 +2965,20 @@ export default function App() {
   }, [passwordRecovery, postLoginAction, session, view]);
 
   useEffect(() => {
+    const authToken = session?.access_token || "";
+    if (!authToken) {
+      setUsage(null);
+      return;
+    }
+    fetch("/api/ask/usage", { headers: { "x-ask-token": authToken } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => {
+        if (payload?.usage) setUsage(payload.usage);
+      })
+      .catch(() => undefined);
+  }, [session?.access_token]);
+
+  useEffect(() => {
     fetch("/data/market_events.json")
       .then((response) => (response.ok ? response.json() : null))
       .then((payload: MarketEventFeed | null) => {
@@ -2925,10 +2989,12 @@ export default function App() {
 
   const index = useMemo(() => (graph ? buildIndex(graph) : undefined), [graph]);
   const selected = graph && selectedId ? graph.nodes.find((node) => node.id === selectedId) : undefined;
+  const currentPlan = usage?.plan || "free";
+  const isFreePreview = currentPlan === "free";
   const neighborhood = useMemo(() => {
     if (!graph || !index || !selected) return { nodes: [], edges: [] };
-    return buildNeighborhood(selected, graph, index, expansion, years, countries, confidence);
-  }, [confidence, countries, expansion, graph, index, selected, years]);
+    return buildNeighborhood(selected, graph, index, expansion, years, countries, confidence, isFreePreview);
+  }, [confidence, countries, expansion, graph, index, isFreePreview, selected, years]);
 
   const handleSelect = useCallback((node: MarketNode | undefined) => {
     if (!node) return;
@@ -3057,11 +3123,12 @@ export default function App() {
       ) : view === "admin" ? (
         <AdminEventsPage session={session} onLoginRequired={() => openLogin()} />
       ) : view === "news" ? (
-        <NewsPage eventFeed={eventFeed} graph={graph} onSelectCompany={selectNodeAndOpenGraph} />
+        <NewsPage eventFeed={eventFeed} graph={graph} isFreePreview={isFreePreview} onSelectCompany={selectNodeAndOpenGraph} />
       ) : view === "analytics" ? (
         <AnalyticsPage
           filters={analyticsFilters}
           graph={graph}
+          isFreePreview={isFreePreview}
           onSelectNode={selectNodeAndOpenGraph}
           onSelectRound={selectNodeAndOpenGraph}
           onSelectSlice={selectSliceAndOpenGraph}
@@ -3091,6 +3158,7 @@ export default function App() {
             years={years}
           />
           <DomainNavigator graph={graph} onSelect={(node) => handleSelect(node)} />
+          {isFreePreview ? <div className="preview-note graph-note">Free preview mode: the graph stays shallow until you upgrade.</div> : null}
           <div className="graph-action-rail">
             <div className="rail-group" aria-label="Graph layout">
               <span>View</span>
