@@ -62,9 +62,11 @@ startup_goodfire,Goodfire,US,USA,San Francisco,Foundation Models / LLMs,,,,,,,,,
 startup_groq,Groq,US,USA,Mountain View,AI Chips / Semiconductors,https://groq.com,2016,Jonathan Ross,,,,LPU inference chips; GroqCloud; low-latency AI inference,https://groq.com/about-us/,high,Profile enrichment starter.
 startup_h_company,H Company,Europe,France,Paris,Foundation Models / LLMs,https://www.hcompany.ai,2023,Charles Kantor; Daan Wierstra; Karl Tuyls; Laurent Sifre; Julien Perolat,,,,AI agents; foundation models for action and automation,https://www.hcompany.ai,medium,French AI agents / foundation model company.
 startup_hailo,Hailo,Israel,Israel,Tel Aviv,AI Chips / Semiconductors,https://hailo.ai,2017,Orr Danon; Avi Baum; Hadar Zeitlin,,,,Edge AI processors; AI accelerators,https://hailo.ai/company-overview/,high,Israeli AI chip company.
+startup_hark,Hark,US,USA,,Foundation Models / LLMs,,,,,,,,,,
 startup_harmattan_ai,Harmattan AI,Europe,France,Paris,Defense / Security AI,https://www.harmattan.ai,2023,,,,,Defense AI; autonomous drones; military robotics,https://techcrunch.com/2026/01/12/harmattan-ai-raises-200m-series-b-led-by-dassault-aviation-becomes-defense-unicorn/,medium,French defense AI startup; official profile source should be strengthened.
 startup_harmonic,Harmonic,US,USA,Palo Alto,Foundation Models / LLMs,,,,,,,,,,
 startup_harvey,Harvey,US,USA,San Francisco,Enterprise AI,https://www.harvey.ai,2022,Winston Weinberg; Gabriel Pereyra,,,,Legal AI assistant; professional services AI workflows,https://www.harvey.ai/about,medium,Enterprise legal AI company.
+startup_havoc,Havoc,US,USA,Providence,Defense / Security AI,,,,,,,,,,
 startup_hebbia,Hebbia,US,USA,New York,Search / Knowledge Agents,,,,,,,,,,
 startup_helsing,Helsing,Europe,Germany,Munich,Defense / Security AI,https://helsing.ai,2021,Torsten Reil; Gundbert Scherf; Niklas Kossen,,,,Defense AI software; autonomous defense systems,https://helsing.ai/company,high,European defense AI company.
 startup_hippocratic_ai,Hippocratic AI,US,USA,Palo Alto,Healthcare AI / Drug Discovery,,,,,,,,,,
@@ -93,6 +95,7 @@ startup_merge_labs,Merge Labs,US,USA,San Francisco,Healthcare AI / Drug Discover
 startup_mind_robotics,Mind Robotics,US,USA,Palo Alto,Robotics / Physical AI,https://www.mindrobotics.ai,2026,,,,,AI-powered industrial robotics,https://techcrunch.com/2026/03/11/rivian-mind-robotics-series-a-500m-fund-raise-industrial-ai-powered-robots/,medium,Rivian spinout; official profile fields should be strengthened when source available.
 startup_minimax,MiniMax,China,China,Shanghai,Foundation Models / LLMs,https://www.minimax.io,2021,Yan Junjie,,,,Chinese foundation models; text/audio/video generation,https://www.minimax.io,medium,Profile enrichment starter.
 startup_mistral_ai,Mistral AI,Europe,France,Paris,Foundation Models / LLMs,https://mistral.ai,2023,Arthur Mensch; Timothee Lacroix; Guillaume Lample,,,,Mistral and Mixtral models; Le Chat; enterprise AI platform,https://mistral.ai/company,high,Profile enrichment starter.
+startup_modal,Modal,US,USA,San Francisco,AI Infrastructure,,,,,,,,,,
 startup_modular,Modular,US,USA,Palo Alto,AI Infrastructure,,,,,,,,,,
 startup_moonshot_ai,Moonshot AI,China,China,Beijing,Foundation Models / LLMs,https://www.moonshot.cn,2023,Yang Zhilin,,,,Kimi chatbot; long-context foundation models,https://www.moonshot.cn,medium,Chinese foundation model company; profile source may need replacement with an English-language source for app display.
 startup_multiverse_computing,Multiverse Computing,Europe,Spain,San Sebastian,AI Infrastructure,,,,,,,,,,
@@ -105,6 +108,7 @@ startup_nscale,Nscale,Europe,United Kingdom,London,AI Infrastructure,https://www
 startup_openai,OpenAI,US,USA,San Francisco,Foundation Models / LLMs,https://openai.com,2015,Sam Altman; Greg Brockman; Ilya Sutskever; Wojciech Zaremba; John Schulman; Andrej Karpathy; Pamela Vagata,,,,ChatGPT; GPT models; API platform; Sora; enterprise AI products,https://openai.com/about/,high,Profile enrichment starter; valuation and total funding should be sourced separately before app display.
 startup_openevidence,OpenEvidence,US,USA,Cambridge,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_ori,Ori,Europe,United Kingdom,London,AI Infrastructure,,,,,,,,,,
+startup_oro_labs,ORO Labs,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_palebluedot_ai,PaleBlueDot AI,US,USA,Palo Alto,AI Infrastructure,,,,,,,,,,
 startup_parallel,Parallel,US,USA,New York,AI Infrastructure,,,,,,,,,,
 startup_parloa,Parloa,Europe,Germany,Berlin,Enterprise AI,,,,,,,,,,
@@ -125,6 +129,7 @@ startup_safe_superintelligence,Safe Superintelligence,US,USA,Palo Alto,Foundatio
 startup_sakana_ai,Sakana AI,Other Global,Japan,Tokyo,Foundation Models / LLMs,,,,,,,,,,
 startup_sandboxaq,SandboxAQ,US,USA,Palo Alto,Enterprise AI,,,,,,,,,,
 startup_scale_ai,Scale AI,US,USA,San Francisco,Data / Analytics,https://scale.com,2016,Alexandr Wang,,,,Data engine for AI; labeling; RLHF and evaluation data,https://scale.com/about,high,Training data and AI data infrastructure.
+startup_scout_ai,Scout AI,US,USA,Sunnyvale,Defense / Security AI,,,,,,,,,,
 startup_sesame,Sesame,US,USA,San Francisco,Creative / Generative Media,,,,,,,,,,
 startup_shield_ai,Shield AI,US,USA,San Diego,Defense / Security AI,https://shield.ai,2015,Brandon Tseng; Ryan Tseng; Andrew Reiter,,,,Hivemind autonomy software; V-BAT; defense autonomy,https://shield.ai/about-us/,high,Defense AI company.
 startup_sierra,Sierra,US,USA,San Francisco,Enterprise AI,https://sierra.ai,2023,Bret Taylor; Clay Bavor,,,,Enterprise AI agents; customer service AI,https://sierra.ai/company,high,Profile enrichment starter.

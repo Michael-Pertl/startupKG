@@ -86,7 +86,7 @@ type Expansion = {
 };
 
 type LayoutMode = "flow" | "network";
-type AppView = "graph" | "analytics" | "news" | "login" | "account";
+type AppView = "graph" | "analytics" | "news" | "login" | "account" | "admin";
 
 type AskUsage = {
   user_id?: string;
@@ -99,6 +99,25 @@ type AskUsage = {
   max_requests_per_minute: number;
 };
 
+type AdminMarketEvent = {
+  candidate_id: string;
+  company_name: string;
+  event_type: string;
+  event_date?: string | null;
+  year?: number | null;
+  country?: string | null;
+  region?: string | null;
+  amount_usd?: number | null;
+  valuation_usd?: number | null;
+  source_url: string;
+  source_type: string;
+  confidence: string;
+  status: string;
+  summary?: string | null;
+  notes?: string | null;
+  review_notes?: string | null;
+};
+
 type SubscriptionPlan = {
   id: "free" | "starter" | "pro";
   label: string;
@@ -106,7 +125,6 @@ type SubscriptionPlan = {
   askAllowance: string;
   description: string;
   features: string[];
-  highlighted?: boolean;
 };
 
 const subscriptionPlans: SubscriptionPlan[] = [
@@ -121,16 +139,15 @@ const subscriptionPlans: SubscriptionPlan[] = [
   {
     id: "starter",
     label: "Starter",
-    price: "€3.99 / month",
+    price: "€4.99 / month",
     askAllowance: "75 Ask questions / month",
     description: "For regular market exploration without a high monthly commitment.",
     features: ["Full graph access", "Full analytics and news", "Monthly Ask allowance"],
-    highlighted: true,
   },
   {
     id: "pro",
     label: "Pro",
-    price: "€9.99 / month",
+    price: "€19.99 / month",
     askAllowance: "Unlimited Ask under fair use",
     description: "For active users who want broad graph exploration and frequent Ask usage.",
     features: ["Full graph access", "Full analytics and news", "Fair-use protected Ask access"],
@@ -146,7 +163,8 @@ type GraphIndex = {
 
 function signal(node: MarketNode): number {
   return Number(
-    node.visible_mega_round_funding_usd ||
+    node.importance_score ||
+      node.visible_mega_round_funding_usd ||
       node.linked_funding_usd ||
       node.amount_usd ||
       node.funding_usd ||
@@ -1230,6 +1248,18 @@ function EntityProfile({ node }: { node?: MarketNode }) {
             <strong>{formatCount(Number(node.mega_round_count))}</strong>
           </div>
         ) : null}
+        {node.participated_rounds ? (
+          <div>
+            <span>Participated rounds</span>
+            <strong>{formatCount(Number(node.participated_rounds))}</strong>
+          </div>
+        ) : null}
+        {node.lead_rounds ? (
+          <div>
+            <span>Lead rounds</span>
+            <strong>{formatCount(Number(node.lead_rounds))}</strong>
+          </div>
+        ) : null}
       </div>
       {node.notable_products ? <p>{node.notable_products}</p> : null}
     </section>
@@ -2279,9 +2309,11 @@ function AuthControls({
 function AccountPage({
   session,
   onLoginRequired,
+  onBack,
 }: {
   session: SupabaseSession | null;
   onLoginRequired: () => void;
+  onBack: () => void;
 }) {
   const [usage, setUsage] = useState<AskUsage | null>(null);
   const [billingError, setBillingError] = useState("");
@@ -2381,6 +2413,9 @@ function AccountPage({
             <h1>Your account</h1>
             <p>{session.user.email}</p>
           </div>
+          <button className="account-back" onClick={onBack} type="button">
+            Back to graph
+          </button>
           <div className="account-balance">
             <span>Ask allowance</span>
             <strong>{usage ? formatCount(creditsRemaining) : "..."}</strong>
@@ -2401,7 +2436,7 @@ function AccountPage({
 
         <div className="plan-grid">
           {subscriptionPlans.map((plan) => (
-            <article className={plan.highlighted ? "plan-card highlighted" : "plan-card"} key={plan.id}>
+            <article className={plan.id === currentPlan ? "plan-card highlighted" : "plan-card"} key={plan.id}>
               <span>{plan.label}</span>
               <h2>{plan.price}</h2>
               <strong>{plan.askAllowance}</strong>
@@ -2438,6 +2473,146 @@ function AccountPage({
           </button>
         </div>
         {billingError ? <p className="account-error">{billingError}</p> : null}
+      </section>
+    </main>
+  );
+}
+
+function AdminEventsPage({ session, onLoginRequired }: { session: SupabaseSession | null; onLoginRequired: () => void }) {
+  const [events, setEvents] = useState<AdminMarketEvent[]>([]);
+  const [statusFilter, setStatusFilter] = useState("needs_review");
+  const [message, setMessage] = useState("");
+  const [busyId, setBusyId] = useState("");
+  const authToken = session?.access_token || "";
+
+  const loadEvents = useCallback(() => {
+    if (!authToken) return;
+    setMessage("");
+    const query = statusFilter ? `?status=${encodeURIComponent(statusFilter)}` : "";
+    fetch(`/api/admin/events${query}`, { headers: { "x-ask-token": authToken } })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Could not load review events.");
+        setEvents(payload.events || []);
+      })
+      .catch((error) => {
+        setEvents([]);
+        setMessage(error instanceof Error ? error.message : "Could not load review events.");
+      });
+  }, [authToken, statusFilter]);
+
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
+
+  const reviewEvent = async (event: AdminMarketEvent, status: string) => {
+    if (!authToken) {
+      onLoginRequired();
+      return;
+    }
+    setBusyId(`${event.candidate_id}:${status}`);
+    setMessage("");
+    try {
+      const response = await fetch(`/api/admin/events/${encodeURIComponent(event.candidate_id)}/review`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-ask-token": authToken,
+        },
+        body: JSON.stringify({ status }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Review update failed.");
+      setEvents((current) => current.filter((item) => item.candidate_id !== event.candidate_id));
+      setMessage(`${event.company_name} marked ${status.replace(/_/g, " ")}.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Review update failed.");
+    } finally {
+      setBusyId("");
+    }
+  };
+
+  const markPromotionReady = async (event: AdminMarketEvent) => {
+    if (!authToken) {
+      onLoginRequired();
+      return;
+    }
+    setBusyId(`${event.candidate_id}:promote`);
+    setMessage("");
+    try {
+      const response = await fetch(`/api/admin/events/${encodeURIComponent(event.candidate_id)}/promote`, {
+        method: "POST",
+        headers: { "x-ask-token": authToken },
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Promotion marker failed.");
+      setEvents((current) => current.filter((item) => item.candidate_id !== event.candidate_id));
+      setMessage(payload.promotion_hint || `${event.company_name} is ready for CSV promotion.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Promotion marker failed.");
+    } finally {
+      setBusyId("");
+    }
+  };
+
+  if (!session) {
+    return (
+      <main className="admin-page">
+        <section className="admin-panel">
+          <span>Admin</span>
+          <h1>Sign in to review market events.</h1>
+          <p>Only configured admin accounts can access candidate review.</p>
+          <button className="account-primary" onClick={onLoginRequired} type="button">Sign in</button>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main className="admin-page">
+      <section className="admin-panel">
+        <div className="admin-header">
+          <div>
+            <span>Admin review</span>
+            <h1>Market event candidates</h1>
+            <p>Review auto-ingested events before they are promoted into the curated CSV graph dataset.</p>
+          </div>
+          <label>
+            Status
+            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+              <option value="needs_review">Needs review</option>
+              <option value="auto_ingested">Auto ingested</option>
+              <option value="approved">Approved</option>
+              <option value="promotion_ready">Promotion ready</option>
+              <option value="rejected">Rejected</option>
+              <option value="">All</option>
+            </select>
+          </label>
+        </div>
+        {message ? <p className="admin-message">{message}</p> : null}
+        <div className="admin-event-list">
+          {events.length ? events.map((event) => (
+            <article className="admin-event-card" key={event.candidate_id}>
+              <div>
+                <span>{eventLabel(event.event_type)} · {event.confidence}</span>
+                <h2>{event.company_name}</h2>
+                <p>{event.summary || event.notes || "No summary available."}</p>
+              </div>
+              <div className="admin-event-meta">
+                <span>{event.event_date || event.year || "No date"}</span>
+                <span>{event.region || event.country || "No region"}</span>
+                <span>{event.amount_usd ? formatUsd(Number(event.amount_usd)) : "No amount"}</span>
+                <strong>{event.status.replace(/_/g, " ")}</strong>
+              </div>
+              <div className="admin-event-actions">
+                <a href={event.source_url} rel="noreferrer" target="_blank">Source</a>
+                <button disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "approved")} type="button">Approve</button>
+                <button disabled={Boolean(busyId)} onClick={() => markPromotionReady(event)} type="button">Ready for CSV</button>
+                <button disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "rejected")} type="button">Reject</button>
+              </div>
+            </article>
+          )) : <p className="admin-empty">No candidates for this filter.</p>}
+        </div>
       </section>
     </main>
   );
@@ -2799,6 +2974,7 @@ export default function App() {
         view === "news" ? "news-shell" : "",
         view === "login" ? "login-shell" : "",
         view === "account" ? "account-shell" : "",
+        view === "admin" ? "admin-shell" : "",
         drawerMode ? "has-right" : "no-right",
       ].join(" ")}
     >
@@ -2812,6 +2988,11 @@ export default function App() {
         <button className={view === "news" ? "active" : ""} onClick={() => setView("news")} type="button">
           News
         </button>
+        {session ? (
+          <button className={view === "admin" ? "active" : ""} onClick={() => setView("admin")} type="button">
+            Admin
+          </button>
+        ) : null}
         <button
           className="theme-toggle"
           onClick={() => {
@@ -2842,7 +3023,9 @@ export default function App() {
           recovery={passwordRecovery}
         />
       ) : view === "account" ? (
-        <AccountPage session={session} onLoginRequired={() => openLogin()} />
+        <AccountPage session={session} onBack={() => setView("graph")} onLoginRequired={() => openLogin()} />
+      ) : view === "admin" ? (
+        <AdminEventsPage session={session} onLoginRequired={() => openLogin()} />
       ) : view === "news" ? (
         <NewsPage eventFeed={eventFeed} graph={graph} onSelectCompany={selectNodeAndOpenGraph} />
       ) : view === "analytics" ? (
@@ -2889,11 +3072,13 @@ export default function App() {
                 type="button"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <g transform="rotate(180 12 12)">
                   <circle cx="5" cy="6" r="1.8" />
                   <circle cx="5" cy="12" r="1.8" />
                   <circle cx="5" cy="18" r="1.8" />
                   <path d="M7 6h5c2.8 0 4.6 1.3 5.8 3.7M7 12h9.5M7 18h5c2.8 0 4.6-1.3 5.8-3.7" />
                   <path d="M16 8l3.2 4-3.2 4" />
+                  </g>
                 </svg>
               </button>
               <button

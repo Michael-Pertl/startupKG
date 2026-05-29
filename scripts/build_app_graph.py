@@ -99,6 +99,7 @@ def main() -> int:
     count_by_startup: Counter[str] = Counter()
     amount_by_investor: defaultdict[str, int] = defaultdict(int)
     count_by_investor: Counter[str] = Counter()
+    lead_count_by_investor: Counter[str] = Counter()
     amount_by_country: defaultdict[str, int] = defaultdict(int)
     amount_by_region: defaultdict[str, int] = defaultdict(int)
     amount_by_domain: defaultdict[str, int] = defaultdict(int)
@@ -117,6 +118,10 @@ def main() -> int:
         for investor_id in round_investors[round_id]:
             amount_by_investor[investor_id] += amount
             count_by_investor[investor_id] += 1
+
+    for row in participations:
+        if row["role"] == "lead":
+            lead_count_by_investor[row["investor_id"]] += 1
 
     for startup_id, row in startups.items():
         profile = profiles.get(startup_id, {})
@@ -140,10 +145,14 @@ def main() -> int:
             mega_round_count=count_by_startup[startup_id],
             visible_mega_round_funding_usd=amount_by_startup[startup_id],
             largest_round_usd=money(growth_row.get("largest_round_usd", "0")),
+            importance_score=amount_by_startup[startup_id] + count_by_startup[startup_id] * 600_000_000,
             trajectory_label=growth_row.get("trajectory_label", ""),
         )
 
     for investor_id, row in investors.items():
+        funding_score = int(amount_by_investor[investor_id] ** 0.82)
+        activity_score = count_by_investor[investor_id] * 900_000
+        lead_score = lead_count_by_investor[investor_id] * 1_500_000
         add_node(
             nodes,
             investor_id,
@@ -153,7 +162,9 @@ def main() -> int:
             country=row["country"],
             website=row["website"],
             participated_rounds=count_by_investor[investor_id],
+            lead_rounds=lead_count_by_investor[investor_id],
             linked_funding_usd=amount_by_investor[investor_id],
+            importance_score=funding_score + activity_score + lead_score,
         )
 
     for round_id, row in rounds.items():
@@ -177,6 +188,7 @@ def main() -> int:
             confidence=row["confidence"],
             source_type=row["source_type"],
             source_url=row["source_url"],
+            importance_score=amount,
         )
         add_edge(
             edges,
@@ -210,6 +222,9 @@ def main() -> int:
         add_node(nodes, country_id, row["country"], "country", region=row["region"], funding_usd=amount_by_country[row["country"]])
         add_node(nodes, region_id, row["region"], "region", funding_usd=amount_by_region[row["region"]])
         add_node(nodes, domain_id, row["primary_domain"], "domain", funding_usd=amount_by_domain[row["primary_domain"]])
+        nodes[country_id]["importance_score"] = amount_by_country[row["country"]]
+        nodes[region_id]["importance_score"] = amount_by_region[row["region"]]
+        nodes[domain_id]["importance_score"] = amount_by_domain[row["primary_domain"]]
         add_edge(edges, f"{startup_id}__hq__{country_id}", startup_id, country_id, "headquartered_in")
         add_edge(edges, f"{country_id}__part_of__{region_id}", country_id, region_id, "part_of")
         add_edge(edges, f"{startup_id}__domain__{domain_id}", startup_id, domain_id, "operates_in")
@@ -217,6 +232,7 @@ def main() -> int:
     for row in rounds.values():
         year_id = f"year::{row['year']}"
         add_node(nodes, year_id, row["year"], "year", funding_usd=amount_by_year[row["year"]])
+        nodes[year_id]["importance_score"] = amount_by_year[row["year"]]
         add_edge(edges, f"{row['round_id']}__year__{year_id}", row["round_id"], year_id, "occurred_in")
 
     co_investment_pairs: dict[tuple[str, str], dict[str, Any]] = {}

@@ -1,13 +1,13 @@
 {
-  "fetched_at": "2026-05-28T10:29:19.502552+00:00",
+  "fetched_at": "2026-05-29T08:18:37.703676+00:00",
   "active_feeds": 6,
   "successful_feeds": 6,
   "failed_feeds": 0,
-  "matching_candidates": 13,
-  "added_events": 0,
+  "matching_candidates": 11,
+  "added_events": 4,
   "candidate_status_counts": {
-    "staged": 7,
-    "auto_ingested": 5,
+    "auto_ingested": 4,
+    "staged": 6,
     "needs_review": 1
   },
   "feeds": [
@@ -30,7 +30,7 @@
       "url": "https://www.eu-startups.com/feed/",
       "status": "ok",
       "items_fetched": 10,
-      "items_matched": 4
+      "items_matched": 3
     },
     {
       "name": "VentureBeat AI",
@@ -44,13 +44,13 @@
       "url": "https://www.prnewswire.com/rss/technology-latest-news/technology-latest-news-list.rss",
       "status": "ok",
       "items_fetched": 20,
-      "items_matched": 2
+      "items_matched": 1
     },
     {
       "name": "BusinessWire Technology",
       "url": "https://feed.businesswire.com/rss/home/?rss=G1QFDERJXkJeGVtQWw==",
       "status": "ok",
-      "items_fetched": 6,
+      "items_fetched": 14,
       "items_matched": 0
     }
   ]

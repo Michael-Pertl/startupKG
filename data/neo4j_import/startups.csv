@@ -62,9 +62,11 @@ startup_goodfire,Goodfire,US,USA,San Francisco,Foundation Models / LLMs
 startup_groq,Groq,US,USA,Mountain View,AI Chips / Semiconductors
 startup_h_company,H Company,Europe,France,Paris,Foundation Models / LLMs
 startup_hailo,Hailo,Israel,Israel,Tel Aviv,AI Chips / Semiconductors
+startup_hark,Hark,US,USA,,Foundation Models / LLMs
 startup_harmattan_ai,Harmattan AI,Europe,France,Paris,Defense / Security AI
 startup_harmonic,Harmonic,US,USA,Palo Alto,Foundation Models / LLMs
 startup_harvey,Harvey,US,USA,San Francisco,Enterprise AI
+startup_havoc,Havoc,US,USA,Providence,Defense / Security AI
 startup_hebbia,Hebbia,US,USA,New York,Search / Knowledge Agents
 startup_helsing,Helsing,Europe,Germany,Munich,Defense / Security AI
 startup_hippocratic_ai,Hippocratic AI,US,USA,Palo Alto,Healthcare AI / Drug Discovery
@@ -93,6 +95,7 @@ startup_merge_labs,Merge Labs,US,USA,San Francisco,Healthcare AI / Drug Discover
 startup_mind_robotics,Mind Robotics,US,USA,Palo Alto,Robotics / Physical AI
 startup_minimax,MiniMax,China,China,Shanghai,Foundation Models / LLMs
 startup_mistral_ai,Mistral AI,Europe,France,Paris,Foundation Models / LLMs
+startup_modal,Modal,US,USA,San Francisco,AI Infrastructure
 startup_modular,Modular,US,USA,Palo Alto,AI Infrastructure
 startup_moonshot_ai,Moonshot AI,China,China,Beijing,Foundation Models / LLMs
 startup_multiverse_computing,Multiverse Computing,Europe,Spain,San Sebastian,AI Infrastructure
@@ -105,6 +108,7 @@ startup_nscale,Nscale,Europe,United Kingdom,London,AI Infrastructure
 startup_openai,OpenAI,US,USA,San Francisco,Foundation Models / LLMs
 startup_openevidence,OpenEvidence,US,USA,Cambridge,Healthcare AI / Drug Discovery
 startup_ori,Ori,Europe,United Kingdom,London,AI Infrastructure
+startup_oro_labs,ORO Labs,US,USA,San Francisco,Enterprise AI
 startup_palebluedot_ai,PaleBlueDot AI,US,USA,Palo Alto,AI Infrastructure
 startup_parallel,Parallel,US,USA,New York,AI Infrastructure
 startup_parloa,Parloa,Europe,Germany,Berlin,Enterprise AI
@@ -125,6 +129,7 @@ startup_safe_superintelligence,Safe Superintelligence,US,USA,Palo Alto,Foundatio
 startup_sakana_ai,Sakana AI,Other Global,Japan,Tokyo,Foundation Models / LLMs
 startup_sandboxaq,SandboxAQ,US,USA,Palo Alto,Enterprise AI
 startup_scale_ai,Scale AI,US,USA,San Francisco,Data / Analytics
+startup_scout_ai,Scout AI,US,USA,Sunnyvale,Defense / Security AI
 startup_sesame,Sesame,US,USA,San Francisco,Creative / Generative Media
 startup_shield_ai,Shield AI,US,USA,San Diego,Defense / Security AI
 startup_sierra,Sierra,US,USA,San Francisco,Enterprise AI

@@ -125,3 +125,10 @@ This file records the public evidence sources used to curate `data/raw/funding_e
 | Uniphore | 2025 Series F | https://www.uniphore.com/blog/ai-and-data-leaders-invest-in-uniphore-to-accelerate-business-ai/ |
 | Applied Intuition | 2025 Series F | https://www.axios.com/2025/06/17/applied-intuition-self-driving-15-billion |
 | Mistral AI | 2026 debt financing | https://www.marketscreener.com/news/france-s-mistral-raises-830-million-in-debt-for-ai-data-centre-build-up-ce7e51d8d18bf020 |
+| Anthropic | 2026 Series H | https://www.anthropic.com/news/series-h |
+| Modal | 2026 Series C | https://modal.com/blog/modal-series-c |
+| Cognition | 2026 funding round | https://techcrunch.com/2026/05/27/ai-coding-startup-cognition-raises-1b-at-25b-pre-money-valuation/ |
+| Hark | 2026 Series A | https://hark.com/articles/hark-announces-usd700-million-fundraising-round |
+| Havoc | 2026 Series A | https://www.prnewswire.com/news-releases/havoc-raises-100m-series-a-to-power-the-future-of-all-domain-collaborative-autonomy-302769697.html |
+| Scout AI | 2026 Series A | https://www.prnewswire.com/news-releases/scout-ai-raises-100m-series-a-to-build-the-ai-brain-for-unmanned-warfare-302756871.html |
+| ORO Labs | 2026 Series C | https://www.prnewswire.com/news-releases/oro-labs-raises-100m-to-make-enterprise-procurement-faster-and-more-agile-with-agentic-orchestration-302711716.html |
