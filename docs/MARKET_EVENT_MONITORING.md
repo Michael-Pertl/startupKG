@@ -316,6 +316,20 @@ web service so only trusted Supabase Auth users can use `/admin/events`. This pr
 from entering `funding_events_raw.csv` without the required amount, date/year,
 investor, source URL, AI relevance, region, and confidence checks.
 
+For the public News page, keep the generated `web/public/data/market_events.json`
+fresh with a scheduled rebuild. The app refreshes this file in the browser every
+five minutes, so new events appear after the hosted job updates the JSON:
+
+```bash
+python3 scripts/fetch_market_events_feeds.py
+python3 scripts/build_market_events.py
+python3 scripts/sync_market_events_to_supabase.py
+```
+
+Use the feed as a market-signal surface, not as the canonical funding graph.
+`approved` and `auto_ingested` events can be visible quickly; verified funding
+rounds still require review before promotion into `funding_events_raw.csv`.
+
 ## Compliance Guardrails
 
 The product can help users discover public market-moving information, but it
