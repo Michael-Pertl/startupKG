@@ -1356,7 +1356,7 @@ function ContextLensControls({
   };
   return (
     <section className="rail-context-controls">
-      <div className="rail-context-title">Context lenses</div>
+      <div className="rail-context-title">Context</div>
       <div className="chip-row">
         {controls.map(({ key, label, title }) => (
           <button
