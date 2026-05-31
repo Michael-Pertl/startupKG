@@ -451,13 +451,14 @@ function buildNeighborhood(
       });
 
   if (selected.kind === "startup") {
-    if (has("market_context") || has("similar_companies")) {
+    const showSimilarCompanies = has("similar_companies") || (expanded && has("market_context"));
+    if (has("market_context") || showSimilarCompanies) {
       addStartupContext(selected, true, true);
     }
 
     const roundEdges = (index.startupRounds.get(selected.id) || [])
       .sort((left, right) => roundValue(right, index) - roundValue(left, index))
-      .slice(0, has("funding_path") || has("investors") ? (isFreePreview ? FREE_PREVIEW_LIMITS.graphRounds : expanded ? 24 : 12) : 0);
+      .slice(0, has("funding_path") ? (isFreePreview ? FREE_PREVIEW_LIMITS.graphRounds : expanded ? 24 : 12) : 0);
 
     for (const edge of roundEdges) {
       const round = index.nodeById.get(edge.target);
@@ -468,7 +469,7 @@ function buildNeighborhood(
       if (has("investors")) addRoundInvestors(round);
     }
 
-    if (has("similar_companies") && !isFreePreview) {
+    if (showSimilarCompanies && !isFreePreview) {
       const peers = graph.nodes
         .filter(
           (node) =>
@@ -1339,9 +1340,15 @@ function ContextLensControls({
 }) {
   const controls = contextLensesByKind[selected.kind];
   const toggleLens = (key: ContextLensKey) => {
-    const activeLenses = context.activeLenses.includes(key)
+    let activeLenses = context.activeLenses.includes(key)
       ? context.activeLenses.filter((lens) => lens !== key)
       : [...context.activeLenses, key];
+    if (selected.kind === "startup" && key === "funding_path" && !activeLenses.includes("funding_path")) {
+      activeLenses = activeLenses.filter((lens) => lens !== "investors");
+    }
+    if (selected.kind === "startup" && key === "investors" && activeLenses.includes("investors")) {
+      activeLenses = Array.from(new Set(["funding_path", ...activeLenses]));
+    }
     setContext({
       activeLenses: activeLenses.length ? activeLenses : [defaultContextLensesByKind[selected.kind][0]],
       expanded: context.expanded,
