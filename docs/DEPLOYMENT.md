@@ -47,6 +47,7 @@ The production container builds the Vite app, serves `web/dist/`, and handles
 the backend API routes:
 
 - `/api/health`
+- `/api/market-events`
 - `/api/ask`
 - `/api/ask/usage`
 - `/api/credit-packs`

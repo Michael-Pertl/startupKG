@@ -14,6 +14,7 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW_FILE = ROOT / "data" / "raw" / "market_events_raw.csv"
+STARTUPS_FILE = ROOT / "data" / "processed" / "startups.csv"
 
 
 def load_env_file(path: Path) -> None:
@@ -32,21 +33,52 @@ def nullable_int(value: str) -> int | None:
     return int(value) if value else None
 
 
-def row_to_candidate(row: dict[str, str]) -> dict[str, object]:
+def normalize_name(value: str) -> str:
+    return "".join(character.lower() for character in value if character.isalnum())
+
+
+def load_startup_links() -> dict[str, dict[str, str]]:
+    with STARTUPS_FILE.open(newline="", encoding="utf-8") as handle:
+        return {
+            normalize_name(row["name"]): {
+                "startup_id": row["startup_id"],
+                "label": row["name"],
+                "country": row["country"],
+                "region": row["region"],
+            }
+            for row in csv.DictReader(handle)
+            if normalize_name(row["name"])
+        }
+
+
+def ipo_stage(event_type: str) -> str | None:
+    return {
+        "ipo_watch": "watch",
+        "ipo_filing": "filing",
+        "ipo_pricing": "pricing",
+        "public_listing": "listed",
+    }.get(event_type)
+
+
+def row_to_candidate(row: dict[str, str], startup_links: dict[str, dict[str, str]]) -> dict[str, object]:
+    linked_startup = startup_links.get(normalize_name(row["company_name"]))
     return {
         "candidate_id": row["event_id"],
         "company_name": row["company_name"],
         "event_type": row["event_type"],
+        "ipo_stage": ipo_stage(row["event_type"]),
         "event_date": row["event_date"] or None,
         "year": nullable_int(row["year"]),
-        "country": row["country"] or None,
-        "region": row["region"] or None,
+        "country": row["country"] or linked_startup.get("country") if linked_startup else row["country"] or None,
+        "region": row["region"] or linked_startup.get("region") if linked_startup else row["region"] or None,
         "amount_usd": nullable_int(row["amount_usd"]),
         "valuation_usd": nullable_int(row["valuation_usd"]),
         "source_url": row["source_url"],
         "source_type": row["source_type"],
         "confidence": row["confidence"],
         "status": row["status"] or "needs_review",
+        "linked_startup_id": linked_startup["startup_id"] if linked_startup else None,
+        "linked_startup_label": linked_startup["label"] if linked_startup else None,
         "summary": row["summary"] or None,
         "notes": row["notes"] or None,
         "raw_payload": row,
@@ -64,8 +96,9 @@ def main() -> int:
         print("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required.", file=sys.stderr)
         return 2
 
+    startup_links = load_startup_links()
     with RAW_FILE.open(newline="", encoding="utf-8") as handle:
-        rows = [row_to_candidate(row) for row in csv.DictReader(handle)]
+        rows = [row_to_candidate(row, startup_links) for row in csv.DictReader(handle)]
 
     if not rows:
         print(f"No market events found in {RAW_FILE}.")

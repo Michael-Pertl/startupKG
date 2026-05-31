@@ -13,6 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW_FILE = ROOT / "data" / "raw" / "market_events_raw.csv"
+STARTUPS_FILE = ROOT / "data" / "processed" / "startups.csv"
 APP_DATA_DIR = ROOT / "data" / "app"
 WEB_DATA_DIR = ROOT / "web" / "public" / "data"
 VISIBLE_STATUS = {"approved", "needs_review", "auto_ingested", "staged"}
@@ -32,6 +33,12 @@ BROAD_EVENT_TYPES = {
     "revenue_or_usage_milestone",
 }
 MIN_FUNDING_USD = 100_000_000
+IPO_STAGE_BY_EVENT_TYPE = {
+    "ipo_watch": "watch",
+    "ipo_filing": "filing",
+    "ipo_pricing": "pricing",
+    "public_listing": "listed",
+}
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -42,6 +49,25 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 def int_or_none(value: str) -> int | None:
     value = value.strip()
     return int(value) if value else None
+
+
+def normalize_name(value: str) -> str:
+    return "".join(character.lower() for character in value if character.isalnum())
+
+
+def load_startup_links() -> dict[str, dict[str, str]]:
+    links: dict[str, dict[str, str]] = {}
+    for row in read_csv(STARTUPS_FILE):
+        key = normalize_name(row["name"])
+        if not key:
+            continue
+        links[key] = {
+            "startup_id": row["startup_id"],
+            "label": row["name"],
+            "country": row["country"],
+            "region": row["region"],
+        }
+    return links
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -84,20 +110,23 @@ def main() -> int:
         return validation.returncode
 
     rows = read_csv(RAW_FILE)
+    startup_links = load_startup_links()
     events = []
     for row in rows:
         if row["status"] not in VISIBLE_STATUS:
             continue
+        linked_startup = startup_links.get(normalize_name(row["company_name"]))
         signal_tier, signal_label = signal_metadata(row)
         events.append(
             {
                 "event_id": row["event_id"],
                 "company_name": row["company_name"],
                 "event_type": row["event_type"],
+                "ipo_stage": IPO_STAGE_BY_EVENT_TYPE.get(row["event_type"], ""),
                 "event_date": row["event_date"],
                 "year": row["year"],
-                "country": row["country"],
-                "region": row["region"],
+                "country": row["country"] or linked_startup.get("country", "") if linked_startup else row["country"],
+                "region": row["region"] or linked_startup.get("region", "") if linked_startup else row["region"],
                 "amount_usd": int_or_none(row["amount_usd"]),
                 "valuation_usd": int_or_none(row["valuation_usd"]),
                 "source_url": row["source_url"],
@@ -106,6 +135,8 @@ def main() -> int:
                 "status": row["status"],
                 "signal_tier": signal_tier,
                 "signal_label": signal_label,
+                "linked_startup_id": linked_startup["startup_id"] if linked_startup else "",
+                "linked_startup_label": linked_startup["label"] if linked_startup else "",
                 "summary": row["summary"],
                 "notes": row["notes"],
             }
@@ -122,11 +153,12 @@ def main() -> int:
             ),
         },
         "facets": {
-            "event_types": sorted({event["event_type"] for event in events}),
-            "regions": sorted({event["region"] for event in events}),
-            "confidence": sorted({event["confidence"] for event in events}),
-            "statuses": sorted({event["status"] for event in events}),
-            "signal_tiers": sorted({event["signal_tier"] for event in events}),
+            "event_types": sorted({event["event_type"] for event in events if event["event_type"]}),
+            "ipo_stages": sorted({event["ipo_stage"] for event in events if event["ipo_stage"]}),
+            "regions": sorted({event["region"] for event in events if event["region"]}),
+            "confidence": sorted({event["confidence"] for event in events if event["confidence"]}),
+            "statuses": sorted({event["status"] for event in events if event["status"]}),
+            "signal_tiers": sorted({event["signal_tier"] for event in events if event["signal_tier"]}),
         },
         "events": events,
     }

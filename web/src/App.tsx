@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import cytoscape, { Core, ElementDefinition, NodeSingular } from "cytoscape";
-import { MarketEdge, MarketEventFeed, MarketGraph, MarketNode, NodeKind } from "./types";
+import { MarketEdge, MarketEvent, MarketEventFeed, MarketGraph, MarketNode, NodeKind } from "./types";
 import { formatCount, formatUsd } from "./format";
 import { supabase, SupabaseSession } from "./supabaseClient";
 import "./styles.css";
@@ -2476,6 +2476,7 @@ function NewsPage({
   const [eventType, setEventType] = useState("__all__");
   const [region, setRegion] = useState("__all__");
   const [signalTier, setSignalTier] = useState("__all__");
+  const [newsMode, setNewsMode] = useState<"ipo" | "latest">("ipo");
   const [query, setQuery] = useState("");
 
   const companyByName = useMemo(() => {
@@ -2485,6 +2486,14 @@ function NewsPage({
     });
     return mapping;
   }, [graph.nodes]);
+  const companyById = useMemo(() => new Map(graph.nodes.filter((node) => node.kind === "startup").map((node) => [node.id, node])), [graph.nodes]);
+  const linkedCompanyForEvent = useCallback(
+    (event: MarketEvent) => {
+      if (event.linked_startup_id) return companyById.get(event.linked_startup_id);
+      return companyByName.get(event.company_name.toLowerCase());
+    },
+    [companyById, companyByName],
+  );
 
   const events = useMemo(() => {
     return (eventFeed?.events || []).filter((event) => {
@@ -2510,17 +2519,19 @@ function NewsPage({
     }).sort((left, right) => String(right.event_date || "").localeCompare(String(left.event_date || "")));
   }, [eventFeed, eventType, query, region, signalTier]);
 
-  const ipoEvents = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing");
-  const coreEvents = events.filter((event) => event.signal_tier === "core_signal");
-  const watchlistEvents = events.filter((event) => event.signal_tier === "watchlist_signal");
-  const fundingEvents = events.filter((event) => event.event_type === "funding_round" || event.event_type === "strategic_investment");
+  const publicMarketEvents = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing");
+  const ipoEvents = publicMarketEvents.filter((event) => linkedCompanyForEvent(event));
+  const latestEvents = newsMode === "ipo" ? ipoEvents : events;
   const visibleFunding = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
   const latestSignalDate = events[0]?.event_date || "n/a";
-  const visibleEvents = isFreePreview ? events.slice(0, FREE_PREVIEW_LIMITS.newsFeedRows) : events;
+  const visibleEvents = isFreePreview ? latestEvents.slice(0, FREE_PREVIEW_LIMITS.newsFeedRows) : latestEvents;
+  const confirmedIpoEvents = ipoEvents.filter((event) =>
+    ["ipo_filing", "ipo_pricing", "public_listing"].includes(event.event_type),
+  );
   const openNewsUpgrade = () => onUpgrade({
     feature: "Full market feed",
     title: "Follow the full signal stream",
-    body: "Starter unlocks the complete market feed, source links, graph jumps, and deeper monitoring signals for regular market tracking.",
+    body: "Starter unlocks the complete market feed, graph jumps, IPO/DPO monitoring, and deeper source-backed signals for regular market tracking.",
   });
 
   if (!eventFeed) {
@@ -2532,7 +2543,7 @@ function NewsPage({
       <header className="analytics-header news-header">
         <div>
           <div className="eyebrow">Market monitor</div>
-          <h1>Market signals</h1>
+          <h1>IPO/DPO watch and AI market news</h1>
           <p>{eventFeed.metadata.scope_note}</p>
         </div>
         <div className="analytics-filters news-filters">
@@ -2548,23 +2559,31 @@ function NewsPage({
           <strong>{latestSignalDate}</strong>
         </div>
         <div>
-          <span>Core signals</span>
-          <strong>{formatCount(coreEvents.length)}</strong>
+          <span>Public-market items</span>
+          <strong>{formatCount(publicMarketEvents.length)}</strong>
         </div>
         <div>
-          <span>Funding signals</span>
-          <strong>{formatCount(fundingEvents.length)}</strong>
+          <span>Confirmed public path</span>
+          <strong>{formatCount(confirmedIpoEvents.length)}</strong>
         </div>
         <div>
-          <span>Linked capital</span>
-          <strong>{formatUsd(visibleFunding)}</strong>
+          <span>Graph-linked IPO watch</span>
+          <strong>{formatCount(ipoEvents.length)}</strong>
         </div>
       </section>
 
       <div className="news-mode-row">
         <div className="news-feed-summary">
-          <strong>{formatCount(events.length)} signals</strong>
-          <span>{formatCount(ipoEvents.length)} IPO/public-market items · {formatCount(watchlistEvents.length)} watchlist items</span>
+          <strong>{newsMode === "ipo" ? `${formatCount(ipoEvents.length)} IPO/DPO watch items` : `${formatCount(events.length)} market signals`}</strong>
+          <span>{formatCount(publicMarketEvents.length - ipoEvents.length)} unlinked public-market items stay in Latest · {formatUsd(visibleFunding)} linked capital</span>
+        </div>
+        <div className="news-view-toggle" role="tablist" aria-label="News views">
+          <button className={newsMode === "ipo" ? "active" : ""} onClick={() => setNewsMode("ipo")} type="button">
+            IPO/DPO Watch
+          </button>
+          <button className={newsMode === "latest" ? "active" : ""} onClick={() => setNewsMode("latest")} type="button">
+            Latest News
+          </button>
         </div>
         <label className="news-search">
           <span>Search news</span>
@@ -2576,12 +2595,33 @@ function NewsPage({
         </label>
       </div>
 
+      {newsMode === "ipo" ? (
+        <section className="ipo-watch-strip" aria-label="IPO and DPO watch summary">
+          {ipoEvents.slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.newsIpoRows : 8).map((event) => {
+            const company = linkedCompanyForEvent(event);
+            return (
+              <article className="ipo-watch-card" key={`watch-${event.event_id}`}>
+                <span>{event.ipo_stage || eventLabel(event.event_type)}</span>
+                <h2>{event.company_name}</h2>
+                <p>{event.summary}</p>
+                <div className="news-metrics">
+                  <span>{event.event_date}</span>
+                  {event.valuation_usd ? <span>{formatUsd(Number(event.valuation_usd))} valuation</span> : null}
+                  <span>{event.confidence}</span>
+                  <span>{company ? "Linked to graph" : "Unlinked source"}</span>
+                </div>
+              </article>
+            );
+          })}
+        </section>
+      ) : null}
+
       <section className="news-layout single">
         <article className="analytics-card news-feed-card">
-          <h2>Latest signals</h2>
+          <h2>{newsMode === "ipo" ? "IPO/DPO evidence feed" : "Latest AI market news"}</h2>
           <div className="news-feed">
             {visibleEvents.length ? visibleEvents.map((event) => {
-              const company = companyByName.get(event.company_name.toLowerCase());
+              const company = linkedCompanyForEvent(event);
               return (
                 <div className="news-item" key={event.event_id}>
                   <div className="news-item-main">
@@ -2589,6 +2629,7 @@ function NewsPage({
                       <span>{event.event_date}</span>
                       <b className={`signal-${event.signal_tier}`}>{signalTierLabel(event.signal_tier)}</b>
                       <b>{eventLabel(event.event_type)}</b>
+                      {event.ipo_stage ? <b>{event.ipo_stage}</b> : null}
                       <em>{event.source_type.replace("_", " ")}</em>
                     </div>
                     <h3>{event.company_name}</h3>
@@ -2596,22 +2637,27 @@ function NewsPage({
                     <div className="news-metrics">
                       {event.amount_usd ? <span>{formatUsd(Number(event.amount_usd))}</span> : null}
                       {event.valuation_usd ? <span>{formatUsd(Number(event.valuation_usd))} valuation</span> : null}
-                      <span>{event.country}</span>
+                      {event.country ? <span>{event.country}</span> : null}
+                      {company ? <span>Linked to graph</span> : <span>Unlinked</span>}
                       <span>{event.confidence}</span>
                     </div>
                   </div>
                   <div className="news-actions">
                     {company ? (
-                      <button onClick={() => onSelectCompany(company)} type="button">Graph</button>
+                      isFreePreview ? (
+                        <button onClick={openNewsUpgrade} type="button">Graph</button>
+                      ) : (
+                        <button onClick={() => onSelectCompany(company)} type="button">Graph</button>
+                      )
                     ) : null}
                     <a href={event.source_url} rel="noreferrer" target="_blank">Source</a>
                   </div>
                 </div>
               );
             }) : <p className="news-empty">No market signals match the current filters.</p>}
-            {isFreePreview && events.length > visibleEvents.length ? (
+            {isFreePreview && latestEvents.length > visibleEvents.length ? (
               <LockedUpgradeRow
-                label={`Unlock ${formatCount(events.length - visibleEvents.length)} more signals`}
+                label={`Unlock ${formatCount(latestEvents.length - visibleEvents.length)} more signals`}
                 onUpgrade={openNewsUpgrade}
               />
             ) : null}
@@ -3291,8 +3337,13 @@ export default function App() {
   useEffect(() => {
     let active = true;
     const loadMarketEvents = () => {
-      fetch(`/data/market_events.json?ts=${Date.now()}`, { cache: "no-store" })
-        .then((response) => (response.ok ? response.json() : null))
+      fetch(`/api/market-events?ts=${Date.now()}`, { cache: "no-store" })
+        .then((response) => {
+          if (response.ok) return response.json();
+          return fetch(`/data/market_events.json?ts=${Date.now()}`, { cache: "no-store" }).then((fallback) =>
+            fallback.ok ? fallback.json() : null,
+          );
+        })
         .then((payload: MarketEventFeed | null) => {
           if (active && payload) setEventFeed(payload);
         })

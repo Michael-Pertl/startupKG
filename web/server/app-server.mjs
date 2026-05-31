@@ -70,6 +70,23 @@ const SUBSCRIPTION_PLANS = {
     monthly_credits: 500,
   },
 };
+const MARKET_EVENT_CORE_TYPES = new Set([
+  "funding_round",
+  "strategic_investment",
+  "compute_commitment",
+  "ipo_filing",
+  "ipo_pricing",
+  "public_listing",
+]);
+const MARKET_EVENT_BROAD_TYPES = new Set([
+  "ipo_watch",
+  "valuation_update",
+  "major_partnership",
+  "acquisition_or_merger",
+  "revenue_or_usage_milestone",
+]);
+const MARKET_EVENT_VISIBLE_STATUS = new Set(["approved", "needs_review", "auto_ingested"]);
+const MARKET_EVENT_MIN_FUNDING_USD = 100_000_000;
 const supabaseAdmin =
   SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
     ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -341,6 +358,105 @@ function publicUsage(user) {
     requests_last_minute: (user.request_timestamps || []).filter((timestamp) => Date.now() - timestamp < 60_000).length,
     max_requests_per_minute: ASK_MAX_REQUESTS_PER_MINUTE,
   };
+}
+
+function ipoStageForEventType(eventType) {
+  return {
+    ipo_watch: "watch",
+    ipo_filing: "filing",
+    ipo_pricing: "pricing",
+    public_listing: "listed",
+  }[eventType] || "";
+}
+
+function marketEventSignal(row) {
+  const eventType = row.event_type || "";
+  const status = row.status || "";
+  const amountUsd = Number(row.amount_usd || 0);
+  if (
+    status === "approved" &&
+    MARKET_EVENT_CORE_TYPES.has(eventType) &&
+    (eventType !== "funding_round" || amountUsd >= MARKET_EVENT_MIN_FUNDING_USD)
+  ) {
+    return ["core_signal", "Reviewed core signal"];
+  }
+  if (MARKET_EVENT_BROAD_TYPES.has(eventType)) {
+    return ["watchlist_signal", "Broader investor watchlist signal"];
+  }
+  if (eventType === "funding_round" && amountUsd > 0 && amountUsd < MARKET_EVENT_MIN_FUNDING_USD) {
+    return ["watchlist_signal", "Below-threshold funding signal"];
+  }
+  if (["auto_ingested", "needs_review", "staged"].includes(status)) {
+    return ["review_queue", "Unreviewed discovery item"];
+  }
+  return ["watchlist_signal", "Broader investor watchlist signal"];
+}
+
+function marketEventPayload(rows, source = "supabase") {
+  const events = rows
+    .filter((row) => MARKET_EVENT_VISIBLE_STATUS.has(row.status || ""))
+    .map((row) => {
+      const [signalTier, signalLabel] = marketEventSignal(row);
+      return {
+        event_id: row.event_id || row.candidate_id,
+        company_name: row.company_name || "",
+        event_type: row.event_type || "",
+        ipo_stage: row.ipo_stage || ipoStageForEventType(row.event_type),
+        event_date: row.event_date || "",
+        year: String(row.year || (row.event_date || "").slice(0, 4)),
+        country: row.country || "",
+        region: row.region || "",
+        amount_usd: row.amount_usd === null || row.amount_usd === undefined ? null : Number(row.amount_usd),
+        valuation_usd: row.valuation_usd === null || row.valuation_usd === undefined ? null : Number(row.valuation_usd),
+        source_url: row.source_url || "",
+        source_type: row.source_type || "",
+        confidence: row.confidence || "",
+        status: row.status || "",
+        signal_tier: signalTier,
+        signal_label: signalLabel,
+        linked_startup_id: row.linked_startup_id || "",
+        linked_startup_label: row.linked_startup_label || "",
+        summary: row.summary || "",
+        notes: row.notes || "",
+      };
+    })
+    .sort((left, right) => String(right.event_date || "").localeCompare(String(left.event_date || "")));
+  return {
+    metadata: {
+      title: "AI Market Event Monitor",
+      event_count: events.length,
+      source,
+      generated_at: new Date().toISOString(),
+      scope_note:
+        "Curated public monitoring events for AI market intelligence. These are public source alerts and not investment recommendations.",
+    },
+    facets: {
+      event_types: [...new Set(events.map((event) => event.event_type).filter(Boolean))].sort(),
+      ipo_stages: [...new Set(events.map((event) => event.ipo_stage).filter(Boolean))].sort(),
+      regions: [...new Set(events.map((event) => event.region).filter(Boolean))].sort(),
+      confidence: [...new Set(events.map((event) => event.confidence).filter(Boolean))].sort(),
+      statuses: [...new Set(events.map((event) => event.status).filter(Boolean))].sort(),
+      signal_tiers: [...new Set(events.map((event) => event.signal_tier).filter(Boolean))].sort(),
+    },
+    events,
+  };
+}
+
+async function publicMarketEvents() {
+  if (supabaseAdmin) {
+    const { data, error } = await supabaseAdmin
+      .from("market_event_candidates")
+      .select("*")
+      .in("status", [...MARKET_EVENT_VISIBLE_STATUS])
+      .order("event_date", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (!error) return marketEventPayload(data || [], "supabase");
+    console.warn(`Could not read Supabase market events; falling back to static JSON: ${error.message}`);
+  }
+  const fallback = readJsonFile(resolve(DIST_DIR, "data", "market_events.json"), null);
+  if (fallback) return { ...fallback, metadata: { ...fallback.metadata, source: "static_json" } };
+  return marketEventPayload([], "empty");
 }
 
 async function createCheckoutSession(request) {
@@ -906,6 +1022,15 @@ createServer(async (request, response) => {
       return;
     }
     sendJson(response, 200, { usage: publicUsage(auth.user) });
+    return;
+  }
+
+  if (request.method === "GET" && request.url?.startsWith("/api/market-events")) {
+    try {
+      sendJson(response, 200, await publicMarketEvents());
+    } catch (error) {
+      sendJson(response, 500, { error: error instanceof Error ? error.message : "Could not load market events." });
+    }
     return;
   }
 
