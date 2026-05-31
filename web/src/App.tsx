@@ -78,11 +78,32 @@ const confidenceHelp: Record<string, string> = {
 
 const graphLegendKinds: NodeKind[] = ["startup", "investor", "round", "country", "domain", "year"];
 
-type Expansion = {
-  rounds: boolean;
-  investors: boolean;
-  geography: boolean;
-  peers: boolean;
+type ContextLensKey =
+  | "funding_path"
+  | "investors"
+  | "similar_companies"
+  | "market_context"
+  | "portfolio_rounds"
+  | "co_investors"
+  | "domains"
+  | "regions"
+  | "deal_participants"
+  | "company_context"
+  | "market_slice"
+  | "top_companies"
+  | "recent_rounds"
+  | "active_investors"
+  | "largest_rounds";
+
+type GraphContext = {
+  activeLenses: ContextLensKey[];
+  expanded: boolean;
+};
+
+type ContextLens = {
+  key: ContextLensKey;
+  label: string;
+  title: string;
 };
 
 type LayoutMode = "flow" | "network";
@@ -169,6 +190,68 @@ const FREE_PREVIEW_LIMITS = {
   newsFeedRows: 6,
   newsIpoRows: 5,
 };
+
+const contextLensesByKind: Record<NodeKind, ContextLens[]> = {
+  startup: [
+    { key: "funding_path", label: "Funding path", title: "Show the company's largest visible funding events" },
+    { key: "investors", label: "Investors", title: "Show investors through the visible funding events" },
+    { key: "similar_companies", label: "Similar companies", title: "Show companies sharing this company's country or AI domain" },
+    { key: "market_context", label: "Market context", title: "Show country and domain anchors for this company" },
+  ],
+  investor: [
+    { key: "portfolio_rounds", label: "Portfolio rounds", title: "Show the investor's largest visible participated rounds" },
+    { key: "co_investors", label: "Co-investors", title: "Show other investors from those same rounds" },
+    { key: "domains", label: "Domains", title: "Show domain anchors for funded companies" },
+    { key: "regions", label: "Regions", title: "Show country and regional anchors for funded companies" },
+  ],
+  round: [
+    { key: "deal_participants", label: "Deal participants", title: "Show the investors in this funding event" },
+    { key: "company_context", label: "Company context", title: "Show the funded company" },
+    { key: "market_slice", label: "Market slice", title: "Show year, country, and domain context for this event" },
+  ],
+  country: [
+    { key: "top_companies", label: "Top companies", title: "Show the largest companies in this country" },
+    { key: "recent_rounds", label: "Recent rounds", title: "Show the largest visible round for each shown company" },
+    { key: "active_investors", label: "Active investors", title: "Show investors through those visible rounds" },
+    { key: "domains", label: "Domains", title: "Show domain anchors for the shown companies" },
+  ],
+  region: [
+    { key: "top_companies", label: "Top companies", title: "Show the largest companies in this region" },
+    { key: "recent_rounds", label: "Recent rounds", title: "Show the largest visible round for each shown company" },
+    { key: "active_investors", label: "Active investors", title: "Show investors through those visible rounds" },
+    { key: "domains", label: "Domains", title: "Show domain anchors for the shown companies" },
+  ],
+  domain: [
+    { key: "top_companies", label: "Top companies", title: "Show the largest companies in this AI domain" },
+    { key: "recent_rounds", label: "Recent rounds", title: "Show the largest visible round for each shown company" },
+    { key: "active_investors", label: "Active investors", title: "Show investors through those visible rounds" },
+    { key: "regions", label: "Regions", title: "Show country and regional anchors for the shown companies" },
+  ],
+  year: [
+    { key: "largest_rounds", label: "Largest rounds", title: "Show the largest funding events in this year" },
+    { key: "active_investors", label: "Active investors", title: "Show investors through those visible rounds" },
+    { key: "domains", label: "Domains", title: "Show domain anchors for the shown companies" },
+    { key: "regions", label: "Regions", title: "Show country and regional anchors for the shown companies" },
+  ],
+};
+
+const defaultContextLensesByKind: Record<NodeKind, ContextLensKey[]> = {
+  startup: ["funding_path", "investors", "market_context"],
+  investor: ["portfolio_rounds", "co_investors"],
+  round: ["deal_participants", "company_context", "market_slice"],
+  country: ["top_companies", "recent_rounds"],
+  region: ["top_companies", "recent_rounds"],
+  domain: ["top_companies", "recent_rounds"],
+  year: ["largest_rounds", "active_investors"],
+};
+
+function defaultGraphContext(kind: NodeKind = "startup"): GraphContext {
+  return { activeLenses: defaultContextLensesByKind[kind], expanded: false };
+}
+
+function lensIsActive(context: GraphContext, key: ContextLensKey): boolean {
+  return context.activeLenses.includes(key);
+}
 
 function LockedUpgradeRow({
   label,
@@ -313,7 +396,7 @@ function buildNeighborhood(
   selected: MarketNode,
   graph: MarketGraph,
   index: GraphIndex,
-  expansion: Expansion,
+  context: GraphContext,
   years: string[],
   countries: string[],
   confidence: string[],
@@ -323,29 +406,59 @@ function buildNeighborhood(
   const edgeIds = new Set<string>();
   const nodes: MarketNode[] = [];
   const edges: MarketEdge[] = [];
-  const showRounds = expansion.rounds;
-  const showInvestors = expansion.rounds && expansion.investors;
-  const showGeography = expansion.geography;
-  const showPeers = expansion.geography && expansion.peers;
+  const has = (key: ContextLensKey) => lensIsActive(context, key);
+  const expanded = Boolean(context.expanded);
+  const investorLimit = isFreePreview ? FREE_PREVIEW_LIMITS.graphInvestors : expanded ? 48 : 28;
 
   addNode(nodeIds, nodes, selected);
 
   const incident = index.edgesByNode.get(selected.id) || [];
-  const addIncidentEdge = (edge: MarketEdge) => {
-    const target = index.nodeById.get(otherEnd(edge, selected.id));
+  const addIncidentEdge = (edge: MarketEdge, nodeId = selected.id) => {
+    const target = index.nodeById.get(otherEnd(edge, nodeId));
     if (!target) return;
     if (target.kind === "round" && !passesRoundScope(target, index, years, countries, confidence)) return;
     addNode(nodeIds, nodes, target);
     addEdge(edgeIds, edges, edge);
   };
+  const addStartupContext = (startup: MarketNode, includeDomain: boolean, includeRegion: boolean) => {
+    addNode(nodeIds, nodes, startup);
+    for (const edge of index.edgesByNode.get(startup.id) || []) {
+      if (includeDomain && edge.kind === "operates_in") addIncidentEdge(edge, startup.id);
+      if (includeRegion && edge.kind === "headquartered_in") {
+        addIncidentEdge(edge, startup.id);
+        const country = index.nodeById.get(otherEnd(edge, startup.id));
+        if (!country) continue;
+        for (const countryEdge of index.edgesByNode.get(country.id) || []) {
+          if (countryEdge.kind === "part_of") addIncidentEdge(countryEdge, country.id);
+        }
+      }
+    }
+  };
+  const addRoundInvestors = (round: MarketNode, skipInvestorId?: string) => {
+    for (const roundEdge of index.edgesByNode.get(round.id) || []) {
+      if (roundEdge.kind !== "participated" || roundEdge.source === skipInvestorId) continue;
+      if (nodes.filter((node) => node.kind === "investor").length >= investorLimit) break;
+      addNode(nodeIds, nodes, index.nodeById.get(roundEdge.source));
+      addEdge(edgeIds, edges, roundEdge);
+    }
+  };
+  const visibleTopRoundForStartup = (startupId: string) =>
+    (index.startupRounds.get(startupId) || [])
+      .sort((left, right) => roundValue(right, index) - roundValue(left, index))
+      .find((roundEdge) => {
+        const round = index.nodeById.get(roundEdge.target);
+        return round ? passesRoundScope(round, index, years, countries, confidence) : false;
+      });
 
   if (selected.kind === "startup") {
-    const startupEdges = incident.filter((edge) => edge.kind === "headquartered_in" || edge.kind === "operates_in");
-    if (showGeography) startupEdges.forEach(addIncidentEdge);
+    const showSimilarCompanies = has("similar_companies") || (expanded && has("market_context"));
+    if (has("market_context") || showSimilarCompanies) {
+      addStartupContext(selected, true, true);
+    }
 
     const roundEdges = (index.startupRounds.get(selected.id) || [])
       .sort((left, right) => roundValue(right, index) - roundValue(left, index))
-      .slice(0, showRounds ? (isFreePreview ? FREE_PREVIEW_LIMITS.graphRounds : 12) : 0);
+      .slice(0, has("funding_path") ? (isFreePreview ? FREE_PREVIEW_LIMITS.graphRounds : expanded ? 24 : 12) : 0);
 
     for (const edge of roundEdges) {
       const round = index.nodeById.get(edge.target);
@@ -353,19 +466,10 @@ function buildNeighborhood(
       addNode(nodeIds, nodes, round);
       addEdge(edgeIds, edges, edge);
 
-      if (showInvestors) {
-        for (const roundEdge of index.edgesByNode.get(round.id) || []) {
-          if (roundEdge.kind !== "participated") continue;
-          if (isFreePreview && nodes.filter((node) => node.kind === "investor").length >= FREE_PREVIEW_LIMITS.graphInvestors) {
-            break;
-          }
-          addNode(nodeIds, nodes, index.nodeById.get(roundEdge.source));
-          addEdge(edgeIds, edges, roundEdge);
-        }
-      }
+      if (has("investors")) addRoundInvestors(round);
     }
 
-    if (showPeers && !isFreePreview) {
+    if (showSimilarCompanies && !isFreePreview) {
       const peers = graph.nodes
         .filter(
           (node) =>
@@ -375,7 +479,7 @@ function buildNeighborhood(
             (node.domain === selected.domain || node.country === selected.country),
         )
         .sort((left, right) => signal(right) - signal(left))
-        .slice(0, 18);
+        .slice(0, expanded ? 36 : 18);
       for (const peer of peers) {
         addNode(nodeIds, nodes, peer);
         for (const edge of index.edgesByNode.get(peer.id) || []) {
@@ -393,7 +497,7 @@ function buildNeighborhood(
     const participationEdges = incident
       .filter((edge) => edge.kind === "participated")
       .sort((left, right) => roundValue(right, index) - roundValue(left, index))
-      .slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.graphInvestors : 18);
+      .slice(0, has("portfolio_rounds") || has("co_investors") || has("domains") || has("regions") ? (isFreePreview ? FREE_PREVIEW_LIMITS.graphInvestors : expanded ? 36 : 18) : 0);
 
     for (const edge of participationEdges) {
       const round = index.nodeById.get(edge.target);
@@ -405,31 +509,63 @@ function buildNeighborhood(
       const startup = raised ? index.nodeById.get(raised.source) : undefined;
       addNode(nodeIds, nodes, startup);
       addEdge(edgeIds, edges, raised);
+
+      if (startup) addStartupContext(startup, has("domains"), has("regions"));
+      if (has("co_investors")) addRoundInvestors(round, selected.id);
     }
   } else if (selected.kind === "round") {
-    for (const edge of incident) addIncidentEdge(edge);
-  } else if (selected.kind === "country" || selected.kind === "domain") {
+    for (const edge of incident) {
+      if (edge.kind === "participated" && has("deal_participants")) addIncidentEdge(edge);
+      if (edge.kind === "raised" && has("company_context")) addIncidentEdge(edge);
+      if (edge.kind === "occurred_in" && has("market_slice")) addIncidentEdge(edge);
+    }
+    if (has("market_slice")) {
+      const raised = index.raisedByRound.get(selected.id);
+      const startup = raised ? index.nodeById.get(raised.source) : undefined;
+      if (startup) addStartupContext(startup, true, true);
+    }
+  } else if (selected.kind === "country" || selected.kind === "domain" || selected.kind === "region") {
     const startupEdges = incident
-      .filter((edge) => edge.kind === "headquartered_in" || edge.kind === "operates_in")
-      .map((edge) => ({ edge, startup: index.nodeById.get(otherEnd(edge, selected.id)) }))
+      .filter((edge) => {
+        if (selected.kind === "country") return edge.kind === "headquartered_in";
+        if (selected.kind === "domain") return edge.kind === "operates_in";
+        return edge.kind === "part_of";
+      })
+      .flatMap((edge) => {
+        if (selected.kind !== "region") {
+          return [{ edge, startup: index.nodeById.get(otherEnd(edge, selected.id)) }];
+        }
+        const country = index.nodeById.get(otherEnd(edge, selected.id));
+        if (!country) return [];
+        return (index.edgesByNode.get(country.id) || [])
+          .filter((countryEdge) => countryEdge.kind === "headquartered_in")
+          .map((countryEdge) => ({ edge: countryEdge, startup: index.nodeById.get(otherEnd(countryEdge, country.id)) }));
+      })
       .filter((item): item is { edge: MarketEdge; startup: MarketNode } => item.startup?.kind === "startup")
       .filter(({ startup }) => passesStartupScope(startup, countries))
       .sort((left, right) => signal(right.startup) - signal(left.startup))
-      .slice(0, isFreePreview ? 18 : 42);
+      .slice(0, has("top_companies") || has("recent_rounds") || has("active_investors") ? (isFreePreview ? 18 : expanded ? 80 : 42) : 0);
 
     for (const { edge, startup } of startupEdges) {
       addNode(nodeIds, nodes, startup);
       addEdge(edgeIds, edges, edge);
-      if (showRounds) {
-        const topRound = (index.startupRounds.get(startup.id) || [])
-          .sort((left, right) => roundValue(right, index) - roundValue(left, index))
-          .find((roundEdge) => {
-            const round = index.nodeById.get(roundEdge.target);
-            return round ? passesRoundScope(round, index, years, countries, confidence) : false;
-          });
+      if (selected.kind === "region") {
+        const country = index.nodeById.get(otherEnd(edge, startup.id));
+        addNode(nodeIds, nodes, country);
+        for (const countryEdge of index.edgesByNode.get(country?.id || "") || []) {
+          if (countryEdge.kind === "part_of" && otherEnd(countryEdge, country?.id || "") === selected.id) {
+            addEdge(edgeIds, edges, countryEdge);
+          }
+        }
+      }
+      addStartupContext(startup, has("domains"), has("regions"));
+      if (has("recent_rounds") || has("active_investors")) {
+        const topRound = visibleTopRoundForStartup(startup.id);
         if (topRound) {
-          addNode(nodeIds, nodes, index.nodeById.get(topRound.target));
+          const round = index.nodeById.get(topRound.target);
+          addNode(nodeIds, nodes, round);
           addEdge(edgeIds, edges, topRound);
+          if (round && has("active_investors")) addRoundInvestors(round);
         }
       }
     }
@@ -438,7 +574,7 @@ function buildNeighborhood(
       .filter((node) => node.kind === "round" && String(node.year) === selected.label)
       .filter((round) => passesRoundScope(round, index, years, countries, confidence))
       .sort((left, right) => Number(right.amount_usd || 0) - Number(left.amount_usd || 0))
-      .slice(0, isFreePreview ? 18 : 42);
+      .slice(0, has("largest_rounds") || has("active_investors") || has("domains") || has("regions") ? (isFreePreview ? 18 : expanded ? 80 : 42) : 0);
 
     for (const round of yearRounds) {
       addNode(nodeIds, nodes, round);
@@ -448,21 +584,9 @@ function buildNeighborhood(
       addNode(nodeIds, nodes, startup);
       addEdge(edgeIds, edges, raised);
 
-      if (showInvestors) {
-        for (const roundEdge of index.edgesByNode.get(round.id) || []) {
-          if (roundEdge.kind !== "participated") continue;
-          addNode(nodeIds, nodes, index.nodeById.get(roundEdge.source));
-          addEdge(edgeIds, edges, roundEdge);
-        }
-      }
+      if (has("active_investors")) addRoundInvestors(round);
 
-      if (startup && showGeography) {
-        for (const startupEdge of index.edgesByNode.get(startup.id) || []) {
-          if (startupEdge.kind !== "headquartered_in" && startupEdge.kind !== "operates_in") continue;
-          addNode(nodeIds, nodes, index.nodeById.get(otherEnd(startupEdge, startup.id)));
-          addEdge(edgeIds, edges, startupEdge);
-        }
-      }
+      if (startup) addStartupContext(startup, has("domains"), has("regions"));
     }
   }
 
@@ -569,13 +693,15 @@ function flowPositions(nodes: MarketNode[], edges: MarketEdge[], selectedId: str
     rounds.forEach((node, index) => positions.set(node.id, lanePosition(index, rounds.length, 260, 88)));
     startups.forEach((node, index) => positions.set(node.id, lanePosition(index, startups.length, 540, 78)));
     context.forEach((node, index) => positions.set(node.id, lanePosition(index, context.length, -250, 90)));
-  } else if (selected?.kind === "domain" || selected?.kind === "country") {
+  } else if (selected?.kind === "domain" || selected?.kind === "country" || selected?.kind === "region") {
     const startups = byKind("startup");
     const rounds = byKind("round");
     const investors = byKind("investor");
+    const context = ranked.filter((node) => ["country", "domain", "region"].includes(node.kind) && node.id !== selectedId);
     startups.forEach((node, index) => positions.set(node.id, lanePosition(index, startups.length, 270, 72)));
     rounds.forEach((node, index) => positions.set(node.id, lanePosition(index, rounds.length, 545, 76)));
     investors.forEach((node, index) => positions.set(node.id, lanePosition(index, investors.length, 820, 62)));
+    context.forEach((node, index) => positions.set(node.id, lanePosition(index, context.length, -245, 82)));
   } else if (selected?.kind === "round") {
     const startups = byKind("startup");
     const investors = byKind("investor");
@@ -583,6 +709,15 @@ function flowPositions(nodes: MarketNode[], edges: MarketEdge[], selectedId: str
     startups.forEach((node, index) => positions.set(node.id, lanePosition(index, startups.length, -260, 90)));
     investors.forEach((node, index) => positions.set(node.id, lanePosition(index, investors.length, 300, 64)));
     context.forEach((node, index) => positions.set(node.id, lanePosition(index, context.length, 560, 80)));
+  } else if (selected?.kind === "year") {
+    const rounds = byKind("round");
+    const startups = byKind("startup");
+    const investors = byKind("investor");
+    const context = ranked.filter((node) => ["country", "domain", "region"].includes(node.kind) && node.id !== selectedId);
+    rounds.forEach((node, index) => positions.set(node.id, lanePosition(index, rounds.length, 270, 78)));
+    startups.forEach((node, index) => positions.set(node.id, lanePosition(index, startups.length, 535, 74)));
+    investors.forEach((node, index) => positions.set(node.id, lanePosition(index, investors.length, 800, 58)));
+    context.forEach((node, index) => positions.set(node.id, lanePosition(index, context.length, -250, 82)));
   }
 
   const unplaced = ranked.filter((node) => !positions.has(node.id));
@@ -1190,58 +1325,67 @@ function DomainNavigator({
   );
 }
 
-function ExpansionControls({
-  expansion,
-  setExpansion,
+function ContextLensControls({
+  context,
+  selected,
+  setContext,
   locked,
   onLocked,
 }: {
-  expansion: Expansion;
-  setExpansion: (expansion: Expansion) => void;
+  context: GraphContext;
+  selected: MarketNode;
+  setContext: (context: GraphContext) => void;
   locked: boolean;
   onLocked: () => void;
 }) {
-  const controls: Array<{ key: keyof Expansion; label: string; dependsOn?: keyof Expansion; title: string }> = [
-    { key: "rounds", label: "Rounds", title: "Show funding rounds connected to the selected entity" },
-    { key: "investors", label: "Investors", dependsOn: "rounds", title: "Requires funding rounds because investors connect through rounds" },
-    { key: "geography", label: "Country/domain", title: "Show country and domain context" },
-    { key: "peers", label: "Peers", dependsOn: "geography", title: "Requires country/domain context for comparable companies" },
-  ];
-  const toggleExpansion = (key: keyof Expansion) => {
-    const next = { ...expansion, [key]: !expansion[key] };
-    if (key === "rounds" && !next.rounds) next.investors = false;
-    if (key === "geography" && !next.geography) next.peers = false;
-    setExpansion(next);
+  const controls = contextLensesByKind[selected.kind];
+  const toggleLens = (key: ContextLensKey) => {
+    let activeLenses = context.activeLenses.includes(key)
+      ? context.activeLenses.filter((lens) => lens !== key)
+      : [...context.activeLenses, key];
+    if (selected.kind === "startup" && key === "funding_path" && !activeLenses.includes("funding_path")) {
+      activeLenses = activeLenses.filter((lens) => lens !== "investors");
+    }
+    if (selected.kind === "startup" && key === "investors" && activeLenses.includes("investors")) {
+      activeLenses = Array.from(new Set(["funding_path", ...activeLenses]));
+    }
+    setContext({
+      activeLenses: activeLenses.length ? activeLenses : [defaultContextLensesByKind[selected.kind][0]],
+      expanded: context.expanded,
+    });
   };
   return (
     <section className="rail-context-controls">
-      <div className="rail-context-title">Context</div>
+      <div className="rail-context-title">Context lenses</div>
       <div className="chip-row">
-        {controls.map(({ key, label, dependsOn, title }) => {
-          const disabled = Boolean(dependsOn && !expansion[dependsOn]);
-          return (
+        {controls.map(({ key, label, title }) => (
           <button
             className={[
-              expansion[key] ? "chip selected" : "chip",
+              context.activeLenses.includes(key) ? "chip selected" : "chip",
               locked ? "locked" : "",
-              disabled ? "disabled" : "",
             ].join(" ")}
-            disabled={!locked && disabled}
             key={key}
             onClick={() => {
               if (locked) {
                 onLocked();
                 return;
               }
-              if (!disabled) toggleExpansion(key);
+              toggleLens(key);
             }}
-            title={disabled && dependsOn ? title : undefined}
+            title={title}
             type="button"
           >
             {label}
           </button>
-          );
-        })}
+        ))}
+        <button
+          className={context.expanded ? "chip selected" : "chip"}
+          onClick={() => setContext({ ...context, expanded: !context.expanded })}
+          title="Toggle a deeper ranked neighborhood for the active lenses"
+          type="button"
+        >
+          {context.expanded ? "Show less" : "Show more"}
+        </button>
       </div>
     </section>
   );
@@ -3081,12 +3225,7 @@ export default function App() {
   const [drawerMode, setDrawerMode] = useState<"details" | "ask" | null>(null);
   const [drawerWidth, setDrawerWidth] = useState(420);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>("flow");
-  const [expansion, setExpansion] = useState<Expansion>({
-    rounds: true,
-    investors: true,
-    geography: true,
-    peers: false,
-  });
+  const [graphContext, setGraphContext] = useState<GraphContext>(() => defaultGraphContext());
 
   useEffect(() => {
     fetch("/data/market_graph.json")
@@ -3175,12 +3314,13 @@ export default function App() {
   const isFreePreview = currentPlan === "free";
   const neighborhood = useMemo(() => {
     if (!graph || !index || !selected) return { nodes: [], edges: [] };
-    return buildNeighborhood(selected, graph, index, expansion, years, countries, confidence, isFreePreview);
-  }, [confidence, countries, expansion, graph, index, isFreePreview, selected, years]);
+    return buildNeighborhood(selected, graph, index, graphContext, years, countries, confidence, isFreePreview);
+  }, [confidence, countries, graph, graphContext, index, isFreePreview, selected, years]);
 
   const handleSelect = useCallback((node: MarketNode | undefined) => {
     if (!node) return;
     setSelectedId(node.id);
+    setGraphContext(defaultGraphContext(node.kind));
     setDrawerMode("details");
     setGraphViewportSignal((signal) => signal + 1);
   }, []);
@@ -3202,7 +3342,7 @@ export default function App() {
   const openGraphUpgrade = () => setUpgradePrompt({
     feature: "Full graph",
     title: "Unlock the full network",
-    body: "Starter unlocks graph context controls for rounds, investors, geography, and peer companies, with preview caps removed across the network.",
+    body: "Starter unlocks entity-specific context lenses for investors, comparable companies, regions, domains, and deeper funding paths.",
   });
 
   const startDrawerResize = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
@@ -3230,7 +3370,7 @@ export default function App() {
   const selectNodeAndOpenGraph = (node: MarketNode) => {
     setSelectedId(node.id);
     setDrawerMode("details");
-    setExpansion({ rounds: true, investors: true, geography: true, peers: false });
+    setGraphContext(defaultGraphContext(node.kind));
     setView("graph");
     setGraphViewportSignal((signal) => signal + 1);
   };
@@ -3414,17 +3554,18 @@ export default function App() {
             {isFreePreview ? (
               <div className="rail-group graph-context-locked rail-row" aria-label="Locked graph context">
                 <span>Context</span>
-                <button onClick={openGraphUpgrade} title="Unlock graph context controls with Starter" type="button">
+                <button onClick={openGraphUpgrade} title="Unlock graph context lenses with Starter" type="button">
                   Full network
                 </button>
               </div>
             ) : (
               <div className="rail-context-panel">
-                <ExpansionControls
-                  expansion={expansion}
+                <ContextLensControls
+                  context={graphContext}
                   locked={false}
                   onLocked={openGraphUpgrade}
-                  setExpansion={setExpansion}
+                  selected={selected}
+                  setContext={setGraphContext}
                 />
               </div>
             )}
