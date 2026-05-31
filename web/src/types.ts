@@ -66,6 +66,7 @@ export type MarketEvent = {
   event_id: string;
   company_name: string;
   event_type: string;
+  ipo_stage?: string;
   event_date: string;
   year: string;
   country: string;
@@ -78,6 +79,8 @@ export type MarketEvent = {
   status: string;
   signal_tier: string;
   signal_label: string;
+  linked_startup_id?: string | null;
+  linked_startup_label?: string | null;
   summary: string;
   notes: string;
 };
@@ -90,6 +93,7 @@ export type MarketEventFeed = {
   };
   facets: {
     event_types: string[];
+    ipo_stages?: string[];
     regions: string[];
     confidence: string[];
     statuses: string[];

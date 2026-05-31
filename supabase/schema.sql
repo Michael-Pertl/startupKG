@@ -75,6 +75,7 @@ create table if not exists public.market_event_candidates (
   candidate_id text primary key,
   company_name text not null,
   event_type text not null,
+  ipo_stage text check (ipo_stage is null or ipo_stage in ('watch', 'filing', 'pricing', 'listed')),
   event_date date,
   year integer,
   country text,
@@ -86,6 +87,8 @@ create table if not exists public.market_event_candidates (
   confidence text not null default 'medium',
   status text not null default 'needs_review'
     check (status in ('auto_ingested', 'needs_review', 'approved', 'rejected', 'promotion_ready', 'promoted')),
+  linked_startup_id text,
+  linked_startup_label text,
   summary text,
   notes text,
   raw_payload jsonb not null default '{}'::jsonb,
@@ -95,6 +98,11 @@ create table if not exists public.market_event_candidates (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.market_event_candidates
+  add column if not exists ipo_stage text check (ipo_stage is null or ipo_stage in ('watch', 'filing', 'pricing', 'listed')),
+  add column if not exists linked_startup_id text,
+  add column if not exists linked_startup_label text;
 
 create table if not exists public.market_event_reviews (
   review_id uuid primary key default gen_random_uuid(),
@@ -123,6 +131,10 @@ create index if not exists idx_profiles_stripe_subscription
 
 create index if not exists idx_market_event_candidates_status_date
   on public.market_event_candidates (status, event_date desc);
+
+create index if not exists idx_market_event_candidates_linked_startup
+  on public.market_event_candidates (linked_startup_id)
+  where linked_startup_id is not null;
 
 create index if not exists idx_market_event_reviews_candidate_created
   on public.market_event_reviews (candidate_id, created_at desc);

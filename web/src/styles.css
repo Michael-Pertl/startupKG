@@ -3056,7 +3056,7 @@ a {
   align-items: end;
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(240px, 1fr) minmax(260px, 420px);
+  grid-template-columns: minmax(220px, 1fr) auto minmax(260px, 420px);
 }
 
 .news-feed-summary {
@@ -3109,6 +3109,71 @@ a {
 
 .news-search input:focus {
   border-color: var(--accent-border);
+}
+
+.news-view-toggle {
+  align-items: center;
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  display: flex;
+  gap: 4px;
+  min-height: 46px;
+  padding: 6px;
+}
+
+.news-view-toggle button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  min-height: 32px;
+  padding: 6px 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.news-view-toggle button:hover,
+.news-view-toggle button.active {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--text-strong);
+}
+
+.ipo-watch-strip {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ipo-watch-card {
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.ipo-watch-card span:first-child {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ipo-watch-card h2 {
+  color: var(--text-strong);
+  font-size: 16px;
+  margin: 0;
+}
+
+.ipo-watch-card p {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 0;
 }
 
 .news-feed-card {
@@ -3293,6 +3358,18 @@ a {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .news-mode-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .news-view-toggle {
+    justify-content: flex-start;
+  }
+
+  .ipo-watch-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .topbar {
     align-items: stretch;
     grid-template-columns: 1fr;
@@ -3397,6 +3474,7 @@ a {
   .analytics-filters,
   .analytics-kpis,
   .analytics-grid,
+  .ipo-watch-strip,
   .lens-controls,
   .growth-grid,
   .slice-summary {
