@@ -3128,31 +3128,8 @@ a {
   align-items: stretch;
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 380px);
-}
-
-.news-feed-summary {
-  align-self: stretch;
-  background: var(--surface-muted);
-  border: 1px solid var(--border-soft);
-  border-radius: 3px;
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-  padding: 10px 12px;
-}
-
-.news-feed-summary strong {
-  color: var(--text-strong);
-  font-size: 14px;
-}
-
-.news-feed-summary span {
-  color: var(--muted);
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  grid-template-columns: auto minmax(260px, 420px);
+  justify-content: space-between;
 }
 
 .news-search {
@@ -3219,7 +3196,7 @@ a {
 }
 
 .news-feed-heading {
-  align-items: start;
+  align-items: center;
   border-bottom: 1px solid var(--border-soft);
   display: flex;
   gap: 16px;
@@ -3230,14 +3207,6 @@ a {
 
 .news-feed-heading h2 {
   margin: 0;
-}
-
-.news-feed-heading p {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.4;
-  margin: 6px 0 0;
-  max-width: 680px;
 }
 
 .news-feed-heading strong {
@@ -3261,8 +3230,8 @@ a {
   border: 1px solid var(--border-soft);
   display: grid;
   gap: 12px;
-  grid-template-columns: 112px minmax(0, 1fr) 92px;
-  min-height: 136px;
+  grid-template-columns: minmax(0, 1fr) 88px;
+  min-height: 92px;
   padding: 12px;
 }
 
@@ -3271,42 +3240,27 @@ a {
   border-color: var(--accent-border);
 }
 
-.news-item-date {
-  align-content: start;
-  border-right: 1px solid var(--border-soft);
-  display: grid;
-  gap: 7px;
-  padding-right: 12px;
-}
-
-.news-item-date strong {
-  color: var(--text-strong);
-  font-size: 13px;
-  font-weight: 900;
-}
-
-.news-item-date span {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
 .news-item-main {
   min-width: 0;
 }
 
-.news-item-topline {
+.news-item-titleline {
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-bottom: 6px;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
 }
 
-.news-item-topline span,
-.news-item-topline b,
-.news-item-topline em,
+.news-item-badges {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+}
+
+.news-item-badges span,
+.news-item-badges b,
 .news-metrics span {
   border: 1px solid var(--border-soft);
   color: var(--muted);
@@ -3317,41 +3271,31 @@ a {
   text-transform: uppercase;
 }
 
-.news-item-topline b {
+.news-item-badges b {
   color: var(--accent);
 }
 
-.news-item-topline .signal-core_signal {
+.news-item-badges .signal-core_signal {
   border-color: rgba(111, 168, 155, 0.48);
   color: #9bc7bc;
 }
 
-.news-item-topline .signal-watchlist_signal {
+.news-item-badges .signal-watchlist_signal {
   border-color: rgba(185, 144, 95, 0.48);
   color: #d5b17e;
 }
 
-.news-item-topline .signal-review_queue {
+.news-item-badges .signal-review_queue {
   border-color: rgba(127, 143, 170, 0.48);
   color: #aab6d0;
 }
 
-.news-item-topline .status-approved {
-  color: #9bb8ad;
-}
-
-.news-item-topline .status-auto {
-  color: #9fb0d1;
-}
-
-.news-item-topline .status-review {
-  color: #d0b47b;
-}
-
 .news-item h3 {
   color: var(--text-strong);
-  font-size: 17px;
-  margin: 0 0 6px;
+  flex: 1;
+  font-size: 15px;
+  margin: 0;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3361,11 +3305,10 @@ a {
   color: var(--text);
   display: -webkit-box;
   font-size: 13px;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   line-height: 1.45;
-  margin: 0;
-  min-height: 38px;
+  margin: 7px 0 0;
   overflow: hidden;
 }
 
@@ -3373,7 +3316,7 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .news-actions {
@@ -3622,16 +3565,15 @@ a {
     min-height: 0;
   }
 
-  .news-item-date {
-    border-bottom: 1px solid var(--border-soft);
-    border-right: 0;
-    grid-template-columns: auto auto;
-    justify-content: start;
-    padding: 0 0 10px;
+  .news-item-titleline {
+    align-items: flex-start;
+    display: grid;
+    gap: 7px;
+    justify-content: stretch;
   }
 
-  .news-item p {
-    min-height: 0;
+  .news-item-badges {
+    flex-wrap: wrap;
   }
 
   .news-actions {
