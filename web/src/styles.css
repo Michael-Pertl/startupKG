@@ -220,7 +220,10 @@ a {
 .login-shell.no-right,
 .account-shell,
 .account-shell.has-right,
-.account-shell.no-right {
+.account-shell.no-right,
+.admin-shell,
+.admin-shell.has-right,
+.admin-shell.no-right {
   grid-template-areas:
     "nav"
     "analytics";
@@ -3399,7 +3402,10 @@ a {
   .login-shell.no-right,
   .account-shell,
   .account-shell.has-right,
-  .account-shell.no-right {
+  .account-shell.no-right,
+  .admin-shell,
+  .admin-shell.has-right,
+  .admin-shell.no-right {
     grid-template-areas:
       "nav"
       "analytics";
@@ -3483,7 +3489,10 @@ a {
   .login-shell.no-right,
   .account-shell,
   .account-shell.has-right,
-  .account-shell.no-right {
+  .account-shell.no-right,
+  .admin-shell,
+  .admin-shell.has-right,
+  .admin-shell.no-right {
     grid-template-areas:
       "nav"
       "analytics";
