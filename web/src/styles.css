@@ -3125,10 +3125,10 @@ a {
 }
 
 .news-mode-row {
-  align-items: end;
+  align-items: stretch;
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(220px, 1fr) auto minmax(260px, 420px);
+  grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 380px);
 }
 
 .news-feed-summary {
@@ -3213,48 +3213,42 @@ a {
   color: var(--text-strong);
 }
 
-.ipo-watch-strip {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.ipo-watch-card {
-  background: var(--surface-muted);
-  border: 1px solid var(--border-soft);
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-  padding: 12px;
-}
-
-.ipo-watch-card span:first-child {
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.ipo-watch-card h2 {
-  color: var(--text-strong);
-  font-size: 16px;
-  margin: 0;
-}
-
-.ipo-watch-card p {
-  color: var(--text);
-  font-size: 12px;
-  line-height: 1.4;
-  margin: 0;
-}
-
 .news-feed-card {
   height: fit-content;
   min-height: 0;
 }
 
-.news-feed-card h2 {
-  margin-bottom: 14px;
+.news-feed-heading {
+  align-items: start;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin: -2px 0 12px;
+  padding-bottom: 12px;
+}
+
+.news-feed-heading h2 {
+  margin: 0;
+}
+
+.news-feed-heading p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 6px 0 0;
+  max-width: 680px;
+}
+
+.news-feed-heading strong {
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  color: var(--text-strong);
+  font-size: 13px;
+  font-weight: 900;
+  min-width: 58px;
+  padding: 7px 9px;
+  text-align: center;
 }
 
 .news-feed {
@@ -3267,13 +3261,39 @@ a {
   border: 1px solid var(--border-soft);
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 112px minmax(0, 1fr) 92px;
+  min-height: 136px;
   padding: 12px;
 }
 
 .news-item:hover {
   background: color-mix(in srgb, var(--surface-muted) 70%, transparent);
   border-color: var(--accent-border);
+}
+
+.news-item-date {
+  align-content: start;
+  border-right: 1px solid var(--border-soft);
+  display: grid;
+  gap: 7px;
+  padding-right: 12px;
+}
+
+.news-item-date strong {
+  color: var(--text-strong);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.news-item-date span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.news-item-main {
+  min-width: 0;
 }
 
 .news-item-topline {
@@ -3332,13 +3352,21 @@ a {
   color: var(--text-strong);
   font-size: 17px;
   margin: 0 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .news-item p {
   color: var(--text);
+  display: -webkit-box;
   font-size: 13px;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   line-height: 1.45;
   margin: 0;
+  min-height: 38px;
+  overflow: hidden;
 }
 
 .news-metrics {
@@ -3352,6 +3380,7 @@ a {
   align-content: start;
   display: grid;
   gap: 7px;
+  justify-items: stretch;
 }
 
 .news-actions a,
@@ -3363,10 +3392,11 @@ a {
   cursor: pointer;
   font-size: 11px;
   font-weight: 900;
-  min-width: 70px;
+  min-width: 0;
   padding: 7px 9px;
   text-align: center;
   text-transform: uppercase;
+  width: 100%;
 }
 
 .news-empty {
@@ -3447,10 +3477,6 @@ a {
 
   .news-view-toggle {
     justify-content: flex-start;
-  }
-
-  .ipo-watch-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .topbar {
@@ -3560,7 +3586,6 @@ a {
   .analytics-filters,
   .analytics-kpis,
   .analytics-grid,
-  .ipo-watch-strip,
   .lens-controls,
   .growth-grid,
   .slice-summary {
@@ -3581,6 +3606,36 @@ a {
 
   .bar-row {
     grid-template-columns: minmax(84px, 0.4fr) minmax(0, 1fr);
+  }
+
+  .news-feed-heading {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .news-feed-heading strong {
+    justify-self: start;
+  }
+
+  .news-item {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .news-item-date {
+    border-bottom: 1px solid var(--border-soft);
+    border-right: 0;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    padding: 0 0 10px;
+  }
+
+  .news-item p {
+    min-height: 0;
+  }
+
+  .news-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .bar-row strong {

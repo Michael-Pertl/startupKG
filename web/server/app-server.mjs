@@ -461,8 +461,12 @@ async function publicMarketEvents() {
       .order("event_date", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false })
       .limit(500);
-    if (!error) return marketEventPayload(data || [], "supabase");
-    console.warn(`Could not read Supabase market events; falling back to static JSON: ${error.message}`);
+    if (!error && data?.length) return marketEventPayload(data, "supabase");
+    if (!error) {
+      console.warn("Supabase market events are empty; falling back to static JSON.");
+    } else {
+      console.warn(`Could not read Supabase market events; falling back to static JSON: ${error.message}`);
+    }
   }
   const fallback = readJsonFile(resolve(DIST_DIR, "data", "market_events.json"), null);
   if (fallback) return { ...fallback, metadata: { ...fallback.metadata, source: "static_json" } };
