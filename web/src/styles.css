@@ -220,7 +220,10 @@ a {
 .login-shell.no-right,
 .account-shell,
 .account-shell.has-right,
-.account-shell.no-right {
+.account-shell.no-right,
+.admin-shell,
+.admin-shell.has-right,
+.admin-shell.no-right {
   grid-template-areas:
     "nav"
     "analytics";
@@ -636,8 +639,63 @@ a {
   margin: 0;
 }
 
-.admin-filter {
-  min-width: 220px;
+.admin-status-tabs {
+  background: color-mix(in srgb, var(--surface-elevated) 72%, transparent);
+  border: 1px solid var(--border-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+}
+
+.admin-status-tabs button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  min-height: 32px;
+  padding: 6px 10px;
+  text-transform: uppercase;
+}
+
+.admin-status-tabs button:hover,
+.admin-status-tabs button.active {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--text-strong);
+}
+
+.admin-workbench {
+  align-items: start;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+}
+
+.admin-review-guide {
+  background: color-mix(in srgb, var(--surface-elevated) 76%, transparent);
+  border: 1px solid var(--border-soft);
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  position: sticky;
+  top: 14px;
+}
+
+.admin-review-guide h2 {
+  color: var(--text-strong);
+  font-size: 18px;
+  margin: 0;
+}
+
+.admin-review-guide ol {
+  color: var(--muted);
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
 }
 
 .admin-event-list {
@@ -651,7 +709,7 @@ a {
   border: 1px solid var(--border-soft);
   display: grid;
   gap: 16px;
-  grid-template-columns: minmax(260px, 1.5fr) minmax(250px, 0.9fr) minmax(132px, auto);
+  grid-template-columns: minmax(260px, 1.45fr) minmax(250px, 0.9fr) minmax(132px, auto);
   padding: 13px;
 }
 
@@ -695,10 +753,24 @@ a {
   margin: 0;
 }
 
+.admin-source-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.admin-source-line span {
+  border: 1px solid var(--border-soft);
+  color: var(--muted);
+  font-size: 10px;
+  padding: 3px 6px;
+}
+
 .admin-event-meta {
   display: grid;
   gap: 7px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .admin-event-meta div {
@@ -778,7 +850,7 @@ a {
 .admin-summary {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .admin-summary div {
@@ -3336,7 +3408,10 @@ a {
   .login-shell.no-right,
   .account-shell,
   .account-shell.has-right,
-  .account-shell.no-right {
+  .account-shell.no-right,
+  .admin-shell,
+  .admin-shell.has-right,
+  .admin-shell.no-right {
     grid-template-areas:
       "nav"
       "analytics";
@@ -3354,6 +3429,14 @@ a {
 
   .admin-event-card {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-review-guide {
+    position: static;
   }
 
   .admin-event-actions {
@@ -3412,7 +3495,10 @@ a {
   .login-shell.no-right,
   .account-shell,
   .account-shell.has-right,
-  .account-shell.no-right {
+  .account-shell.no-right,
+  .admin-shell,
+  .admin-shell.has-right,
+  .admin-shell.no-right {
     grid-template-areas:
       "nav"
       "analytics";

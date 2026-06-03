@@ -297,6 +297,16 @@ async function ensureAdminUser(request) {
   return auth;
 }
 
+async function adminStatus(request) {
+  const auth = await ensureSupabaseUser(request);
+  if (auth.error) return auth;
+  const email = String(auth.user.email || "").toLowerCase();
+  return {
+    admin: Boolean(ADMIN_EMAILS.size && ADMIN_EMAILS.has(email)),
+    email: auth.user.email || "",
+  };
+}
+
 function checkCreditsAndRateLimit(user, provider = "local") {
   if (provider === "supabase") {
     if (!checkRateLimit(user.user_id)) {
@@ -1031,6 +1041,16 @@ createServer(async (request, response) => {
     } catch (error) {
       sendJson(response, 500, { error: error instanceof Error ? error.message : "Could not load market events." });
     }
+    return;
+  }
+
+  if (request.method === "GET" && request.url === "/api/admin/me") {
+    const result = await adminStatus(request);
+    if (result.error) {
+      sendJson(response, result.error.status, { error: result.error.message, admin: false });
+      return;
+    }
+    sendJson(response, 200, { admin: result.admin, email: result.email });
     return;
   }
 

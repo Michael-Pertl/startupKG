@@ -130,6 +130,7 @@ type AdminMarketEvent = {
   candidate_id: string;
   company_name: string;
   event_type: string;
+  ipo_stage?: string | null;
   event_date?: string | null;
   year?: number | null;
   country?: string | null;
@@ -140,6 +141,8 @@ type AdminMarketEvent = {
   source_type: string;
   confidence: string;
   status: string;
+  linked_startup_id?: string | null;
+  linked_startup_label?: string | null;
   summary?: string | null;
   notes?: string | null;
   review_notes?: string | null;
@@ -2960,15 +2963,17 @@ function AdminEventsPage({ session, onLoginRequired }: { session: SupabaseSessio
   };
 
   const statusOptions = [
-    "needs_review",
-    "auto_ingested",
-    "approved",
-    "promotion_ready",
-    "rejected",
+    { value: "needs_review", label: "Needs review" },
+    { value: "auto_ingested", label: "Auto ingested" },
+    { value: "approved", label: "Approved" },
+    { value: "promotion_ready", label: "Ready for CSV" },
+    { value: "rejected", label: "Rejected" },
   ];
   const statusLabel = (value: string) => value ? value.replace(/_/g, " ") : "All";
   const fundingInView = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
   const highConfidenceCount = events.filter((event) => event.confidence === "high").length;
+  const publicMarketCount = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing").length;
+  const linkedCount = events.filter((event) => event.linked_startup_id).length;
 
   if (!session) {
     return (
@@ -2990,17 +2995,21 @@ function AdminEventsPage({ session, onLoginRequired }: { session: SupabaseSessio
           <div>
             <span>Admin review</span>
             <h1>Market event candidates</h1>
-            <p>Review auto-ingested events before they are promoted into the curated CSV graph dataset.</p>
+            <p>Review auto-ingested public market, funding, valuation, and partnership signals before they influence the curated product surface.</p>
           </div>
-          <div className="admin-filter">
-            <SinglePopoverSelect
-              formatValue={statusLabel}
-              label="Status"
-              onChange={setStatusFilter}
-              value={statusFilter}
-              values={statusOptions}
-            />
-          </div>
+          <button className="account-back" onClick={loadEvents} type="button">Refresh</button>
+        </div>
+        <div className="admin-status-tabs" role="tablist" aria-label="Candidate status filters">
+          {statusOptions.map((option) => (
+            <button
+              className={statusFilter === option.value ? "active" : ""}
+              key={option.value}
+              onClick={() => setStatusFilter(option.value)}
+              type="button"
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
         <div className="admin-summary">
           <div>
@@ -3015,42 +3024,71 @@ function AdminEventsPage({ session, onLoginRequired }: { session: SupabaseSessio
             <span>Linked amount</span>
             <strong>{formatUsd(fundingInView)}</strong>
           </div>
+          <div>
+            <span>Public path</span>
+            <strong>{formatCount(publicMarketCount)}</strong>
+          </div>
+          <div>
+            <span>Graph linked</span>
+            <strong>{formatCount(linkedCount)}</strong>
+          </div>
         </div>
         {message ? <p className="admin-message">{message}</p> : null}
-        <div className="admin-event-list">
-          {events.length ? events.map((event) => (
-            <article className="admin-event-card" key={event.candidate_id}>
-              <div className="admin-event-main">
-                <div className="admin-event-kicker">
-                  <span>{eventLabel(event.event_type)}</span>
-                  <span>{event.confidence}</span>
-                  <span>{event.status.replace(/_/g, " ")}</span>
+        <div className="admin-workbench">
+          <aside className="admin-review-guide" aria-label="Review workflow">
+            <span>Workflow</span>
+            <h2>Review order</h2>
+            <p>Open the source, confirm company identity, check amount or valuation when present, then approve only source-backed signals.</p>
+            <ol>
+              <li>Reject low-signal or mismatched news.</li>
+              <li>Approve visible market intelligence.</li>
+              <li>Mark graph-grade funding candidates ready for CSV promotion.</li>
+            </ol>
+          </aside>
+          <div className="admin-event-list">
+            {events.length ? events.map((event) => (
+              <article className="admin-event-card" key={event.candidate_id}>
+                <div className="admin-event-main">
+                  <div className="admin-event-kicker">
+                    <span>{eventLabel(event.event_type)}</span>
+                    {event.ipo_stage ? <span>{event.ipo_stage}</span> : null}
+                    <span>{event.confidence}</span>
+                    <span>{statusLabel(event.status)}</span>
+                  </div>
+                  <h2>{event.company_name}</h2>
+                  <p>{event.summary || event.notes || "No summary available."}</p>
+                  <div className="admin-source-line">
+                    <span>{event.source_type.replace(/_/g, " ")}</span>
+                    <span>{event.linked_startup_label || event.linked_startup_id ? `Graph: ${event.linked_startup_label || event.linked_startup_id}` : "No graph link"}</span>
+                  </div>
                 </div>
-                <h2>{event.company_name}</h2>
-                <p>{event.summary || event.notes || "No summary available."}</p>
-              </div>
-              <div className="admin-event-meta">
-                <div>
-                  <span>Date</span>
-                  <strong>{event.event_date || event.year || "No date"}</strong>
+                <div className="admin-event-meta">
+                  <div>
+                    <span>Date</span>
+                    <strong>{event.event_date || event.year || "No date"}</strong>
+                  </div>
+                  <div>
+                    <span>Region</span>
+                    <strong>{event.region || event.country || "No region"}</strong>
+                  </div>
+                  <div>
+                    <span>Amount</span>
+                    <strong>{event.amount_usd ? formatUsd(Number(event.amount_usd)) : "No amount"}</strong>
+                  </div>
+                  <div>
+                    <span>Valuation</span>
+                    <strong>{event.valuation_usd ? formatUsd(Number(event.valuation_usd)) : "No valuation"}</strong>
+                  </div>
                 </div>
-                <div>
-                  <span>Region</span>
-                  <strong>{event.region || event.country || "No region"}</strong>
+                <div className="admin-event-actions">
+                  <a href={event.source_url} rel="noreferrer" target="_blank">Source</a>
+                  <button className="admin-action-primary" disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "approved")} type="button">Approve</button>
+                  <button disabled={Boolean(busyId)} onClick={() => markPromotionReady(event)} type="button">Ready for CSV</button>
+                  <button className="admin-action-muted" disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "rejected")} type="button">Reject</button>
                 </div>
-                <div>
-                  <span>Amount</span>
-                  <strong>{event.amount_usd ? formatUsd(Number(event.amount_usd)) : "No amount"}</strong>
-                </div>
-              </div>
-              <div className="admin-event-actions">
-                <button className="admin-action-primary" disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "approved")} type="button">Approve</button>
-                <button disabled={Boolean(busyId)} onClick={() => markPromotionReady(event)} type="button">Ready for CSV</button>
-                <a href={event.source_url} rel="noreferrer" target="_blank">Source</a>
-                <button className="admin-action-muted" disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "rejected")} type="button">Reject</button>
-              </div>
-            </article>
-          )) : <p className="admin-empty">No candidates for this filter.</p>}
+              </article>
+            )) : <p className="admin-empty">No candidates for {statusLabel(statusFilter)}.</p>}
+          </div>
         </div>
       </section>
     </main>
@@ -3252,6 +3290,7 @@ export default function App() {
   const [view, setView] = useState<AppView>("graph");
   const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
   const [session, setSession] = useState<SupabaseSession | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [usage, setUsage] = useState<AskUsage | null>(null);
   const [upgradePrompt, setUpgradePrompt] = useState<UpgradePrompt | null>(null);
   const [passwordRecovery, setPasswordRecovery] = useState(false);
@@ -3324,15 +3363,28 @@ export default function App() {
     const authToken = session?.access_token || "";
     if (!authToken) {
       setUsage(null);
+      setIsAdmin(false);
+      if (view === "admin") setView("graph");
       return;
     }
+    fetch("/api/admin/me", { headers: { "x-ask-token": authToken } })
+      .then((response) => (response.ok ? response.json() : { admin: false }))
+      .then((payload) => {
+        const admin = Boolean(payload?.admin);
+        setIsAdmin(admin);
+        if (!admin && view === "admin") setView("graph");
+      })
+      .catch(() => {
+        setIsAdmin(false);
+        if (view === "admin") setView("graph");
+      });
     fetch("/api/ask/usage", { headers: { "x-ask-token": authToken } })
       .then((response) => (response.ok ? response.json() : null))
       .then((payload) => {
         if (payload?.usage) setUsage(payload.usage);
       })
       .catch(() => undefined);
-  }, [session?.access_token]);
+  }, [session?.access_token, view]);
 
   useEffect(() => {
     let active = true;
@@ -3463,7 +3515,7 @@ export default function App() {
         <button className={view === "news" ? "active" : ""} onClick={() => setView("news")} type="button">
           News
         </button>
-        {session ? (
+        {isAdmin ? (
           <button className={view === "admin" ? "active" : ""} onClick={() => setView("admin")} type="button">
             Admin
           </button>
