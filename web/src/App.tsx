@@ -2434,11 +2434,20 @@ function eventLabel(value: string) {
 
 function signalTierLabel(value: string) {
   const labels: Record<string, string> = {
-    core_signal: "Core",
-    watchlist_signal: "Watchlist",
+    core_signal: "Verified",
+    watchlist_signal: "Watch",
     review_queue: "Review",
   };
   return labels[value] || value.replace(/_/g, " ");
+}
+
+function signalTierHelp(value: string) {
+  const labels: Record<string, string> = {
+    core_signal: "Source-backed event ready to use in the market monitor.",
+    watchlist_signal: "Useful market movement to track, but not yet a confirmed transaction.",
+    review_queue: "Needs human review before it should influence conclusions.",
+  };
+  return labels[value] || "Market intelligence signal.";
 }
 
 function NewsSelect({
@@ -2525,9 +2534,12 @@ function NewsPage({
   const publicMarketEvents = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing");
   const ipoEvents = publicMarketEvents.filter((event) => linkedCompanyForEvent(event));
   const latestEvents = newsMode === "ipo" ? ipoEvents : events;
-  const visibleFunding = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
   const latestSignalDate = events[0]?.event_date || "n/a";
   const visibleEvents = isFreePreview ? latestEvents.slice(0, FREE_PREVIEW_LIMITS.newsFeedRows) : latestEvents;
+  const feedRegions = eventFeed?.facets.regions || [];
+  const newsRegionValues = graph.facets.regions.length
+    ? [...graph.facets.regions, ...feedRegions.filter((item) => !graph.facets.regions.includes(item))]
+    : feedRegions;
   const confirmedIpoEvents = ipoEvents.filter((event) =>
     ["ipo_filing", "ipo_pricing", "public_listing"].includes(event.event_type),
   );
@@ -2547,12 +2559,11 @@ function NewsPage({
         <div>
           <div className="eyebrow">Market monitor</div>
           <h1>IPO/DPO watch and AI market news</h1>
-          <p>{eventFeed.metadata.scope_note}</p>
         </div>
         <div className="analytics-filters news-filters">
           <NewsSelect label="Signal" onChange={setSignalTier} value={signalTier} values={eventFeed.facets.signal_tiers} />
           <NewsSelect label="Event" onChange={setEventType} value={eventType} values={eventFeed.facets.event_types} />
-          <NewsSelect label="Region" onChange={setRegion} value={region} values={eventFeed.facets.regions} />
+          <NewsSelect label="Region" onChange={setRegion} value={region} values={newsRegionValues} />
         </div>
       </header>
 
@@ -2576,10 +2587,6 @@ function NewsPage({
       </section>
 
       <div className="news-mode-row">
-        <div className="news-feed-summary">
-          <strong>{newsMode === "ipo" ? `${formatCount(ipoEvents.length)} IPO/DPO watch items` : `${formatCount(events.length)} market signals`}</strong>
-          <span>{formatCount(publicMarketEvents.length - ipoEvents.length)} unlinked public-market items stay in Latest · {formatUsd(visibleFunding)} linked capital</span>
-        </div>
         <div className="news-view-toggle" role="tablist" aria-label="News views">
           <button className={newsMode === "ipo" ? "active" : ""} onClick={() => setNewsMode("ipo")} type="button">
             IPO/DPO Watch
@@ -2598,51 +2605,36 @@ function NewsPage({
         </label>
       </div>
 
-      {newsMode === "ipo" ? (
-        <section className="ipo-watch-strip" aria-label="IPO and DPO watch summary">
-          {ipoEvents.slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.newsIpoRows : 8).map((event) => {
-            const company = linkedCompanyForEvent(event);
-            return (
-              <article className="ipo-watch-card" key={`watch-${event.event_id}`}>
-                <span>{event.ipo_stage || eventLabel(event.event_type)}</span>
-                <h2>{event.company_name}</h2>
-                <p>{event.summary}</p>
-                <div className="news-metrics">
-                  <span>{event.event_date}</span>
-                  {event.valuation_usd ? <span>{formatUsd(Number(event.valuation_usd))} valuation</span> : null}
-                  <span>{event.confidence}</span>
-                  <span>{company ? "Linked to graph" : "Unlinked source"}</span>
-                </div>
-              </article>
-            );
-          })}
-        </section>
-      ) : null}
-
       <section className="news-layout single">
         <article className="analytics-card news-feed-card">
-          <h2>{newsMode === "ipo" ? "IPO/DPO evidence feed" : "Latest AI market news"}</h2>
+          <div className="news-feed-heading">
+            <div>
+              <h2>{newsMode === "ipo" ? "IPO/DPO watchlist" : "Latest AI market signals"}</h2>
+            </div>
+            <strong>{formatCount(latestEvents.length)}</strong>
+          </div>
           <div className="news-feed">
             {visibleEvents.length ? visibleEvents.map((event) => {
               const company = linkedCompanyForEvent(event);
               return (
                 <div className="news-item" key={event.event_id}>
                   <div className="news-item-main">
-                    <div className="news-item-topline">
-                      <span>{event.event_date}</span>
-                      <b className={`signal-${event.signal_tier}`}>{signalTierLabel(event.signal_tier)}</b>
-                      <b>{eventLabel(event.event_type)}</b>
-                      {event.ipo_stage ? <b>{event.ipo_stage}</b> : null}
-                      <em>{event.source_type.replace("_", " ")}</em>
+                    <div className="news-item-titleline">
+                      <h3>{event.company_name}</h3>
+                      <div className="news-item-badges">
+                        <b className={`signal-${event.signal_tier}`} title={signalTierHelp(event.signal_tier)}>
+                          {signalTierLabel(event.signal_tier)}
+                        </b>
+                        <span>{eventLabel(event.event_type)}</span>
+                      </div>
                     </div>
-                    <h3>{event.company_name}</h3>
                     <p>{event.summary}</p>
                     <div className="news-metrics">
+                      <span>{event.event_date || event.year || "n/a"}</span>
                       {event.amount_usd ? <span>{formatUsd(Number(event.amount_usd))}</span> : null}
                       {event.valuation_usd ? <span>{formatUsd(Number(event.valuation_usd))} valuation</span> : null}
-                      {event.country ? <span>{event.country}</span> : null}
+                      {event.region ? <span>{event.region}</span> : event.country ? <span>{event.country}</span> : null}
                       {company ? <span>Linked to graph</span> : <span>Unlinked</span>}
-                      <span>{event.confidence}</span>
                     </div>
                   </div>
                   <div className="news-actions">
@@ -2657,7 +2649,13 @@ function NewsPage({
                   </div>
                 </div>
               );
-            }) : <p className="news-empty">No market signals match the current filters.</p>}
+            }) : (
+              <p className="news-empty">
+                {newsMode === "ipo"
+                  ? "No graph-linked IPO/DPO signals match the current filters. Switch to Latest News to see unlinked public-market items."
+                  : "No market signals match the current filters."}
+              </p>
+            )}
             {isFreePreview && latestEvents.length > visibleEvents.length ? (
               <LockedUpgradeRow
                 label={`Unlock ${formatCount(latestEvents.length - visibleEvents.length)} more signals`}
