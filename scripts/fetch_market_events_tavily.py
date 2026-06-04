@@ -3,8 +3,8 @@
 
 The script is intentionally conservative: it discovers public articles, maps
 them into a monitoring-event schema, deduplicates by source URL and
-company/date/type, and writes visible rows as ``auto_ingested``. It does not
-modify the core funding graph.
+company/date/type, and writes rows for review. It does not modify the core
+funding graph.
 """
 
 from __future__ import annotations
@@ -26,6 +26,7 @@ RAW_DIR = ROOT / "data" / "raw"
 RAW_FILE = RAW_DIR / "market_events_raw.csv"
 STARTUPS_FILE = ROOT / "data" / "processed" / "startups.csv"
 TAVILY_URL = "https://api.tavily.com/search"
+MIN_FUNDING_USD = 100_000_000
 
 FIELDNAMES = [
     "event_id",
@@ -45,15 +46,41 @@ FIELDNAMES = [
     "notes",
 ]
 
-QUERIES = [
+BASE_QUERIES = [
     "AI startup IPO filing OR files to go public",
     "AI company IPO pricing OR public listing",
-    "AI startup raises $100 million funding",
+    "AI startup raises $100 million OR $100M funding",
+    "AI startup valuation funding round IPO",
     "AI chip startup IPO filing funding",
-    "AI infrastructure company strategic investment OpenAI Nvidia cloud",
+    "AI infrastructure company strategic investment Nvidia cloud",
+    "AI data center startup funding artificial intelligence",
+    "AI foundation model startup funding valuation",
+    "AI agent startup funding valuation",
+    "AI drug discovery startup funding valuation",
+    "robotics AI startup funding valuation",
     "site:techcrunch.com AI startup raises $100M",
     "site:reuters.com AI startup IPO funding",
     "site:sec.gov S-1 artificial intelligence",
+]
+REGION_QUERIES = [
+    "United States AI startup IPO funding valuation",
+    "Europe AI startup IPO funding valuation",
+    "China AI startup IPO funding valuation",
+    "India AI startup IPO funding valuation",
+    "Israel AI startup IPO funding valuation",
+    "Canada AI startup IPO funding valuation",
+    "Singapore AI startup IPO funding valuation",
+    "UAE Gulf AI startup funding valuation",
+]
+DOMAIN_QUERIES = [
+    "foundation model LLM startup funding IPO valuation",
+    "AI infrastructure startup funding IPO valuation",
+    "GPU inference AI startup funding valuation",
+    "enterprise AI agents startup funding valuation",
+    "healthcare AI drug discovery startup funding valuation",
+    "defense security AI startup funding valuation",
+    "AI search knowledge agent startup funding valuation",
+    "autonomous robotics AI startup funding valuation",
 ]
 
 SOURCE_TYPE_BY_DOMAIN = {
@@ -64,10 +91,12 @@ SOURCE_TYPE_BY_DOMAIN = {
     "techcrunch.com": ("techcrunch", "medium"),
     "sifted.eu": ("sifted", "medium"),
     "eu-startups.com": ("eu_startups", "medium"),
+    "venturebeat.com": ("other", "medium"),
+    "cnbc.com": ("other", "medium"),
 }
 
 COMPANY_SUFFIX_PATTERN = re.compile(
-    r"\b(raises?|raised|lands?|files?|filed|prices?|priced|lists?|listed|plans?|targets?|considers?|announces?|secures?)\b",
+    r"\b(raises?|raised|lands?|files?|filed|prices?|priced|lists?|listed|plans?|targets?|considers?|announces?|secures?|closes?)\b",
     re.IGNORECASE,
 )
 MONEY_PATTERN = re.compile(
@@ -78,6 +107,41 @@ VALUATION_PATTERN = re.compile(
     r"valuation(?:\s+of|\s+at|\s+up to)?\s+\$?\s?([0-9]+(?:\.[0-9]+)?)\s?(billion|bn|million|m)\b",
     re.IGNORECASE,
 )
+LOW_SIGNAL_TERMS = [
+    "appoints",
+    "appointment",
+    "hires",
+    "launches",
+    "unveils",
+    "webinar",
+    "conference",
+    "award",
+]
+AI_TERMS = [
+    r"\bai\b",
+    "artificial intelligence",
+    "generative",
+    r"\bllm\b",
+    "foundation model",
+    "machine learning",
+    r"\bgpu\b",
+    "inference",
+    "agentic",
+]
+EVENT_TERMS = [
+    "ipo",
+    "s-1",
+    "files to go public",
+    "public listing",
+    "raises",
+    "raised",
+    "funding",
+    "series",
+    "valuation",
+    "strategic investment",
+    "partnership",
+    "acquires",
+]
 
 
 def slugify(value: str) -> str:
@@ -106,8 +170,28 @@ def load_company_context() -> dict[str, dict[str, str]]:
             "name": row["name"],
             "country": row["country"],
             "region": row["region"],
+            "domain": row.get("primary_domain", ""),
         }
     return context
+
+
+def build_queries(known_companies: dict[str, dict[str, str]], max_queries: int) -> list[str]:
+    queries = BASE_QUERIES + REGION_QUERIES + DOMAIN_QUERIES
+    company_queries = []
+    for company, context in sorted(known_companies.items(), key=lambda item: (item[1].get("region", ""), item[0])):
+        label = context.get("name", company.title())
+        company_queries.append(f'"{label}" AI startup funding OR valuation OR IPO')
+    deduped = []
+    seen = set()
+    for query in [*queries, *company_queries]:
+        normalized = query.lower()
+        if normalized in seen:
+            continue
+        deduped.append(query)
+        seen.add(normalized)
+        if len(deduped) >= max_queries:
+            break
+    return deduped
 
 
 def money_to_int(match: re.Match[str] | None) -> str:
@@ -146,6 +230,30 @@ def infer_event_type(text: str) -> str:
     return "funding_round"
 
 
+def text_matches(text: str) -> bool:
+    lower = text.lower()
+    has_ai_term = any(re.search(term, lower) for term in AI_TERMS)
+    has_event_term = any(term in lower for term in EVENT_TERMS)
+    return has_ai_term and has_event_term
+
+
+def is_low_signal(text: str) -> bool:
+    lower = text.lower()
+    return any(term in lower for term in LOW_SIGNAL_TERMS)
+
+
+def infer_status(event_type: str, amount: str, text: str) -> tuple[str, str]:
+    if event_type == "funding_round":
+        parsed_amount = int(amount) if amount else None
+        if parsed_amount is not None and parsed_amount < MIN_FUNDING_USD:
+            return ("staged", f" Hidden from News because detected amount is below USD{MIN_FUNDING_USD:,}.")
+        if parsed_amount is None:
+            return ("needs_review", " Amount not detected; manually verify whether this meets the mega-round threshold.")
+    if is_low_signal(text):
+        return ("staged", " Hidden from News because the item looks like a low-signal announcement.")
+    return ("auto_ingested", "")
+
+
 def infer_company(title: str, known_companies: dict[str, dict[str, str]]) -> str:
     lower_title = title.lower()
     for company in sorted(known_companies, key=len, reverse=True):
@@ -173,6 +281,7 @@ def tavily_search(api_key: str, query: str, max_results: int) -> list[dict[str, 
         "max_results": max_results,
         "include_answer": False,
         "include_raw_content": False,
+        "days": int(os.environ.get("TAVILY_DAYS", "14")),
     }
     request = Request(
         TAVILY_URL,
@@ -200,6 +309,7 @@ def make_event(result: dict[str, object], query: str, known_companies: dict[str,
     source_type, confidence = source_metadata(url)
     amount = money_to_int(MONEY_PATTERN.search(text))
     valuation = money_to_int(VALUATION_PATTERN.search(text))
+    status, review_note = infer_status(event_type, amount, text)
     event_id = f"auto_{slugify(company)}_{event_date.replace('-', '')}_{slugify(event_type)}"
 
     return {
@@ -215,9 +325,9 @@ def make_event(result: dict[str, object], query: str, known_companies: dict[str,
         "source_url": url,
         "source_type": source_type,
         "confidence": confidence,
-        "status": "auto_ingested",
+        "status": status,
         "summary": title,
-        "notes": f"Auto-ingested from Tavily query: {query}",
+        "notes": f"Auto-ingested from Tavily query: {query}.{review_note}",
     }
 
 
@@ -254,21 +364,34 @@ def main() -> int:
         return 2
 
     max_results = int(os.environ.get("TAVILY_MAX_RESULTS", "5"))
+    max_queries = int(os.environ.get("TAVILY_MAX_QUERIES", "40"))
     existing = read_csv(RAW_FILE)
     known_companies = load_company_context()
+    queries = build_queries(known_companies, max_queries)
 
     candidates: list[dict[str, str]] = []
+    query_count = 0
     try:
-        for query in QUERIES:
+        for query in queries:
+            query_count += 1
             for result in tavily_search(api_key, query, max_results):
-                candidates.append(make_event(result, query, known_companies))
+                title = str(result.get("title") or "")
+                content = str(result.get("content") or "")
+                if text_matches(f"{title} {content}"):
+                    candidates.append(make_event(result, query, known_companies))
     except (HTTPError, URLError, TimeoutError) as error:
         print(f"Tavily fetch failed: {error}", file=sys.stderr)
         return 1
 
     rows, added = dedupe(existing, candidates)
     write_csv(RAW_FILE, rows)
-    print(f"Tavily fetched {len(candidates)} candidates; added {added} new market events.")
+    status_counts: dict[str, int] = {}
+    for row in candidates:
+        status_counts[row["status"]] = status_counts.get(row["status"], 0) + 1
+    print(
+        f"Tavily searched {query_count} queries, fetched {len(candidates)} matching candidates, "
+        f"added {added} new market events. Status counts: {status_counts}."
+    )
     return 0
 
 

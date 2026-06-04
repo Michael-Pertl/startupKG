@@ -185,8 +185,9 @@ python3 scripts/fetch_market_events_tavily.py
 python3 scripts/build_market_events.py
 ```
 
-Rows discovered this way are marked `auto_ingested` and shown in News as
-unreviewed monitoring items. They are not added to the core funding graph.
+Rows discovered this way are classified as `auto_ingested`, `needs_review`, or
+`staged` using the same monitoring guardrails as RSS. They are not added to the
+core funding graph.
 Obvious below-threshold funding items and low-signal announcements are staged in
 `data/raw/market_events_raw.csv` but hidden from the app until reviewed.
 The News JSON adds investor-facing signal tiers: `core_signal`,
