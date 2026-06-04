@@ -225,7 +225,7 @@ const legalPages: Record<LegalView, LegalPageContent> = {
   impressum: {
     eyebrow: "Legal notice",
     title: "Impressum",
-    intro: "Draft operator disclosure for an Austria/EU-facing commercial web application. Replace all placeholders before accepting paid users.",
+    intro: "Operator information for AI Market Graph, a public-source AI market intelligence and knowledge-graph service.",
     sections: [
       {
         title: "Operator",
@@ -261,7 +261,7 @@ const legalPages: Record<LegalView, LegalPageContent> = {
   privacy: {
     eyebrow: "Data protection",
     title: "Privacy Policy",
-    intro: "Draft privacy policy for the current product architecture. Review and complete it with your exact processors, retention periods, and contact details.",
+    intro: "This Privacy Policy explains how AI Market Graph processes personal data when users create an account, use the service, or interact with billing and support workflows.",
     sections: [
       {
         title: "Controller",
@@ -297,19 +297,34 @@ const legalPages: Record<LegalView, LegalPageContent> = {
       {
         title: "Legal bases and rights",
         body:
-          "Depending on the processing activity, data is processed to perform a contract, comply with legal obligations, protect legitimate interests, or based on consent. Users may request access, correction, deletion, restriction, portability, or objection where applicable under GDPR.",
+          "Depending on the processing activity, data is processed to perform a contract, comply with legal obligations, protect legitimate interests, or based on consent. Users may request access, correction, deletion, restriction, portability, or objection where applicable under GDPR by contacting aimarketgraph@gmail.com.",
+      },
+      {
+        title: "Retention",
+        body:
+          "Account and subscription data is retained while the account is active and as long as needed for legal, tax, accounting, security, and dispute-resolution purposes. Operational logs are retained only as long as reasonably needed to secure, debug, and operate the service.",
+      },
+      {
+        title: "International transfers",
+        body:
+          "Infrastructure and payment providers may process data outside Austria or the European Economic Area. Where applicable, transfers rely on contractual safeguards and provider compliance mechanisms.",
       },
       {
         title: "Cookies and local storage",
         body:
-          "The app uses necessary storage for authentication/session behavior and product functionality. Add a cookie banner before using optional analytics or marketing tracking.",
+          "The app uses necessary storage for authentication/session behavior and product functionality. Optional analytics or marketing tracking is not used unless a separate consent flow is provided.",
+      },
+      {
+        title: "Supervisory authority",
+        body:
+          "Users may contact the Austrian Data Protection Authority if they believe their data protection rights have been infringed.",
       },
     ],
   },
   terms: {
     eyebrow: "AGB / Terms",
     title: "Terms of Service",
-    intro: "Draft SaaS terms for paid access. Have these reviewed before taking payments, especially if selling to consumers or EU customers.",
+    intro: "These Terms govern access to AI Market Graph and the use of its graph, news, analytics, and Ask features.",
     sections: [
       {
         title: "Service",
@@ -343,6 +358,11 @@ const legalPages: Record<LegalView, LegalPageContent> = {
         title: "Billing and cancellation",
         body:
           "Paid subscriptions are processed by Stripe. Users can manage payment methods, invoices, plan changes, and cancellation through the billing portal where available.",
+      },
+      {
+        title: "Consumer rights",
+        body:
+          "Where mandatory consumer protection rights apply, nothing in these Terms limits those rights. Users should review Stripe checkout and billing information before confirming a paid subscription.",
       },
       {
         title: "Liability",
@@ -2982,10 +3002,6 @@ function LegalPage({ page, onOpenLegal }: { page: LegalView; onOpenLegal: (view:
           <h1>{content.title}</h1>
           <p>{content.intro}</p>
         </header>
-        <div className="legal-callout">
-          <strong>Draft status</strong>
-          <p>This page is an implementation draft and must be completed with your exact operator details and reviewed before paid launch.</p>
-        </div>
         <div className="legal-sections">
           {content.sections.map((section) => (
             <section key={section.title}>
