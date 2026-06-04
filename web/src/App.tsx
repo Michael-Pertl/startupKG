@@ -153,6 +153,7 @@ type SubscriptionPlan = {
   id: "free" | "starter" | "pro";
   label: string;
   price: string;
+  monthlyAskLimit: number;
   askAllowance: string;
   description: string;
   features: string[];
@@ -174,6 +175,7 @@ const subscriptionPlans: SubscriptionPlan[] = [
     id: "free",
     label: "Free",
     price: "€0",
+    monthlyAskLimit: 5,
     askAllowance: "5 Ask questions total",
     description: "A focused preview for evaluating the product before upgrading.",
     features: ["Graph preview", "Top analytics and featured news", "Small Ask trial"],
@@ -182,6 +184,7 @@ const subscriptionPlans: SubscriptionPlan[] = [
     id: "starter",
     label: "Starter",
     price: "€4.99 / month",
+    monthlyAskLimit: 75,
     askAllowance: "75 Ask questions / month",
     description: "Unlock the full graph, analytics, and news for regular exploration.",
     features: ["Full graph access", "Full analytics and news", "Monthly Ask allowance", "Recommended for most users"],
@@ -190,9 +193,10 @@ const subscriptionPlans: SubscriptionPlan[] = [
     id: "pro",
     label: "Pro",
     price: "€19.99 / month",
-    askAllowance: "Unlimited Ask under fair use",
+    monthlyAskLimit: 500,
+    askAllowance: "500 Ask questions / month",
     description: "For power users who follow market signals frequently.",
-    features: ["Everything in Starter", "Fair-use protected Ask access", "Priority access to new market-event signals"],
+    features: ["Everything in Starter", "Higher Ask allowance", "Priority access to new market-event signals"],
   },
 ];
 
@@ -3107,6 +3111,9 @@ function AccountPage({
   const creditsRemaining = Number(usage?.credits_remaining || 0);
   const creditsPerPrompt = Number(usage?.credits_per_prompt || 1);
   const currentPlan = usage?.plan || "free";
+  const currentPlanConfig = subscriptionPlans.find((plan) => plan.id === currentPlan) || subscriptionPlans[0];
+  const monthlyAskLimit = currentPlanConfig.monthlyAskLimit;
+  const allowancePeriod = currentPlan === "free" ? "total" : "/ month";
   const subscriptionStatus = usage?.subscription_status || (currentPlan === "free" ? "trial" : "active");
   const hasPaidPlan = currentPlan === "starter" || currentPlan === "pro";
 
@@ -3121,15 +3128,15 @@ function AccountPage({
           </div>
           <div className="account-balance">
             <span>Ask allowance</span>
-            <strong>{usage ? formatCount(creditsRemaining) : "..."}</strong>
-            <small>{creditsPerPrompt} allowance unit per successful answer</small>
+            <strong>{usage ? `${formatCount(monthlyAskLimit)} ${allowancePeriod}` : "..."}</strong>
+            <small>{usage ? `${formatCount(creditsRemaining)} remaining - ${creditsPerPrompt} unit per answer` : "Loading usage..."}</small>
           </div>
         </div>
 
         <div className="profile-summary">
           <div>
             <span>Current plan</span>
-            <strong>{subscriptionPlans.find((plan) => plan.id === currentPlan)?.label || "Free"}</strong>
+            <strong>{currentPlanConfig.label}</strong>
           </div>
           <div>
             <span>Status</span>

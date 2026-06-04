@@ -36,7 +36,7 @@ const BASE_URL = process.env.NEBIUS_BASE_URL || "https://api.tokenfactory.nebius
 const MODEL = process.env.NEBIUS_MODEL || "moonshotai/Kimi-K2.5";
 const ASK_REQUIRE_AUTH = (process.env.ASK_REQUIRE_AUTH || "false").toLowerCase() === "true";
 const ASK_CREDITS_PER_PROMPT = Number(process.env.ASK_CREDITS_PER_PROMPT || 1);
-const ASK_MONTHLY_FREE_CREDITS = Number(process.env.ASK_MONTHLY_FREE_CREDITS || 25);
+const ASK_MONTHLY_FREE_CREDITS = 5;
 const ASK_MAX_REQUESTS_PER_MINUTE = Number(process.env.ASK_MAX_REQUESTS_PER_MINUTE || 8);
 const ASK_LEDGER_FILE = resolve(process.cwd(), process.env.ASK_LEDGER_FILE || ".ask_ledger.json");
 const ASK_USAGE_LOG_FILE = resolve(process.cwd(), process.env.ASK_USAGE_LOG_FILE || ".ask_usage_log.jsonl");
@@ -55,6 +55,13 @@ const ADMIN_EMAILS = new Set(
     .filter(Boolean),
 );
 const SUBSCRIPTION_PLANS = {
+  free: {
+    label: "Free",
+    price_id: "",
+    amount_cents: 0,
+    currency: "eur",
+    monthly_credits: ASK_MONTHLY_FREE_CREDITS,
+  },
   starter: {
     label: "Starter",
     price_id: STRIPE_STARTER_PRICE_ID,
@@ -233,6 +240,8 @@ async function ensureSupabaseUser(request) {
   }
   const userId = userData.user.id;
   const profile = await getSupabaseProfile(userId);
+  const planId = SUBSCRIPTION_PLANS[profile?.plan] ? profile.plan : "free";
+  const plan = SUBSCRIPTION_PLANS[planId];
   const { data: balanceData, error: balanceError } = await supabaseAdmin.rpc("get_ask_credit_balance", {
     target_user_id: userId,
   });
@@ -245,12 +254,12 @@ async function ensureSupabaseUser(request) {
     user: {
       user_id: userId,
       email: userData.user.email,
-      plan: profile?.plan || "free",
+      plan: planId,
       subscription_status: profile?.subscription_status || "trial",
       stripe_customer_id: profile?.stripe_customer_id || null,
       stripe_subscription_id: profile?.stripe_subscription_id || null,
       current_period_end: profile?.current_period_end || null,
-      monthly_ask_limit: profile?.monthly_ask_limit || null,
+      monthly_ask_limit: plan.monthly_credits,
       credits_remaining: Number(balanceData || 0),
       request_timestamps: [],
     },
@@ -602,7 +611,7 @@ async function updateSubscriptionProfile({
   const nextPlan = normalizedStatus === "active" || normalizedStatus === "trialing" || normalizedStatus === "past_due"
     ? planId || "free"
     : "free";
-  const effectivePlan = SUBSCRIPTION_PLANS[nextPlan];
+  const effectivePlan = SUBSCRIPTION_PLANS[nextPlan] || SUBSCRIPTION_PLANS.free;
   const { error } = await supabaseAdmin
     .from("profiles")
     .update({
@@ -611,7 +620,7 @@ async function updateSubscriptionProfile({
       stripe_customer_id: customerId || null,
       stripe_subscription_id: subscriptionId || null,
       current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null,
-      monthly_ask_limit: effectivePlan?.monthly_credits || 5,
+      monthly_ask_limit: effectivePlan.monthly_credits,
       updated_at: new Date().toISOString(),
     })
     .eq("user_id", userId);

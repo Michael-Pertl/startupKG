@@ -35,7 +35,7 @@ const BASE_URL = process.env.NEBIUS_BASE_URL || "https://api.tokenfactory.nebius
 const MODEL = process.env.NEBIUS_MODEL || "moonshotai/Kimi-K2.5";
 const ASK_REQUIRE_AUTH = (process.env.ASK_REQUIRE_AUTH || "false").toLowerCase() === "true";
 const ASK_CREDITS_PER_PROMPT = Number(process.env.ASK_CREDITS_PER_PROMPT || 1);
-const ASK_MONTHLY_FREE_CREDITS = Number(process.env.ASK_MONTHLY_FREE_CREDITS || 25);
+const ASK_MONTHLY_FREE_CREDITS = 5;
 const ASK_MAX_REQUESTS_PER_MINUTE = Number(process.env.ASK_MAX_REQUESTS_PER_MINUTE || 8);
 const ASK_LEDGER_FILE = resolve(process.cwd(), process.env.ASK_LEDGER_FILE || ".ask_ledger.json");
 const ASK_USAGE_LOG_FILE = resolve(process.cwd(), process.env.ASK_USAGE_LOG_FILE || ".ask_usage_log.jsonl");
