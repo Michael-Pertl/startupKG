@@ -14,7 +14,7 @@ import json
 import os
 import re
 import sys
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
@@ -267,9 +267,16 @@ def infer_company(title: str, known_companies: dict[str, dict[str, str]]) -> str
 
 
 def published_date(result: dict[str, object]) -> str:
-    raw = str(result.get("published_date") or result.get("publishedDate") or "")
+    raw = str(result.get("published_date") or result.get("publishedDate") or "").strip()
     if raw:
-        return raw[:10]
+        date_match = re.search(r"\d{4}-\d{2}-\d{2}", raw)
+        if date_match:
+            return date_match.group(0)
+        for date_format in ("%b %d, %Y", "%B %d, %Y", "%d %b %Y", "%d %B %Y", "%m/%d/%Y"):
+            try:
+                return datetime.strptime(raw, date_format).date().isoformat()
+            except ValueError:
+                continue
     return date.today().isoformat()
 
 
