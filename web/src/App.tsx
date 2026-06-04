@@ -2425,24 +2425,6 @@ function eventLabel(value: string) {
   return eventTypeLabels[value] || value.replace(/_/g, " ");
 }
 
-function signalTierLabel(value: string) {
-  const labels: Record<string, string> = {
-    core_signal: "Verified",
-    watchlist_signal: "Watch",
-    review_queue: "Review",
-  };
-  return labels[value] || value.replace(/_/g, " ");
-}
-
-function signalTierHelp(value: string) {
-  const labels: Record<string, string> = {
-    core_signal: "Source-backed event ready to use in the market monitor.",
-    watchlist_signal: "Useful market movement to track, but not yet a confirmed transaction.",
-    review_queue: "Needs human review before it should influence conclusions.",
-  };
-  return labels[value] || "Market intelligence signal.";
-}
-
 function hostnameFromUrl(value?: string | null) {
   const trimmed = (value || "").trim();
   if (!trimmed) return "";
@@ -2492,7 +2474,7 @@ function NewsSelect({
 }) {
   return (
     <SinglePopoverSelect
-      formatValue={(item) => (label === "Event" ? eventLabel(item) : label === "Signal" ? signalTierLabel(item) : item)}
+      formatValue={(item) => (label === "Event" ? eventLabel(item) : item)}
       label={label}
       onChange={onChange}
       value={value}
@@ -2516,7 +2498,6 @@ function NewsPage({
 }) {
   const [eventType, setEventType] = useState("__all__");
   const [region, setRegion] = useState("__all__");
-  const [signalTier, setSignalTier] = useState("__all__");
   const [newsMode, setNewsMode] = useState<"ipo" | "latest">("ipo");
   const [query, setQuery] = useState("");
 
@@ -2541,12 +2522,10 @@ function NewsPage({
       if (event.status === "staged" || event.status === "rejected") return false;
       if (eventType !== "__all__" && event.event_type !== eventType) return false;
       if (region !== "__all__" && event.region !== region) return false;
-      if (signalTier !== "__all__" && event.signal_tier !== signalTier) return false;
       const text = [
         event.company_name,
         eventLabel(event.event_type),
         event.event_type,
-        signalTierLabel(event.signal_tier),
         event.signal_label,
         event.summary,
         event.notes,
@@ -2558,7 +2537,7 @@ function NewsPage({
       ].join(" ").toLowerCase();
       return text.includes(query.toLowerCase().trim());
     }).sort((left, right) => String(right.event_date || "").localeCompare(String(left.event_date || "")));
-  }, [eventFeed, eventType, query, region, signalTier]);
+  }, [eventFeed, eventType, query, region]);
 
   const publicMarketEvents = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing");
   const ipoEvents = publicMarketEvents.filter((event) => linkedCompanyForEvent(event));
@@ -2590,7 +2569,6 @@ function NewsPage({
           <h1>IPO/DPO watch and AI market news</h1>
         </div>
         <div className="analytics-filters news-filters">
-          <NewsSelect label="Signal" onChange={setSignalTier} value={signalTier} values={eventFeed.facets.signal_tiers} />
           <NewsSelect label="Event" onChange={setEventType} value={eventType} values={eventFeed.facets.event_types} />
           <NewsSelect label="Region" onChange={setRegion} value={region} values={newsRegionValues} />
         </div>
@@ -2652,10 +2630,8 @@ function NewsPage({
                     <div className="news-item-titleline">
                       <h3>{event.company_name}</h3>
                       <div className="news-item-badges">
-                        <b className={`signal-${event.signal_tier}`} title={signalTierHelp(event.signal_tier)}>
-                          {signalTierLabel(event.signal_tier)}
-                        </b>
                         <span>{eventLabel(event.event_type)}</span>
+                        <span>{event.confidence}</span>
                       </div>
                     </div>
                     <p>{event.summary}</p>

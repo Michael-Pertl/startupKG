@@ -3110,7 +3110,7 @@ a {
 }
 
 .news-filters {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .news-layout {
@@ -3295,25 +3295,6 @@ a {
   font-weight: 900;
   padding: 3px 6px;
   text-transform: uppercase;
-}
-
-.news-item-badges b {
-  color: var(--accent);
-}
-
-.news-item-badges .signal-core_signal {
-  border-color: rgba(111, 168, 155, 0.48);
-  color: #9bc7bc;
-}
-
-.news-item-badges .signal-watchlist_signal {
-  border-color: rgba(185, 144, 95, 0.48);
-  color: #d5b17e;
-}
-
-.news-item-badges .signal-review_queue {
-  border-color: rgba(127, 143, 170, 0.48);
-  color: #aab6d0;
 }
 
 .news-item h3 {
