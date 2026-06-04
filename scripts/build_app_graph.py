@@ -204,6 +204,7 @@ def main() -> int:
         role = row["role"]
         round_row = rounds[row["round_id"]]
         amount = money(round_row["amount_usd"])
+        role_multiplier = 1.45 if role == "lead" else 0.85
         add_edge(
             edges,
             f"{row['investor_id']}__{role}__{row['round_id']}",
@@ -212,6 +213,10 @@ def main() -> int:
             "participated",
             role=role,
             amount_usd=amount,
+            linked_round_usd=amount,
+            participation_role=role,
+            participation_weight=int(amount * role_multiplier),
+            allocation_basis="role_proxy",
             year=round_row["year"],
         )
 

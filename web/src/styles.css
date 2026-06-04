@@ -2343,6 +2343,87 @@ a {
   font-size: 14px;
 }
 
+.panel-heading-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.panel-heading-row h2 {
+  margin: 0;
+}
+
+.panel-heading-row span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.participant-list {
+  display: grid;
+  gap: 6px;
+}
+
+.participant-row {
+  align-items: center;
+  border-bottom: 1px solid var(--border-soft);
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  padding: 8px 0;
+}
+
+.participant-row strong,
+.participant-row small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.participant-row strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.participant-row small {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.role-pill {
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 850;
+  padding: 4px 7px;
+  text-transform: uppercase;
+}
+
+.role-pill.lead {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--text-strong);
+}
+
+.participant-exposure {
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.panel-note {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  margin: 9px 0 0;
+}
+
 .selected-panel a {
   display: inline-block;
   margin-right: 14px;
