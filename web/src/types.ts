@@ -38,6 +38,10 @@ export type MarketEdge = {
   role?: string;
   year?: string;
   amount_usd?: number;
+  linked_round_usd?: number;
+  participation_role?: string;
+  participation_weight?: number;
+  allocation_basis?: string;
   shared_rounds?: number;
   linked_funding_usd?: number;
 };

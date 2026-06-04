@@ -565,6 +565,17 @@ function signal(node: MarketNode): number {
   );
 }
 
+function nodeSizeForSignal(value: number): number {
+  return Math.min(58, Math.max(10, Math.sqrt(value / 90_000_000)));
+}
+
+function participantSize(edge: MarketEdge): number {
+  const amount = Number(edge.linked_round_usd || edge.amount_usd || 0);
+  const amountFactor = Math.min(1.45, Math.max(1, Math.sqrt(amount / 100_000_000) / 1.8));
+  const roleBase = edge.role === "lead" || edge.participation_role === "lead" ? 36 : 25;
+  return Math.round(roleBase * amountFactor);
+}
+
 function buildIndex(graph: MarketGraph): GraphIndex {
   const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
   const edgesByNode = new Map<string, MarketEdge[]>();
@@ -988,6 +999,14 @@ function buildElements(
 ): ElementDefinition[] {
   const ranked = [...nodes].sort((left, right) => signal(right) - signal(left));
   const positions = buildPositions(nodes, edges, selectedId, layoutMode);
+  const selectedRoundInvestorSizes =
+    nodes.find((node) => node.id === selectedId)?.kind === "round"
+      ? new Map(
+          edges
+            .filter((edge) => edge.kind === "participated" && edge.target === selectedId)
+            .map((edge) => [edge.source, participantSize(edge)]),
+        )
+      : new Map<string, number>();
 
   const topLabels = new Set(ranked.slice(0, 60).map((node) => node.id));
   topLabels.add(selectedId);
@@ -1002,6 +1021,7 @@ function buildElements(
         kind: node.kind,
         selected: node.id === selectedId ? "yes" : "no",
         weight: signal(node),
+        size: selectedRoundInvestorSizes.get(node.id) || nodeSizeForSignal(signal(node)),
       },
       position: positions.get(node.id),
     })),
@@ -1038,14 +1058,28 @@ function GraphView({
 }) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [containerReady, setContainerReady] = useState(false);
-  const [hovered, setHovered] = useState<{ node: MarketNode; x: number; y: number } | null>(null);
+  const [hovered, setHovered] = useState<{ node: MarketNode; edge?: MarketEdge; x: number; y: number } | null>(null);
   const cyRef = useRef<Core | null>(null);
   const nodeById = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
+  const selectedRoundParticipationByInvestor = useMemo(
+    () =>
+      new Map(
+        edges
+          .filter((edge) => edge.kind === "participated" && edge.target === selectedId)
+          .map((edge) => [edge.source, edge]),
+      ),
+    [edges, selectedId],
+  );
   const nodeByIdRef = useRef(nodeById);
+  const selectedRoundParticipationByInvestorRef = useRef(selectedRoundParticipationByInvestor);
 
   useEffect(() => {
     nodeByIdRef.current = nodeById;
   }, [nodeById]);
+
+  useEffect(() => {
+    selectedRoundParticipationByInvestorRef.current = selectedRoundParticipationByInvestor;
+  }, [selectedRoundParticipationByInvestor]);
 
   useEffect(() => {
     if (!container) return;
@@ -1094,10 +1128,8 @@ function GraphView({
             "text-valign": "bottom",
             "text-halign": "center",
             "text-margin-y": 7,
-            width: (element: NodeSingular) =>
-              Math.min(58, Math.max(10, Math.sqrt(Number(element.data("weight")) / 90_000_000))),
-            height: (element: NodeSingular) =>
-              Math.min(58, Math.max(10, Math.sqrt(Number(element.data("weight")) / 90_000_000))),
+            width: "data(size)",
+            height: "data(size)",
             "border-width": 1.2,
             "border-color": theme.outline,
             "active-bg-color": themeMode === "dark" ? "#b7bfbd" : theme.selected,
@@ -1265,13 +1297,23 @@ function GraphView({
       if (!node) return;
       applyGraphFocus(event.target.id());
       const position = event.renderedPosition || { x: 0, y: 0 };
-      setHovered({ node, x: position.x, y: position.y });
+      setHovered({
+        node,
+        edge: selectedRoundParticipationByInvestorRef.current.get(node.id),
+        x: position.x,
+        y: position.y,
+      });
     });
     cy.on("mousemove", "node", (event) => {
       const node = nodeByIdRef.current.get(event.target.id());
       if (!node) return;
       const position = event.renderedPosition || { x: 0, y: 0 };
-      setHovered({ node, x: position.x, y: position.y });
+      setHovered({
+        node,
+        edge: selectedRoundParticipationByInvestorRef.current.get(node.id),
+        x: position.x,
+        y: position.y,
+      });
     });
     cy.on("mouseout", "node", () => {
       clearGraphFocus();
@@ -1383,6 +1425,13 @@ function GraphView({
           {hovered.node.country ? <small>{hovered.node.country}</small> : null}
           {hovered.node.domain ? <small>{hovered.node.domain}</small> : null}
           {hovered.node.amount_usd ? <small>{formatUsd(Number(hovered.node.amount_usd))}</small> : null}
+          {hovered.edge ? (
+            <>
+              <small>{hovered.edge.role === "lead" ? "Lead investor" : "Participant"}</small>
+              <small>{formatUsd(Number(hovered.edge.linked_round_usd || hovered.edge.amount_usd || 0))} linked exposure</small>
+              <small>Circle size is a role-based signal, not disclosed allocation.</small>
+            </>
+          ) : null}
           {hovered.node.visible_mega_round_funding_usd ? (
             <small>{formatUsd(Number(hovered.node.visible_mega_round_funding_usd))} visible funding</small>
           ) : null}
@@ -1873,6 +1922,56 @@ function EvidenceTable({ nodes }: { nodes: MarketNode[] }) {
         ))}
         {!rounds.length ? <p>No funding events are visible in this neighborhood.</p> : null}
       </div>
+    </section>
+  );
+}
+
+function DealParticipants({
+  selected,
+  nodes,
+  edges,
+}: {
+  selected?: MarketNode;
+  nodes: MarketNode[];
+  edges: MarketEdge[];
+}) {
+  if (selected?.kind !== "round") return null;
+  const nodeById = new Map(nodes.map((node) => [node.id, node]));
+  const participants = edges
+    .filter((edge) => edge.kind === "participated" && edge.target === selected.id)
+    .map((edge) => ({ edge, investor: nodeById.get(edge.source) }))
+    .filter((item): item is { edge: MarketEdge; investor: MarketNode } => Boolean(item.investor))
+    .sort((left, right) => {
+      const leftLead = left.edge.role === "lead" || left.edge.participation_role === "lead";
+      const rightLead = right.edge.role === "lead" || right.edge.participation_role === "lead";
+      if (leftLead !== rightLead) return leftLead ? -1 : 1;
+      return left.investor.label.localeCompare(right.investor.label);
+    });
+
+  return (
+    <section className="panel-block">
+      <div className="panel-heading-row">
+        <h2>Deal participants</h2>
+        <span>{formatCount(participants.length)}</span>
+      </div>
+      <div className="participant-list">
+        {participants.map(({ edge, investor }) => (
+          <div className="participant-row" key={edge.id}>
+            <span>
+              <strong>{investor.label}</strong>
+              <small>{investor.investor_type || investor.country || "Investor"}</small>
+            </span>
+            <span className={edge.role === "lead" ? "role-pill lead" : "role-pill"}>
+              {edge.role === "lead" ? "Lead" : "Participant"}
+            </span>
+            <span className="participant-exposure">
+              {formatUsd(Number(edge.linked_round_usd || edge.amount_usd || 0))}
+            </span>
+          </div>
+        ))}
+        {!participants.length ? <p>No investors are visible for this funding event.</p> : null}
+      </div>
+      <p className="panel-note">Exposure is the total linked round size. Circle size uses role-based weighting, not disclosed allocation.</p>
     </section>
   );
 }
@@ -4231,6 +4330,7 @@ export default function App() {
         <>
         <EntityProfile node={selected} />
         <DetailContext edges={neighborhood.edges} nodes={neighborhood.nodes} />
+        <DealParticipants edges={neighborhood.edges} nodes={neighborhood.nodes} selected={selected} />
         <EvidenceTable nodes={neighborhood.nodes} />
         </>
         ) : null}
