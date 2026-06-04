@@ -110,6 +110,27 @@ type LayoutMode = "flow" | "network";
 type LegalView = "impressum" | "privacy" | "terms" | "methodology";
 type AppView = "graph" | "analytics" | "news" | "pricing" | "login" | "account" | "admin" | LegalView;
 
+const viewPaths: Record<AppView, string> = {
+  graph: "/",
+  analytics: "/analytics",
+  news: "/news",
+  pricing: "/pricing",
+  login: "/login",
+  account: "/account",
+  admin: "/admin",
+  impressum: "/impressum",
+  privacy: "/privacy",
+  terms: "/terms",
+  methodology: "/methodology",
+};
+
+function appViewFromPath(pathname: string): AppView {
+  const normalized = pathname.replace(/\/+$/, "") || "/";
+  if (normalized === "/subscription") return "pricing";
+  const match = (Object.entries(viewPaths) as Array<[AppView, string]>).find(([, path]) => path === normalized);
+  return match?.[0] || "graph";
+}
+
 type AskUsage = {
   user_id?: string;
   plan?: string;
@@ -3601,7 +3622,7 @@ function toggle(list: string[], value: string): string[] {
 export default function App() {
   const [graph, setGraph] = useState<MarketGraph | null>(null);
   const [eventFeed, setEventFeed] = useState<MarketEventFeed | null>(null);
-  const [view, setView] = useState<AppView>("graph");
+  const [view, setView] = useState<AppView>(() => appViewFromPath(window.location.pathname));
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
   const [session, setSession] = useState<SupabaseSession | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -3625,6 +3646,19 @@ export default function App() {
   const [drawerWidth, setDrawerWidth] = useState(420);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>("flow");
   const [graphContext, setGraphContext] = useState<GraphContext>(() => defaultGraphContext());
+
+  const navigateToView = useCallback((nextView: AppView, replace = false) => {
+    const nextPath = viewPaths[nextView];
+    if (nextPath && window.location.pathname !== nextPath) {
+      window.history[replace ? "replaceState" : "pushState"]({}, "", nextPath);
+    }
+    setView(nextView);
+  }, []);
+
+  const openUpgradeDestination = useCallback(() => {
+    setUpgradePrompt(null);
+    navigateToView(session ? "account" : "pricing");
+  }, [navigateToView, session]);
 
   useEffect(() => {
     fetch("/data/market_graph.json")
@@ -3651,34 +3685,45 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const initialView = appViewFromPath(window.location.pathname);
+    if (initialView === "pricing" && window.location.pathname === "/subscription") {
+      window.history.replaceState({}, "", viewPaths.pricing);
+    }
+    setView(initialView);
+    const onPopState = () => setView(appViewFromPath(window.location.pathname));
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [navigateToView]);
+
+  useEffect(() => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
     const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
       if (event === "PASSWORD_RECOVERY") {
         setPasswordRecovery(true);
-        setView("login");
+        navigateToView("login");
       }
     });
     return () => listener.subscription.unsubscribe();
-  }, []);
+  }, [navigateToView]);
 
   useEffect(() => {
     if (session && view === "login" && !passwordRecovery) {
-      setView("graph");
+      navigateToView("graph");
       if (postLoginAction === "ask") {
         setDrawerMode("ask");
         setPostLoginAction(null);
       }
     }
-  }, [passwordRecovery, postLoginAction, session, view]);
+  }, [navigateToView, passwordRecovery, postLoginAction, session, view]);
 
   useEffect(() => {
     const authToken = session?.access_token || "";
     if (!authToken) {
       setUsage(null);
       setIsAdmin(false);
-      if (view === "admin") setView("graph");
+      if (view === "admin") navigateToView("graph");
       return;
     }
     fetch("/api/admin/me", { headers: { "x-ask-token": authToken } })
@@ -3686,11 +3731,11 @@ export default function App() {
       .then((payload) => {
         const admin = Boolean(payload?.admin);
         setIsAdmin(admin);
-        if (!admin && view === "admin") setView("graph");
+        if (!admin && view === "admin") navigateToView("graph");
       })
       .catch(() => {
         setIsAdmin(false);
-        if (view === "admin") setView("graph");
+        if (view === "admin") navigateToView("graph");
       });
     fetch("/api/ask/usage", { headers: { "x-ask-token": authToken } })
       .then((response) => (response.ok ? response.json() : null))
@@ -3698,7 +3743,7 @@ export default function App() {
         if (payload?.usage) setUsage(payload.usage);
       })
       .catch(() => undefined);
-  }, [session?.access_token, view]);
+  }, [navigateToView, session?.access_token, view]);
 
   useEffect(() => {
     let active = true;
@@ -3745,8 +3790,8 @@ export default function App() {
   const openLogin = useCallback((afterLogin: "ask" | null = null) => {
     setPostLoginAction(afterLogin);
     setDrawerMode(null);
-    setView("login");
-  }, []);
+    navigateToView("login");
+  }, [navigateToView]);
 
   const openAskPanel = useCallback(() => {
     if (supabase && !session) {
@@ -3788,7 +3833,7 @@ export default function App() {
     setSelectedId(node.id);
     setDrawerMode("details");
     setGraphContext(defaultGraphContext(node.kind));
-    setView("graph");
+    navigateToView("graph");
     setGraphViewportSignal((signal) => signal + 1);
   };
 
@@ -3823,20 +3868,20 @@ export default function App() {
       ].join(" ")}
     >
       <nav className="app-nav" aria-label="Application views">
-        <button className={view === "graph" ? "active" : ""} onClick={() => setView("graph")} type="button">
+        <button className={view === "graph" ? "active" : ""} onClick={() => navigateToView("graph")} type="button">
           Graph
         </button>
-        <button className={view === "analytics" ? "active" : ""} onClick={() => setView("analytics")} type="button">
+        <button className={view === "analytics" ? "active" : ""} onClick={() => navigateToView("analytics")} type="button">
           Analytics
         </button>
-        <button className={view === "news" ? "active" : ""} onClick={() => setView("news")} type="button">
+        <button className={view === "news" ? "active" : ""} onClick={() => navigateToView("news")} type="button">
           News
         </button>
-        <button className={view === "pricing" ? "active" : ""} onClick={() => setView("pricing")} type="button">
+        <button className={view === "pricing" ? "active" : ""} onClick={() => navigateToView("pricing")} type="button">
           Pricing
         </button>
         {isAdmin ? (
-          <button className={view === "admin" ? "active" : ""} onClick={() => setView("admin")} type="button">
+          <button className={view === "admin" ? "active" : ""} onClick={() => navigateToView("admin")} type="button">
             Admin
           </button>
         ) : null}
@@ -3853,14 +3898,14 @@ export default function App() {
         <AuthControls
           session={session}
           setSession={setSession}
-          onOpenAccount={() => setView("account")}
+          onOpenAccount={() => navigateToView("account")}
           onOpenLogin={() => openLogin()}
         />
       </nav>
       {view === "login" ? (
         <LoginPage
           onComplete={() => {
-            setView("graph");
+            navigateToView("graph");
             if (postLoginAction === "ask") {
               setDrawerMode("ask");
               setPostLoginAction(null);
@@ -3872,21 +3917,21 @@ export default function App() {
       ) : view === "account" ? (
         <AccountPage
           session={session}
-          onBack={() => setView("graph")}
+          onBack={() => navigateToView("graph")}
           onLoginRequired={() => openLogin()}
-          onOpenLegal={(target) => setView(target)}
+          onOpenLegal={(target) => navigateToView(target)}
         />
       ) : view === "pricing" ? (
         <PricingPage
           currentPlan={usage?.plan || "free"}
           onChoosePlan={(planId) => {
-            if (planId === "free" && !session) setView("graph");
-            else setView(session ? "account" : "login");
+            if (planId === "free" && !session) navigateToView("graph");
+            else navigateToView(session ? "account" : "login");
           }}
-          onOpenLegal={(target) => setView(target)}
+          onOpenLegal={(target) => navigateToView(target)}
         />
       ) : isLegalView ? (
-        <LegalPage page={view as LegalView} onOpenLegal={(target) => setView(target)} />
+        <LegalPage page={view as LegalView} onOpenLegal={(target) => navigateToView(target)} />
       ) : view === "admin" ? (
         <AdminEventsPage session={session} onLoginRequired={() => openLogin()} />
       ) : view === "news" ? (
@@ -4047,7 +4092,7 @@ export default function App() {
             edges={neighborhood.edges}
             nodes={neighborhood.nodes}
             onLoginRequired={() => openLogin("ask")}
-            onOpenAccount={() => setView("account")}
+            onOpenAccount={() => navigateToView("account")}
             selected={selected}
             session={session}
           />
@@ -4067,13 +4112,10 @@ export default function App() {
         <UpgradePromptModal
           prompt={upgradePrompt}
           onClose={() => setUpgradePrompt(null)}
-          onViewPlans={() => {
-            setUpgradePrompt(null);
-            setView("account");
-          }}
+          onViewPlans={openUpgradeDestination}
         />
       ) : null}
-      <LegalFooter onOpenLegal={(target) => setView(target)} />
+      <LegalFooter onOpenLegal={(target) => navigateToView(target)} />
     </div>
   );
 }
