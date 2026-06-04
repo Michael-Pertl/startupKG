@@ -664,7 +664,7 @@ async function updateAdminEventReview(request, candidateId) {
   const body = JSON.parse(await readBody(request));
   const nextStatus = String(body.status || "").trim();
   const reviewNotes = String(body.review_notes || body.notes || "").trim();
-  const allowed = new Set(["auto_ingested", "needs_review", "approved", "rejected", "promotion_ready", "promoted"]);
+  const allowed = new Set(["auto_ingested", "needs_review", "staged", "approved", "rejected", "promotion_ready", "promoted"]);
   if (!allowed.has(nextStatus)) {
     return { error: { status: 400, message: "Invalid review status." } };
   }

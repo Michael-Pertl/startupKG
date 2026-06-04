@@ -107,8 +107,38 @@ def missing_schema_column(error_body: str) -> str | None:
     return column if column in OPTIONAL_SUPABASE_COLUMNS else None
 
 
+def is_legacy_status_constraint(error_body: str) -> bool:
+    try:
+        payload = json.loads(error_body)
+    except json.JSONDecodeError:
+        return False
+    return (
+        payload.get("code") == "23514"
+        and "market_event_candidates_status_check" in str(payload.get("message", ""))
+    )
+
+
+def hide_staged_for_legacy_schema(rows: list[dict[str, object]]) -> tuple[list[dict[str, object]], bool]:
+    changed = False
+    normalized_rows: list[dict[str, object]] = []
+    for row in rows:
+        if row.get("status") != "staged":
+            normalized_rows.append(row)
+            continue
+        changed = True
+        notes = str(row.get("notes") or "").strip()
+        legacy_note = "Legacy Supabase schema did not support staged; stored as rejected to keep it hidden from public News."
+        normalized_rows.append({
+            **row,
+            "status": "rejected",
+            "notes": f"{notes} {legacy_note}".strip(),
+        })
+    return normalized_rows, changed
+
+
 def sync_rows(supabase_url: str, service_role_key: str, rows: list[dict[str, object]]) -> tuple[bool, str]:
     omitted_columns: list[str] = []
+    used_legacy_status_fallback = False
     payload_rows = rows
     while True:
         request = Request(
@@ -125,7 +155,12 @@ def sync_rows(supabase_url: str, service_role_key: str, rows: list[dict[str, obj
         try:
             with urlopen(request, timeout=30) as response:
                 response.read()
-            suffix = f" Omitted optional columns missing in Supabase: {', '.join(omitted_columns)}." if omitted_columns else ""
+            messages = []
+            if omitted_columns:
+                messages.append(f"Omitted optional columns missing in Supabase: {', '.join(omitted_columns)}.")
+            if used_legacy_status_fallback:
+                messages.append("Stored staged rows as rejected because Supabase status constraint is outdated.")
+            suffix = f" {' '.join(messages)}" if messages else ""
             return True, suffix
         except HTTPError as error:
             body = error.read().decode("utf-8", errors="replace")
@@ -134,6 +169,12 @@ def sync_rows(supabase_url: str, service_role_key: str, rows: list[dict[str, obj
                 omitted_columns.append(missing_column)
                 payload_rows = [{key: value for key, value in row.items() if key != missing_column} for row in payload_rows]
                 continue
+            if not used_legacy_status_fallback and is_legacy_status_constraint(body):
+                normalized_rows, changed = hide_staged_for_legacy_schema(payload_rows)
+                if changed:
+                    used_legacy_status_fallback = True
+                    payload_rows = normalized_rows
+                    continue
             return False, body
         except URLError as error:
             return False, f"Could not reach Supabase: {error}"
