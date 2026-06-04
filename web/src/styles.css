@@ -320,27 +320,43 @@ a {
   min-width: 74px;
 }
 
-.legal-nav-links {
-  align-items: center;
-  border-left: 1px solid var(--border-soft);
-  display: flex;
-  gap: 2px;
-  margin-left: 4px;
-  padding-left: 6px;
-}
-
-.legal-nav-links button {
-  font-size: 10px;
-  min-height: 28px;
-  padding: 5px 7px;
-}
-
 .auth-controls .profile-button {
   align-items: center;
   display: flex;
   justify-content: center;
   padding: 0;
   width: 30px;
+}
+
+.legal-footer {
+  align-items: center;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  border: 1px solid var(--border-soft);
+  bottom: 10px;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  position: fixed;
+  right: 10px;
+  z-index: 55;
+}
+
+.legal-footer button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 900;
+  min-height: 26px;
+  padding: 4px 7px;
+  text-transform: uppercase;
+}
+
+.legal-footer button:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--text-strong);
 }
 
 .profile-button svg {
@@ -3650,6 +3666,13 @@ a {
 
   .app-nav {
     flex-wrap: wrap;
+  }
+
+  .legal-footer {
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    justify-content: center;
   }
 
   .login-page {
