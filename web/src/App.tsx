@@ -3292,7 +3292,7 @@ export default function App() {
   const [graph, setGraph] = useState<MarketGraph | null>(null);
   const [eventFeed, setEventFeed] = useState<MarketEventFeed | null>(null);
   const [view, setView] = useState<AppView>("graph");
-  const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
+  const [themeMode, setThemeMode] = useState<ThemeMode>("light");
   const [session, setSession] = useState<SupabaseSession | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [usage, setUsage] = useState<AskUsage | null>(null);
