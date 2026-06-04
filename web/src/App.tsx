@@ -3038,6 +3038,7 @@ function AccountPage({
   const [billingError, setBillingError] = useState("");
   const [billingBusy, setBillingBusy] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [termsError, setTermsError] = useState(false);
   const authToken = session?.access_token || "";
 
   useEffect(() => {
@@ -3059,9 +3060,11 @@ function AccountPage({
       return;
     }
     if (!acceptedTerms) {
-      setBillingError("Please accept the Terms and Privacy Policy before opening checkout.");
+      setTermsError(true);
+      setBillingError("");
       return;
     }
+    setTermsError(false);
     setBillingError("");
     setBillingBusy(planId);
     try {
@@ -3158,14 +3161,22 @@ function AccountPage({
           </div>
         </div>
 
-        <label className="terms-acceptance">
-          <input checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} type="checkbox" />
+        <label className={["terms-acceptance", termsError ? "error" : ""].join(" ")}>
+          <input
+            checked={acceptedTerms}
+            onChange={(event) => {
+              setAcceptedTerms(event.target.checked);
+              if (event.target.checked) setTermsError(false);
+            }}
+            type="checkbox"
+          />
           <span>
             I accept the{" "}
             <button onClick={() => onOpenLegal("terms")} type="button">Terms</button>
             {" "}and{" "}
             <button onClick={() => onOpenLegal("privacy")} type="button">Privacy Policy</button>
             , and understand this platform provides research information, not investment advice.
+            {termsError ? <strong className="terms-error-text">Required before checkout.</strong> : null}
           </span>
         </label>
 
