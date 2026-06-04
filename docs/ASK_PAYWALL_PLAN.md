@@ -59,12 +59,9 @@ Starter, EUR 4.99/month
 
 Pro, EUR 19.99/month
 - Everything in Starter
-- Unlimited Ask under fair use
+- 500 Ask questions/month
 - Priority access to new market-event signals
 ```
-
-The Pro plan should still have an internal fair-use cap, for example 500 Ask
-questions/month, so model costs and abuse risk remain bounded.
 
 ## Current Stripe Flow
 
