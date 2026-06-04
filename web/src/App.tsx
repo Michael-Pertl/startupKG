@@ -205,18 +205,20 @@ const legalPages: Record<LegalView, LegalPageContent> = {
       {
         title: "Operator",
         items: [
-          "[Your legal name or company name]",
-          "[Street address]",
-          "[Postal code and city], [Country]",
-          "Email: [legal/contact email]",
+          "Michael Pertl",
+          "Zillingberg 12",
+          "5300 Hallwang, Austria",
+          "Email: aimarketgraph@gmail.com",
         ],
       },
       {
         title: "Business information",
         items: [
           "Business purpose: AI market intelligence and knowledge-graph software for publicly sourced startup funding and market-event analysis.",
-          "Commercial register / trade authority / VAT ID: [insert if applicable]",
-          "Responsible for content: [name]",
+          "Business form: private person.",
+          "Company register: not applicable.",
+          "VAT ID / UID: not applicable.",
+          "Responsible for content: Michael Pertl.",
         ],
       },
       {
@@ -238,7 +240,7 @@ const legalPages: Record<LegalView, LegalPageContent> = {
     sections: [
       {
         title: "Controller",
-        body: "[Your legal name/company], [address], [privacy contact email] is the controller for personal data processed through this service.",
+        body: "Michael Pertl, Zillingberg 12, 5300 Hallwang, Austria, aimarketgraph@gmail.com, is the controller for personal data processed through this service.",
       },
       {
         title: "Data we process",
