@@ -527,7 +527,10 @@ async function createCheckoutSession(request) {
     },
   };
 
-  if (auth.user.stripe_customer_id) {
+  const stripeCustomer = auth.user.stripe_customer_id
+    ? await retrieveStripeCustomer(auth.user.stripe_customer_id)
+    : null;
+  if (stripeCustomer && !stripeCustomer.deleted) {
     sessionParams.customer = auth.user.stripe_customer_id;
   } else if (auth.user.email || body.email) {
     sessionParams.customer_email = body.email || auth.user.email;
@@ -547,11 +550,35 @@ async function createBillingPortalSession(request) {
   if (!auth.user.stripe_customer_id) {
     return { error: { status: 400, message: "No Stripe customer is linked to this account yet." } };
   }
+  const stripeCustomer = await retrieveStripeCustomer(auth.user.stripe_customer_id);
+  if (!stripeCustomer || stripeCustomer.deleted) {
+    return {
+      error: {
+        status: 409,
+        message:
+          "The Stripe customer linked to this account does not exist in the active Stripe environment. This usually happens after switching from test mode to live mode. Start a new live checkout for this account, or clear the stale Stripe customer ID in Supabase.",
+      },
+    };
+  }
   const session = await stripe.billingPortal.sessions.create({
     customer: auth.user.stripe_customer_id,
     return_url: `${APP_PUBLIC_URL}/account`,
   });
   return { session };
+}
+
+function isMissingStripeResource(error) {
+  return error?.type === "StripeInvalidRequestError" && error?.code === "resource_missing";
+}
+
+async function retrieveStripeCustomer(customerId) {
+  if (!customerId) return null;
+  try {
+    return await stripe.customers.retrieve(customerId);
+  } catch (error) {
+    if (isMissingStripeResource(error)) return null;
+    throw error;
+  }
 }
 
 function planIdFromPriceId(priceId) {
