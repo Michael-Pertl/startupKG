@@ -1897,6 +1897,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-width: min(560px, calc(100% - 48px));
   padding: 7px;
   position: absolute;
   right: 24px;
@@ -1949,6 +1950,22 @@ a {
   white-space: nowrap;
 }
 
+.rail-group button.rail-ask-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  font-size: 11px;
+  min-width: 76px;
+  text-transform: none;
+}
+
+.rail-group button.rail-ask-primary:hover,
+.rail-group button.rail-ask-primary.active {
+  background: color-mix(in srgb, var(--accent) 86%, var(--text-strong));
+  border-color: color-mix(in srgb, var(--accent) 86%, var(--text-strong));
+  color: var(--bg);
+}
+
 .rail-group button svg {
   fill: none;
   height: 16px;
@@ -1971,7 +1988,7 @@ a {
   display: inline-block;
   font-size: 9px;
   line-height: 28px;
-  margin: 0 8px 0 0;
+  margin: 0 6px 0 0;
   vertical-align: top;
 }
 
@@ -1984,14 +2001,17 @@ a {
 }
 
 .rail-context-controls {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   gap: 0;
+  min-width: 0;
 }
 
 .rail-context-panel .chip-row {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   gap: 3px;
+  min-width: 0;
 }
 
 .rail-context-panel .chip {
@@ -1999,7 +2019,7 @@ a {
   font-size: 10px;
   font-weight: 900;
   min-height: 28px;
-  padding: 4px 8px;
+  padding: 4px 7px;
   text-transform: uppercase;
 }
 
