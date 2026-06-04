@@ -70,12 +70,6 @@ const graphThemeColors: Record<
   },
 };
 
-const confidenceHelp: Record<string, string> = {
-  high: "Press release, Reuters, official filing, or equivalent primary source.",
-  medium: "Reputable secondary startup or technology publication.",
-  low: "Weak, unclear, or seed-only source. Use cautiously.",
-};
-
 const graphLegendKinds: NodeKind[] = ["startup", "investor", "round", "country", "domain", "year"];
 
 type ContextLensKey =
@@ -417,6 +411,12 @@ const FREE_PREVIEW_LIMITS = {
   newsIpoRows: 5,
 };
 
+const roundSizeFilters = [
+  { label: "All rounds", value: 0 },
+  { label: "$250M+", value: 250_000_000 },
+  { label: "$1B+", value: 1_000_000_000 },
+];
+
 const contextLensesByKind: Record<NodeKind, ContextLens[]> = {
   startup: [
     { key: "funding_path", label: "Funding path", title: "Show the company's largest visible funding events" },
@@ -608,10 +608,10 @@ function roundValue(edge: MarketEdge, index: GraphIndex): number {
   return Number(index.nodeById.get(roundId)?.amount_usd || edge.amount_usd || 0);
 }
 
-function passesRoundFilters(node: MarketNode, years: string[], confidence: string[]) {
+function passesRoundFilters(node: MarketNode, years: string[], roundSizeMinUsd: number) {
   if (node.kind !== "round") return true;
   if (node.year && !years.includes(String(node.year))) return false;
-  if (node.confidence && !confidence.includes(node.confidence)) return false;
+  if (roundSizeMinUsd && Number(node.amount_usd || 0) < roundSizeMinUsd) return false;
   return true;
 }
 
@@ -619,19 +619,19 @@ function passesRoundScope(
   round: MarketNode,
   index: GraphIndex,
   years: string[],
-  countries: string[],
-  confidence: string[],
+  regions: string[],
+  roundSizeMinUsd: number,
 ) {
-  if (!passesRoundFilters(round, years, confidence)) return false;
+  if (!passesRoundFilters(round, years, roundSizeMinUsd)) return false;
   const raised = index.raisedByRound.get(round.id);
   const startup = raised ? index.nodeById.get(raised.source) : undefined;
-  if (startup?.country && !countries.includes(startup.country)) return false;
+  if (startup?.region && !regions.includes(startup.region)) return false;
   return true;
 }
 
-function passesStartupScope(startup: MarketNode, countries: string[]) {
+function passesStartupScope(startup: MarketNode, regions: string[]) {
   if (startup.kind !== "startup") return true;
-  return !startup.country || countries.includes(startup.country);
+  return !startup.region || regions.includes(startup.region);
 }
 
 function buildNeighborhood(
@@ -640,8 +640,8 @@ function buildNeighborhood(
   index: GraphIndex,
   context: GraphContext,
   years: string[],
-  countries: string[],
-  confidence: string[],
+  regions: string[],
+  roundSizeMinUsd: number,
   isFreePreview: boolean,
 ): { nodes: MarketNode[]; edges: MarketEdge[] } {
   const nodeIds = new Set<string>();
@@ -658,7 +658,7 @@ function buildNeighborhood(
   const addIncidentEdge = (edge: MarketEdge, nodeId = selected.id) => {
     const target = index.nodeById.get(otherEnd(edge, nodeId));
     if (!target) return;
-    if (target.kind === "round" && !passesRoundScope(target, index, years, countries, confidence)) return;
+    if (target.kind === "round" && !passesRoundScope(target, index, years, regions, roundSizeMinUsd)) return;
     addNode(nodeIds, nodes, target);
     addEdge(edgeIds, edges, edge);
   };
@@ -689,7 +689,7 @@ function buildNeighborhood(
       .sort((left, right) => roundValue(right, index) - roundValue(left, index))
       .find((roundEdge) => {
         const round = index.nodeById.get(roundEdge.target);
-        return round ? passesRoundScope(round, index, years, countries, confidence) : false;
+        return round ? passesRoundScope(round, index, years, regions, roundSizeMinUsd) : false;
       });
 
   if (selected.kind === "startup") {
@@ -704,7 +704,7 @@ function buildNeighborhood(
 
     for (const edge of roundEdges) {
       const round = index.nodeById.get(edge.target);
-      if (!round || !passesRoundScope(round, index, years, countries, confidence)) continue;
+      if (!round || !passesRoundScope(round, index, years, regions, roundSizeMinUsd)) continue;
       addNode(nodeIds, nodes, round);
       addEdge(edgeIds, edges, edge);
 
@@ -717,7 +717,7 @@ function buildNeighborhood(
           (node) =>
             node.kind === "startup" &&
             node.id !== selected.id &&
-            passesStartupScope(node, countries) &&
+            passesStartupScope(node, regions) &&
             (node.domain === selected.domain || node.country === selected.country),
         )
         .sort((left, right) => signal(right) - signal(left))
@@ -743,7 +743,7 @@ function buildNeighborhood(
 
     for (const edge of participationEdges) {
       const round = index.nodeById.get(edge.target);
-      if (!round || !passesRoundScope(round, index, years, countries, confidence)) continue;
+      if (!round || !passesRoundScope(round, index, years, regions, roundSizeMinUsd)) continue;
       addNode(nodeIds, nodes, round);
       addEdge(edgeIds, edges, edge);
 
@@ -784,7 +784,7 @@ function buildNeighborhood(
           .map((countryEdge) => ({ edge: countryEdge, startup: index.nodeById.get(otherEnd(countryEdge, country.id)) }));
       })
       .filter((item): item is { edge: MarketEdge; startup: MarketNode } => item.startup?.kind === "startup")
-      .filter(({ startup }) => passesStartupScope(startup, countries))
+      .filter(({ startup }) => passesStartupScope(startup, regions))
       .sort((left, right) => signal(right.startup) - signal(left.startup))
       .slice(0, has("top_companies") || has("recent_rounds") || has("active_investors") ? (isFreePreview ? 18 : expanded ? 80 : 42) : 0);
 
@@ -814,7 +814,7 @@ function buildNeighborhood(
   } else if (selected.kind === "year") {
     const yearRounds = graph.nodes
       .filter((node) => node.kind === "round" && String(node.year) === selected.label)
-      .filter((round) => passesRoundScope(round, index, years, countries, confidence))
+      .filter((round) => passesRoundScope(round, index, years, regions, roundSizeMinUsd))
       .sort((left, right) => Number(right.amount_usd || 0) - Number(left.amount_usd || 0))
       .slice(0, has("largest_rounds") || has("active_investors") || has("domains") || has("regions") ? (isFreePreview ? 18 : expanded ? 80 : 42) : 0);
 
@@ -1455,24 +1455,22 @@ function QuickSearch({
 function HighLevelFilters({
   graph,
   years,
-  countries,
-  confidence,
+  regions,
+  roundSizeMinUsd,
   setYears,
-  setCountries,
-  setConfidence,
+  setRegions,
+  setRoundSizeMinUsd,
 }: {
   graph: MarketGraph;
   years: string[];
-  countries: string[];
-  confidence: string[];
+  regions: string[];
+  roundSizeMinUsd: number;
   setYears: (years: string[]) => void;
-  setCountries: (countries: string[]) => void;
-  setConfidence: (confidence: string[]) => void;
+  setRegions: (regions: string[]) => void;
+  setRoundSizeMinUsd: (roundSizeMinUsd: number) => void;
 }) {
-  const confidenceValue =
-    confidence.length === graph.facets.confidence.length ? "__all__" : confidence[0] || "__all__";
-  const countryValue =
-    countries.length === graph.facets.countries.length ? "__all__" : countries[0] || "__all__";
+  const regionValue =
+    regions.length === graph.facets.regions.length ? "__all__" : regions[0] || "__all__";
   return (
     <aside className="graph-filter-panel" aria-label="Graph filters">
       <label>
@@ -1493,36 +1491,31 @@ function HighLevelFilters({
         </select>
       </label>
       <label>
-        <span>Country</span>
+        <span>Region</span>
         <select
           onChange={(event) => {
             const value = event.target.value;
-            setCountries(value === "__all__" ? graph.facets.countries : [value]);
+            setRegions(value === "__all__" ? graph.facets.regions : [value]);
           }}
-          value={countryValue}
+          value={regionValue}
         >
-          <option value="__all__">All countries</option>
-          {graph.facets.countries.map((country) => (
-            <option key={country} value={country}>
-              {country}
+          <option value="__all__">All regions</option>
+          {graph.facets.regions.map((region) => (
+            <option key={region} value={region}>
+              {region}
             </option>
           ))}
         </select>
       </label>
       <label>
-        <span>Confidence</span>
+        <span>Round size</span>
         <select
-          onChange={(event) => {
-            const value = event.target.value;
-            setConfidence(value === "__all__" ? graph.facets.confidence : [value]);
-          }}
-          title={confidenceValue === "__all__" ? "All source confidence levels" : confidenceHelp[confidenceValue]}
-          value={confidenceValue}
+          onChange={(event) => setRoundSizeMinUsd(Number(event.target.value))}
+          value={String(roundSizeMinUsd)}
         >
-          <option value="__all__">All evidence</option>
-          {graph.facets.confidence.map((item) => (
-            <option key={item} value={item}>
-              {item}
+          {roundSizeFilters.map((item) => (
+            <option key={item.value} value={item.value}>
+              {item.label}
             </option>
           ))}
         </select>
@@ -3683,8 +3676,8 @@ export default function App() {
   const [graphViewportSignal, setGraphViewportSignal] = useState(0);
   const [selectedId, setSelectedId] = useState<string>("");
   const [years, setYears] = useState<string[]>([]);
-  const [countries, setCountries] = useState<string[]>([]);
-  const [confidence, setConfidence] = useState<string[]>([]);
+  const [graphRegions, setGraphRegions] = useState<string[]>([]);
+  const [roundSizeMinUsd, setRoundSizeMinUsd] = useState(0);
   const [analyticsFilters, setAnalyticsFilters] = useState<AnalyticsFilters>({
     years: [],
     regions: [],
@@ -3716,8 +3709,7 @@ export default function App() {
       .then((payload: MarketGraph) => {
         setGraph(payload);
         setYears(payload.facets.years);
-        setCountries(payload.facets.countries);
-        setConfidence(payload.facets.confidence);
+        setGraphRegions(payload.facets.regions);
         setAnalyticsFilters({
           years: payload.facets.years,
           regions: payload.facets.regions,
@@ -3826,16 +3818,28 @@ export default function App() {
   const isFreePreview = currentPlan === "free";
   const neighborhood = useMemo(() => {
     if (!graph || !index || !selected) return { nodes: [], edges: [] };
-    return buildNeighborhood(selected, graph, index, graphContext, years, countries, confidence, isFreePreview);
-  }, [confidence, countries, graph, graphContext, index, isFreePreview, selected, years]);
+    return buildNeighborhood(selected, graph, index, graphContext, years, graphRegions, roundSizeMinUsd, isFreePreview);
+  }, [graph, graphContext, graphRegions, index, isFreePreview, roundSizeMinUsd, selected, years]);
+
+  const alignGraphRegionWithSelection = useCallback((node: MarketNode) => {
+    if (!graph) return;
+    if (node.kind === "region") {
+      setGraphRegions([node.label]);
+      return;
+    }
+    if (node.region && graphRegions.length && !graphRegions.includes(node.region)) {
+      setGraphRegions(graph.facets.regions);
+    }
+  }, [graph, graphRegions]);
 
   const handleSelect = useCallback((node: MarketNode | undefined) => {
     if (!node) return;
+    alignGraphRegionWithSelection(node);
     setSelectedId(node.id);
     setGraphContext(defaultGraphContext(node.kind));
     setDrawerMode("details");
     setGraphViewportSignal((signal) => signal + 1);
-  }, []);
+  }, [alignGraphRegionWithSelection]);
 
   const openLogin = useCallback((afterLogin: "ask" | null = null) => {
     setPostLoginAction(afterLogin);
@@ -3880,6 +3884,7 @@ export default function App() {
   }
 
   const selectNodeAndOpenGraph = (node: MarketNode) => {
+    alignGraphRegionWithSelection(node);
     setSelectedId(node.id);
     setDrawerMode("details");
     setGraphContext(defaultGraphContext(node.kind));
@@ -3893,8 +3898,7 @@ export default function App() {
     const target = graph.nodes.find((node) => node.kind === nodeKind && node.label === label);
     if (!target) return;
     setYears(kind === "year" ? [label] : analyticsFilters.years);
-    setCountries(kind === "country" ? [label] : analyticsFilters.countries);
-    setConfidence(analyticsFilters.confidence);
+    setGraphRegions(kind === "region" ? [label] : graph.facets.regions);
     setLayoutMode("flow");
     selectNodeAndOpenGraph(target);
   };
@@ -4018,11 +4022,11 @@ export default function App() {
         </header>
         <section className="graph-section">
           <HighLevelFilters
-            confidence={confidence}
-            countries={countries}
             graph={graph}
-            setCountries={setCountries}
-            setConfidence={setConfidence}
+            regions={graphRegions}
+            roundSizeMinUsd={roundSizeMinUsd}
+            setRegions={setGraphRegions}
+            setRoundSizeMinUsd={setRoundSizeMinUsd}
             setYears={setYears}
             years={years}
           />
