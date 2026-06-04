@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -15,6 +16,12 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 RAW_FILE = ROOT / "data" / "raw" / "market_events_raw.csv"
 STARTUPS_FILE = ROOT / "data" / "processed" / "startups.csv"
+OPTIONAL_SUPABASE_COLUMNS = {
+    "ipo_stage",
+    "linked_startup_id",
+    "linked_startup_label",
+    "raw_payload",
+}
 
 
 def load_env_file(path: Path) -> None:
@@ -85,6 +92,53 @@ def row_to_candidate(row: dict[str, str], startup_links: dict[str, dict[str, str
     }
 
 
+def missing_schema_column(error_body: str) -> str | None:
+    try:
+        payload = json.loads(error_body)
+    except json.JSONDecodeError:
+        return None
+    if payload.get("code") != "PGRST204":
+        return None
+    message = payload.get("message", "")
+    match = re.search(r"Could not find the '([^']+)' column", message)
+    if not match:
+        return None
+    column = match.group(1)
+    return column if column in OPTIONAL_SUPABASE_COLUMNS else None
+
+
+def sync_rows(supabase_url: str, service_role_key: str, rows: list[dict[str, object]]) -> tuple[bool, str]:
+    omitted_columns: list[str] = []
+    payload_rows = rows
+    while True:
+        request = Request(
+            f"{supabase_url}/rest/v1/market_event_candidates?on_conflict=candidate_id",
+            method="POST",
+            headers={
+                "apikey": service_role_key,
+                "authorization": f"Bearer {service_role_key}",
+                "content-type": "application/json",
+                "prefer": "resolution=merge-duplicates",
+            },
+            data=json.dumps(payload_rows).encode("utf-8"),
+        )
+        try:
+            with urlopen(request, timeout=30) as response:
+                response.read()
+            suffix = f" Omitted optional columns missing in Supabase: {', '.join(omitted_columns)}." if omitted_columns else ""
+            return True, suffix
+        except HTTPError as error:
+            body = error.read().decode("utf-8", errors="replace")
+            missing_column = missing_schema_column(body)
+            if missing_column:
+                omitted_columns.append(missing_column)
+                payload_rows = [{key: value for key, value in row.items() if key != missing_column} for row in payload_rows]
+                continue
+            return False, body
+        except URLError as error:
+            return False, f"Could not reach Supabase: {error}"
+
+
 def main() -> int:
     load_env_file(ROOT / ".env")
     load_env_file(ROOT / ".env.local")
@@ -104,28 +158,12 @@ def main() -> int:
         print(f"No market events found in {RAW_FILE}.")
         return 0
 
-    request = Request(
-        f"{supabase_url}/rest/v1/market_event_candidates?on_conflict=candidate_id",
-        method="POST",
-        headers={
-            "apikey": service_role_key,
-            "authorization": f"Bearer {service_role_key}",
-            "content-type": "application/json",
-            "prefer": "resolution=merge-duplicates",
-        },
-        data=json.dumps(rows).encode("utf-8"),
-    )
-    try:
-        with urlopen(request, timeout=30) as response:
-            response.read()
-    except HTTPError as error:
-        print(error.read().decode("utf-8", errors="replace"), file=sys.stderr)
-        return 1
-    except URLError as error:
-        print(f"Could not reach Supabase: {error}", file=sys.stderr)
+    success, message = sync_rows(supabase_url, service_role_key, rows)
+    if not success:
+        print(message, file=sys.stderr)
         return 1
 
-    print(f"Synced {len(rows)} market event candidates to Supabase.")
+    print(f"Synced {len(rows)} market event candidates to Supabase.{message}")
     return 0
 
 
