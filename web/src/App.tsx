@@ -461,6 +461,22 @@ const contextLensesByKind: Record<NodeKind, ContextLens[]> = {
   ],
 };
 
+const compactContextLensLabels: Partial<Record<ContextLensKey, string>> = {
+  funding_path: "Funding",
+  investors: "Investors",
+  similar_companies: "Peers",
+  market_context: "Market",
+  portfolio_rounds: "Portfolio",
+  co_investors: "Co-investors",
+  deal_participants: "Participants",
+  company_context: "Company",
+  market_slice: "Slice",
+  top_companies: "Companies",
+  recent_rounds: "Rounds",
+  active_investors: "Investors",
+  largest_rounds: "Rounds",
+};
+
 const defaultContextLensesByKind: Record<NodeKind, ContextLensKey[]> = {
   startup: ["funding_path", "investors", "market_context"],
   investor: ["portfolio_rounds", "co_investors"],
@@ -1601,7 +1617,7 @@ function ContextLensControls({
             title={title}
             type="button"
           >
-            {label}
+            {compactContextLensLabels[key] || label}
           </button>
         ))}
         <button
@@ -1610,7 +1626,7 @@ function ContextLensControls({
           title="Toggle a deeper ranked neighborhood for the active lenses"
           type="button"
         >
-          {context.expanded ? "Show less" : "Show more"}
+          {context.expanded ? "Less" : "More"}
         </button>
       </div>
     </section>
@@ -4060,12 +4076,12 @@ export default function App() {
                 </button>
                 <button
                   aria-label="Ask questions about the selected graph context"
-                  className={drawerMode === "ask" ? "active" : ""}
+                  className={["rail-ask-primary", drawerMode === "ask" ? "active" : ""].join(" ")}
                   onClick={openAskPanel}
                   title="Ask the assistant about the selected entity and visible graph"
                   type="button"
                 >
-                  ASK AI
+                  Ask AI
                 </button>
               </div>
             </div>

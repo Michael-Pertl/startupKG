@@ -1952,6 +1952,22 @@ a {
   white-space: nowrap;
 }
 
+.rail-group button.rail-ask-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  font-size: 11px;
+  min-width: 76px;
+  text-transform: none;
+}
+
+.rail-group button.rail-ask-primary:hover,
+.rail-group button.rail-ask-primary.active {
+  background: color-mix(in srgb, var(--accent) 86%, var(--text-strong));
+  border-color: color-mix(in srgb, var(--accent) 86%, var(--text-strong));
+  color: var(--bg);
+}
+
 .rail-group button svg {
   fill: none;
   height: 16px;
@@ -2004,7 +2020,7 @@ a {
   font-size: 10px;
   font-weight: 900;
   min-height: 28px;
-  padding: 4px 8px;
+  padding: 4px 7px;
   text-transform: uppercase;
   white-space: nowrap;
 }
