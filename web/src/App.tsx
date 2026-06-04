@@ -2450,6 +2450,42 @@ function signalTierHelp(value: string) {
   return labels[value] || "Market intelligence signal.";
 }
 
+function hostnameFromUrl(value?: string | null) {
+  const trimmed = (value || "").trim();
+  if (!trimmed) return "";
+  try {
+    const url = new URL(trimmed.startsWith("http") ? trimmed : `https://${trimmed}`);
+    return url.hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+function faviconUrl(website?: string | null) {
+  const host = hostnameFromUrl(website);
+  return host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64` : "";
+}
+
+function companyInitials(value: string) {
+  const words = value.replace(/[^A-Za-z0-9 ]/g, " ").trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return "?";
+  return words.slice(0, 2).map((word) => word[0]).join("").toUpperCase();
+}
+
+function NewsCompanyLogo({ companyName, website }: { companyName: string; website?: string | null }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const logoUrl = faviconUrl(website);
+  return (
+    <div className="news-logo" aria-hidden="true">
+      {logoUrl && !imageFailed ? (
+        <img alt="" onError={() => setImageFailed(true)} src={logoUrl} />
+      ) : (
+        <span>{companyInitials(companyName)}</span>
+      )}
+    </div>
+  );
+}
+
 function NewsSelect({
   label,
   value,
@@ -2618,6 +2654,7 @@ function NewsPage({
               const company = linkedCompanyForEvent(event);
               return (
                 <div className="news-item" key={event.event_id}>
+                  <NewsCompanyLogo companyName={event.company_name} website={company?.website} />
                   <div className="news-item-main">
                     <div className="news-item-titleline">
                       <h3>{event.company_name}</h3>
