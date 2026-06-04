@@ -86,7 +86,7 @@ create table if not exists public.market_event_candidates (
   source_type text not null,
   confidence text not null default 'medium',
   status text not null default 'needs_review'
-    check (status in ('auto_ingested', 'needs_review', 'approved', 'rejected', 'promotion_ready', 'promoted')),
+    check (status in ('auto_ingested', 'needs_review', 'staged', 'approved', 'rejected', 'promotion_ready', 'promoted')),
   linked_startup_id text,
   linked_startup_label text,
   summary text,
@@ -103,6 +103,13 @@ alter table public.market_event_candidates
   add column if not exists ipo_stage text check (ipo_stage is null or ipo_stage in ('watch', 'filing', 'pricing', 'listed')),
   add column if not exists linked_startup_id text,
   add column if not exists linked_startup_label text;
+
+alter table public.market_event_candidates
+  drop constraint if exists market_event_candidates_status_check;
+
+alter table public.market_event_candidates
+  add constraint market_event_candidates_status_check
+  check (status in ('auto_ingested', 'needs_review', 'staged', 'approved', 'rejected', 'promotion_ready', 'promoted'));
 
 create table if not exists public.market_event_reviews (
   review_id uuid primary key default gen_random_uuid(),
