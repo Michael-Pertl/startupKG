@@ -2895,7 +2895,7 @@ function PricingPage({
   onOpenLegal,
 }: {
   currentPlan: string;
-  onChoosePlan: () => void;
+  onChoosePlan: (planId: "free" | "starter" | "pro") => void;
   onOpenLegal: (view: LegalView) => void;
 }) {
   return (
@@ -2925,7 +2925,7 @@ function PricingPage({
                   <li key={feature}>{feature}</li>
                 ))}
               </ul>
-              <button onClick={onChoosePlan} type="button">
+              <button onClick={() => onChoosePlan(plan.id)} type="button">
                 {plan.id === currentPlan ? "Manage current plan" : plan.id === "free" ? "Use preview" : "Choose in account"}
               </button>
             </article>
@@ -2982,6 +2982,17 @@ function LegalPage({ page, onOpenLegal }: { page: LegalView; onOpenLegal: (view:
         </div>
       </article>
     </main>
+  );
+}
+
+function LegalFooter({ onOpenLegal }: { onOpenLegal: (view: LegalView) => void }) {
+  return (
+    <footer className="legal-footer">
+      <button onClick={() => onOpenLegal("methodology")} type="button">Methodology</button>
+      <button onClick={() => onOpenLegal("impressum")} type="button">Impressum</button>
+      <button onClick={() => onOpenLegal("privacy")} type="button">Privacy</button>
+      <button onClick={() => onOpenLegal("terms")} type="button">Terms</button>
+    </footer>
   );
 }
 
@@ -3836,12 +3847,6 @@ export default function App() {
           onOpenAccount={() => setView("account")}
           onOpenLogin={() => openLogin()}
         />
-        <div className="legal-nav-links" aria-label="Legal links">
-          <button className={view === "methodology" ? "active" : ""} onClick={() => setView("methodology")} type="button">Methodology</button>
-          <button className={view === "impressum" ? "active" : ""} onClick={() => setView("impressum")} type="button">Impressum</button>
-          <button className={view === "privacy" ? "active" : ""} onClick={() => setView("privacy")} type="button">Privacy</button>
-          <button className={view === "terms" ? "active" : ""} onClick={() => setView("terms")} type="button">Terms</button>
-        </div>
       </nav>
       {view === "login" ? (
         <LoginPage
@@ -3865,7 +3870,10 @@ export default function App() {
       ) : view === "pricing" ? (
         <PricingPage
           currentPlan={usage?.plan || "free"}
-          onChoosePlan={() => setView(session ? "account" : "login")}
+          onChoosePlan={(planId) => {
+            if (planId === "free" && !session) setView("graph");
+            else setView(session ? "account" : "login");
+          }}
           onOpenLegal={(target) => setView(target)}
         />
       ) : isLegalView ? (
@@ -4056,6 +4064,7 @@ export default function App() {
           }}
         />
       ) : null}
+      <LegalFooter onOpenLegal={(target) => setView(target)} />
     </div>
   );
 }
