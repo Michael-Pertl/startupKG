@@ -221,6 +221,9 @@ a {
 .account-shell,
 .account-shell.has-right,
 .account-shell.no-right,
+.legal-shell,
+.legal-shell.has-right,
+.legal-shell.no-right,
 .admin-shell,
 .admin-shell.has-right,
 .admin-shell.no-right {
@@ -315,6 +318,21 @@ a {
 
 .auth-controls .auth-primary {
   min-width: 74px;
+}
+
+.legal-nav-links {
+  align-items: center;
+  border-left: 1px solid var(--border-soft);
+  display: flex;
+  gap: 2px;
+  margin-left: 4px;
+  padding-left: 6px;
+}
+
+.legal-nav-links button {
+  font-size: 10px;
+  min-height: 28px;
+  padding: 5px 7px;
 }
 
 .auth-controls .profile-button {
@@ -546,6 +564,7 @@ a {
 }
 
 .account-page,
+.legal-page,
 .admin-page {
   background:
     linear-gradient(var(--bg-grid) 1px, transparent 1px),
@@ -557,6 +576,10 @@ a {
   padding: 34px;
 }
 
+.legal-page {
+  grid-area: analytics;
+}
+
 .account-panel {
   border: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
@@ -565,6 +588,114 @@ a {
   margin: 0 auto;
   max-width: 880px;
   padding: 24px;
+}
+
+.legal-panel {
+  background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 18px;
+  margin: 0 auto;
+  max-width: 980px;
+  padding: 24px;
+}
+
+.pricing-panel {
+  max-width: 1080px;
+}
+
+.legal-header {
+  border-bottom: 1px solid var(--border-soft);
+  display: grid;
+  gap: 8px;
+  padding-bottom: 16px;
+}
+
+.legal-header span,
+.legal-callout strong {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.legal-header h1 {
+  color: var(--text-strong);
+  font-size: 34px;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.legal-header p,
+.legal-callout p,
+.legal-sections p,
+.legal-sections li {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.legal-callout {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+}
+
+.legal-sections {
+  display: grid;
+  gap: 12px;
+}
+
+.legal-sections section {
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.legal-sections h2 {
+  color: var(--text-strong);
+  font-size: 18px;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.legal-sections ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.legal-inline-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.legal-inline-links button {
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  min-height: 32px;
+  padding: 6px 10px;
+  text-transform: uppercase;
+}
+
+.legal-inline-links button:hover {
+  border-color: var(--accent-border);
+  color: var(--text-strong);
+}
+
+.pricing-grid {
+  border-bottom: 1px solid var(--border-soft);
+  padding-bottom: 6px;
 }
 
 .admin-panel {
@@ -922,6 +1053,37 @@ a {
 .profile-summary strong {
   color: var(--text-strong);
   font-size: 15px;
+}
+
+.terms-acceptance {
+  align-items: start;
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  color: var(--muted);
+  display: grid;
+  font-size: 12px;
+  gap: 9px;
+  grid-template-columns: auto minmax(0, 1fr);
+  line-height: 1.45;
+  padding: 12px;
+}
+
+.terms-acceptance input {
+  margin-top: 2px;
+}
+
+.terms-acceptance button {
+  background: transparent;
+  border: 0;
+  color: var(--link);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  padding: 0;
+}
+
+.terms-acceptance button:hover {
+  color: var(--text-strong);
 }
 
 .account-billing,
@@ -3116,7 +3278,7 @@ a {
 }
 
 .news-filters {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .news-layout {
@@ -3303,25 +3465,6 @@ a {
   text-transform: uppercase;
 }
 
-.news-item-badges b {
-  color: var(--accent);
-}
-
-.news-item-badges .signal-core_signal {
-  border-color: rgba(111, 168, 155, 0.48);
-  color: #9bc7bc;
-}
-
-.news-item-badges .signal-watchlist_signal {
-  border-color: rgba(185, 144, 95, 0.48);
-  color: #d5b17e;
-}
-
-.news-item-badges .signal-review_queue {
-  border-color: rgba(127, 143, 170, 0.48);
-  color: #aab6d0;
-}
-
 .news-item h3 {
   color: var(--text-strong);
   flex: 1;
@@ -3408,6 +3551,9 @@ a {
   .account-shell,
   .account-shell.has-right,
   .account-shell.no-right,
+  .legal-shell,
+  .legal-shell.has-right,
+  .legal-shell.no-right,
   .admin-shell,
   .admin-shell.has-right,
   .admin-shell.no-right {
@@ -3491,6 +3637,9 @@ a {
   .account-shell,
   .account-shell.has-right,
   .account-shell.no-right,
+  .legal-shell,
+  .legal-shell.has-right,
+  .legal-shell.no-right,
   .admin-shell,
   .admin-shell.has-right,
   .admin-shell.no-right {
@@ -3509,6 +3658,7 @@ a {
   }
 
   .account-page,
+  .legal-page,
   .admin-page {
     min-height: calc(100vh - 79px);
     padding: 12px;
@@ -3542,12 +3692,21 @@ a {
     padding: 18px;
   }
 
+  .legal-panel {
+    padding: 18px;
+  }
+
+  .legal-header h1 {
+    font-size: 29px;
+  }
+
   .account-header,
   .admin-header,
   .admin-summary,
   .admin-event-meta,
   .admin-event-actions,
   .plan-grid,
+  .pricing-grid,
   .profile-summary {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
