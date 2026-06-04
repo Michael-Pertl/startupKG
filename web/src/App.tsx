@@ -1132,9 +1132,10 @@ function GraphView({
         {
           selector: 'edge[mode = "network"]',
           style: {
-            "curve-style": "straight",
+            "curve-style": "bezier",
+            "control-point-step-size": 42,
             "target-arrow-shape": "none",
-            opacity: 0.2,
+            opacity: 0.24,
             width: 0.85,
           },
         },
@@ -1150,7 +1151,9 @@ function GraphView({
         {
           selector: 'edge[mode = "network"][kind = "participated"]',
           style: {
-            opacity: 0.28,
+            "curve-style": "bezier",
+            "control-point-step-size": 52,
+            opacity: 0.32,
             width: 0.9,
           },
         },
@@ -1167,6 +1170,8 @@ function GraphView({
         {
           selector: 'edge[mode = "network"][kind = "raised"]',
           style: {
+            "curve-style": "bezier",
+            "control-point-step-size": 34,
             "target-arrow-shape": "triangle",
             opacity: 0.72,
             width: 1.8,
@@ -1186,6 +1191,8 @@ function GraphView({
         {
           selector: 'edge[mode = "network"][kind = "operates_in"], edge[mode = "network"][kind = "headquartered_in"]',
           style: {
+            "curve-style": "bezier",
+            "control-point-step-size": 46,
             "target-arrow-shape": "none",
             opacity: 0.42,
             width: 1.15,
@@ -1199,9 +1206,56 @@ function GraphView({
             label: "data(label)",
           },
         },
+        {
+          selector: "node.dimmed",
+          style: {
+            opacity: 0.18,
+            label: "",
+          },
+        },
+        {
+          selector: "edge.dimmed",
+          style: {
+            opacity: 0.05,
+          },
+        },
+        {
+          selector: "node.focused",
+          style: {
+            opacity: 1,
+          },
+        },
+        {
+          selector: "edge.focused",
+          style: {
+            opacity: 0.88,
+            width: 2.4,
+          },
+        },
+        {
+          selector: "node.focus-root",
+          style: {
+            "border-width": 4,
+            "border-color": theme.selected,
+            label: "data(label)",
+          },
+        },
       ],
     });
     cyRef.current = cy;
+
+    const clearGraphFocus = () => {
+      cy.elements().removeClass("dimmed focused focus-root");
+    };
+    const applyGraphFocus = (nodeId: string) => {
+      const root = cy.getElementById(nodeId);
+      if (!root.length) return;
+      clearGraphFocus();
+      const neighborhood = root.closedNeighborhood();
+      cy.elements().addClass("dimmed");
+      neighborhood.removeClass("dimmed").addClass("focused");
+      root.addClass("focus-root");
+    };
 
     cy.on("tap", "node", (event) => {
       onSelect(nodeByIdRef.current.get(event.target.id()));
@@ -1209,6 +1263,7 @@ function GraphView({
     cy.on("mouseover", "node", (event) => {
       const node = nodeByIdRef.current.get(event.target.id());
       if (!node) return;
+      applyGraphFocus(event.target.id());
       const position = event.renderedPosition || { x: 0, y: 0 };
       setHovered({ node, x: position.x, y: position.y });
     });
@@ -1218,7 +1273,10 @@ function GraphView({
       const position = event.renderedPosition || { x: 0, y: 0 };
       setHovered({ node, x: position.x, y: position.y });
     });
-    cy.on("mouseout", "node", () => setHovered(null));
+    cy.on("mouseout", "node", () => {
+      clearGraphFocus();
+      setHovered(null);
+    });
 
     const resize = () => {
       cy.resize();
@@ -1241,8 +1299,26 @@ function GraphView({
     cy.batch(() => {
       cy.elements().remove();
       cy.add(buildElements(nodes, edges, selectedId, layoutMode));
-      cy.layout({ name: "preset", fit: false }).run();
     });
+    const layout =
+      layoutMode === "network"
+        ? cy.layout({
+            name: "cose",
+            animate: false,
+            fit: false,
+            padding: 54,
+            randomize: false,
+            nodeRepulsion: 9000,
+            nodeOverlap: 28,
+            idealEdgeLength: 130,
+            edgeElasticity: 110,
+            nestingFactor: 1.15,
+            gravity: 0.22,
+            numIter: 1200,
+            componentSpacing: 90,
+          })
+        : cy.layout({ name: "preset", fit: false });
+    layout.run();
     const refresh = () => {
       cy.resize();
       cy.fit(undefined, 54);
