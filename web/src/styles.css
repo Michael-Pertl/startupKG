@@ -1090,6 +1090,13 @@ a {
   padding: 12px;
 }
 
+.terms-acceptance.error {
+  background: var(--danger-surface);
+  border-color: rgba(180, 94, 94, 0.82);
+  box-shadow: 0 0 0 3px rgba(180, 94, 94, 0.14);
+  color: var(--text-strong);
+}
+
 .terms-acceptance input {
   margin-top: 2px;
 }
@@ -1106,6 +1113,13 @@ a {
 
 .terms-acceptance button:hover {
   color: var(--text-strong);
+}
+
+.terms-error-text {
+  color: var(--danger);
+  display: block;
+  font-size: 11px;
+  margin-top: 6px;
 }
 
 .account-billing,
