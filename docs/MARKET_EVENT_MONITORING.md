@@ -238,10 +238,11 @@ python3 scripts/fetch_market_events_tavily.py
 python3 scripts/build_market_events.py
 ```
 
-The Tavily script searches public web/news results, classifies likely market
+The Tavily script searches public web/news results across global regions, AI
+domains, and selected companies from the graph. It classifies likely market
 events, deduplicates by source URL and company/date/type, and appends new rows
-with `status=auto_ingested`. These rows are visible in News but remain separate
-from the core Neo4j funding graph.
+with `status=auto_ingested`, `needs_review`, or `staged`. Visible rows remain
+separate from the core Neo4j funding graph until reviewed and promoted.
 
 To promote a reviewed market event into the formal funding-event staging file,
 use:
@@ -322,9 +323,16 @@ five minutes, so new events appear after the hosted job updates the JSON:
 
 ```bash
 python3 scripts/fetch_market_events_feeds.py
+python3 scripts/fetch_market_events_tavily.py
 python3 scripts/build_market_events.py
 python3 scripts/sync_market_events_to_supabase.py
 ```
+
+For Render cron, set `TAVILY_API_KEY` and optionally tune:
+
+- `TAVILY_MAX_QUERIES`: defaults to `40`
+- `TAVILY_MAX_RESULTS`: defaults to `5`
+- `TAVILY_DAYS`: defaults to `14`
 
 Use the feed as a market-signal surface, not as the canonical funding graph.
 `approved` and `auto_ingested` events can be visible quickly; verified funding
