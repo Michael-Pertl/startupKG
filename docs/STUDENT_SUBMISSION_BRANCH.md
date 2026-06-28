@@ -10,11 +10,10 @@ The core Knowledge Graph work remains unchanged:
 - Cypher schema, validation, analysis, and visualization queries;
 - React graph explorer for screenshots and demonstration.
 
-Commercial/product features are disabled in the student-facing React UI:
+The student-facing React UI is limited to academic exploration:
 
-- no pricing navigation;
-- no account or billing navigation;
-- no Stripe checkout flow in the visible application;
+- no pricing, account, or billing navigation;
+- no payment or checkout flow;
 - no free/paid graph gating;
 - no upgrade prompts;
 - legal text reframed as an academic demonstrator.
