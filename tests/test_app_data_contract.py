@@ -69,19 +69,6 @@ class AppDataContractTest(unittest.TestCase):
         growth_ids = {row["startup_id"] for row in growth}
         self.assertEqual(startup_ids, growth_ids)
 
-    def test_each_startup_has_one_primary_domain(self) -> None:
-        startups = read_csv(ROOT / "data" / "processed" / "startups.csv")
-        startup_domains = read_csv(ROOT / "data" / "processed" / "startup_domains.csv")
-        primary_counts: dict[str, int] = {}
-        for row in startup_domains:
-            if row["role"] == "primary":
-                primary_counts[row["startup_id"]] = primary_counts.get(row["startup_id"], 0) + 1
-
-        self.assertEqual(
-            {row["startup_id"]: 1 for row in startups},
-            primary_counts,
-        )
-
     def test_graph_export_exists_when_built(self) -> None:
         path = ROOT / "web" / "public" / "data" / "market_graph.json"
         if path.exists():

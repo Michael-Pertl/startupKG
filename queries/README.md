@@ -6,8 +6,6 @@ Run these files in order:
 2. `01_import.cypher`
 3. `02_validation.cypher`
 4. `03_analysis.cypher`
-5. `04_final_results.cypher`
-6. `05_visualization_views.cypher`
 
 ## Import Files
 
@@ -29,5 +27,3 @@ Expected files:
 - Funding dates are imported as Neo4j `date` values.
 - `amount_usd`, `year`, and `month` are imported as integers.
 - Rounds without a disclosed lead investor remain represented through `PARTICIPATED_IN {role: 'participant'}` relationships.
-- Use `04_final_results.cypher` for tables in the portfolio report.
-- Use `05_visualization_views.cypher` for Neo4j Browser screenshots.

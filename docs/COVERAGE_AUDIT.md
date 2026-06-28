@@ -1,6 +1,6 @@
 # Coverage Audit
 
-Last reviewed: 2026-06-28
+Last reviewed: 2026-05-26
 
 ## Summary
 
@@ -8,7 +8,7 @@ The current graph dataset is useful for prototype network analysis, but it is no
 
 The dataset now intentionally targets AI mega-rounds: publicly reported funding events of USD 100M or more. That is a defensible threshold for analysing investor concentration and domain-level capital shifts, but it is too high for a claim that the graph represents the whole AI ecosystem. Smaller startup formation, seed rounds, public-company AI spend, university labs, open-source ecosystems, and sub-USD100M regional companies remain out of scope.
 
-US coverage has been expanded against TechCrunch's public AI mega-round trackers. Europe and non-US regions are still more manually curated and should be treated as selected evidence sets until region-specific audits are complete. The 2026 data is partial-year data as of 2026-06-28 and must not be compared with full-year 2024 or 2025 totals without this caveat.
+US coverage has been expanded against TechCrunch's public AI mega-round trackers. Europe and non-US regions are still more manually curated and should be treated as selected evidence sets until region-specific audits are complete. The 2026 data is partial-year data as of 2026-05-26 and must not be compared with full-year 2024 or 2025 totals without this caveat.
 
 ## Current Raw Dataset Counts
 
@@ -16,9 +16,9 @@ US coverage has been expanded against TechCrunch's public AI mega-round trackers
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | 2024 | 52 | 8 | 4 | 1 | 2 | 1 | 0 | 0 | 1 |
 | 2025 | 63 | 15 | 0 | 5 | 1 | 0 | 1 | 0 | 0 |
-| 2026 | 35 | 9 | 1 | 1 | 0 | 0 | 0 | 1 | 0 |
+| 2026 | 28 | 9 | 1 | 1 | 0 | 0 | 0 | 1 | 0 |
 
-The raw validator passes for 201 funding events. Confidence distribution is 61 high-confidence rows and 140 medium-confidence rows, with no low-confidence rows. The processed graph currently contains 160 startups, 520 investors, and 1,156 investor-round participations.
+The raw validator passes for 194 funding events. Confidence distribution is 55 high-confidence rows and 139 medium-confidence rows, with no low-confidence rows. The processed graph currently contains 155 startups, 476 investors, and 1,067 investor-round participations.
 
 ## In-Scope Candidate Gaps
 

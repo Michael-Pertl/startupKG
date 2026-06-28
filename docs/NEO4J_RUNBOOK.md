@@ -48,17 +48,6 @@ password: startupkg2026
 
 ## Load The Graph
 
-If the container import directory is empty even though
-`data/neo4j_import/*.csv` exists on the host, copy the generated CSVs into the
-running container before import:
-
-```bash
-tar -C data/neo4j_import -cf /tmp/neo4j_import_csvs.tar .
-docker cp /tmp/neo4j_import_csvs.tar startupkg-neo4j:/tmp/neo4j_import_csvs.tar
-docker exec --user root startupkg-neo4j bash -lc \
-  'tar -xf /tmp/neo4j_import_csvs.tar -C /var/lib/neo4j/import && chown neo4j:neo4j /var/lib/neo4j/import/*.csv'
-```
-
 Run the schema:
 
 ```bash
@@ -87,21 +76,12 @@ docker exec -i startupkg-neo4j cypher-shell -u neo4j -p startupkg2026 < queries/
 
 The current import should contain:
 
-- 201 funding events
-- 160 startups
-- 520 investors
-- 1,156 investor-round participations
-- 14 AI domains
-- 15 countries
-- 9 regions
-
-Current relationship counts:
-
-- 201 `RAISED` relationships
-- 1,156 `PARTICIPATED_IN` relationships
-- 161 `OPERATES_IN` relationships
-- 160 `HEADQUARTERED_IN` relationships
-- 15 `PART_OF` relationships
+- 90 funding events
+- 68 startups
+- 275 investors
+- 585 investor-round participations
+- 19 AI infrastructure funding events
+- 23 funding events from 2026
 
 ## Stop Neo4j
 
