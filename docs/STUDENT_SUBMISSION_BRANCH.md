@@ -12,10 +12,8 @@ The core Knowledge Graph work remains unchanged:
 
 The student-facing React UI is limited to academic exploration:
 
-- no pricing, account, or billing navigation;
-- no payment or checkout flow;
-- no free/paid graph gating;
-- no upgrade prompts;
+- graph, analytics, news, and methodology/legal views only;
+- full graph exploration without feature gating;
 - legal text reframed as an academic demonstrator.
 
 Use the web app only as an optional graph exploration layer in the portfolio.

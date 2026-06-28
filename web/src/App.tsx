@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import cytoscape, { Core, ElementDefinition, NodeSingular } from "cytoscape";
 import { MarketEdge, MarketEvent, MarketEventFeed, MarketGraph, MarketNode, NodeKind } from "./types";
 import { formatCount, formatUsd } from "./format";
-import { supabase, SupabaseSession } from "./supabaseClient";
 import "./styles.css";
 
 const kindLabels: Record<NodeKind, string> = {
@@ -71,7 +70,6 @@ const graphThemeColors: Record<
 };
 
 const graphLegendKinds: NodeKind[] = ["startup", "investor", "round", "country", "domain", "year"];
-const STUDENT_SUBMISSION_MODE = true;
 
 type ContextLensKey =
   | "funding_path"
@@ -103,16 +101,12 @@ type ContextLens = {
 
 type LayoutMode = "flow" | "network";
 type LegalView = "impressum" | "privacy" | "terms" | "methodology";
-type AppView = "graph" | "analytics" | "news" | "pricing" | "login" | "account" | "admin" | LegalView;
+type AppView = "graph" | "analytics" | "news" | LegalView;
 
 const viewPaths: Record<AppView, string> = {
   graph: "/",
   analytics: "/analytics",
   news: "/news",
-  pricing: "/pricing",
-  login: "/login",
-  account: "/account",
-  admin: "/admin",
   impressum: "/impressum",
   privacy: "/privacy",
   terms: "/terms",
@@ -121,62 +115,15 @@ const viewPaths: Record<AppView, string> = {
 
 function appViewFromPath(pathname: string): AppView {
   const normalized = pathname.replace(/\/+$/, "") || "/";
-  if (normalized === "/subscription") return "pricing";
   const match = (Object.entries(viewPaths) as Array<[AppView, string]>).find(([, path]) => path === normalized);
-  const view = match?.[0] || "graph";
-  if (STUDENT_SUBMISSION_MODE && ["pricing", "login", "account", "admin"].includes(view)) {
-    return "graph";
-  }
-  return view;
+  return match?.[0] || "graph";
 }
 
 type AskUsage = {
   user_id?: string;
-  plan?: string;
-  subscription_status?: string;
-  current_period_end?: string | null;
-  monthly_ask_limit?: number | null;
   credits_remaining: number;
   credits_per_prompt: number;
   max_requests_per_minute: number;
-};
-
-type UpgradePrompt = {
-  title: string;
-  body: string;
-  feature: string;
-};
-
-type AdminMarketEvent = {
-  candidate_id: string;
-  company_name: string;
-  event_type: string;
-  ipo_stage?: string | null;
-  event_date?: string | null;
-  year?: number | null;
-  country?: string | null;
-  region?: string | null;
-  amount_usd?: number | null;
-  valuation_usd?: number | null;
-  source_url: string;
-  source_type: string;
-  confidence: string;
-  status: string;
-  linked_startup_id?: string | null;
-  linked_startup_label?: string | null;
-  summary?: string | null;
-  notes?: string | null;
-  review_notes?: string | null;
-};
-
-type SubscriptionPlan = {
-  id: "free" | "starter" | "pro";
-  label: string;
-  price: string;
-  monthlyAskLimit: number;
-  askAllowance: string;
-  description: string;
-  features: string[];
 };
 
 type LegalPageContent = {
@@ -189,36 +136,6 @@ type LegalPageContent = {
     items?: string[];
   }>;
 };
-
-const subscriptionPlans: SubscriptionPlan[] = [
-  {
-    id: "free",
-    label: "Free",
-    price: "€0",
-    monthlyAskLimit: 5,
-    askAllowance: "5 Ask questions total",
-    description: "A focused preview for evaluating the product before upgrading.",
-    features: ["Graph preview", "Top analytics and featured news", "Small Ask trial"],
-  },
-  {
-    id: "starter",
-    label: "Starter",
-    price: "€4.99 / month",
-    monthlyAskLimit: 75,
-    askAllowance: "75 Ask questions / month",
-    description: "Unlock the full graph, analytics, and news for regular exploration.",
-    features: ["Full graph access", "Full analytics and news", "Monthly Ask allowance", "Recommended for most users"],
-  },
-  {
-    id: "pro",
-    label: "Pro",
-    price: "€19.99 / month",
-    monthlyAskLimit: 500,
-    askAllowance: "500 Ask questions / month",
-    description: "For power users who follow market signals frequently.",
-    features: ["Everything in Starter", "Higher Ask allowance", "Priority access to new market-event signals"],
-  },
-];
 
 const legalPages: Record<LegalView, LegalPageContent> = {
   impressum: {
@@ -260,7 +177,7 @@ const legalPages: Record<LegalView, LegalPageContent> = {
   privacy: {
     eyebrow: "Data protection",
     title: "Privacy Policy",
-    intro: "This portfolio demonstrator is intended for local academic review and does not require accounts, subscriptions, or payment processing.",
+    intro: "This portfolio demonstrator is intended for local academic review of a source-backed knowledge graph.",
     sections: [
       {
         title: "Controller",
@@ -269,7 +186,7 @@ const legalPages: Record<LegalView, LegalPageContent> = {
       {
         title: "Data we process",
         items: [
-          "No account or billing data is required for the student-submission build.",
+          "The student-submission build runs as a local academic demonstrator.",
           "Technical logs may be generated locally while running the application.",
           "Technical data such as IP address, browser metadata, and security logs generated by hosting and infrastructure providers.",
         ],
@@ -291,7 +208,7 @@ const legalPages: Record<LegalView, LegalPageContent> = {
       {
         title: "Legal bases and rights",
         body:
-          "For the student-submission build, the application is intended to run locally for academic assessment and does not require user accounts or payment processing.",
+          "For the student-submission build, the application is intended to run locally for academic assessment.",
       },
       {
         title: "Retention",
@@ -328,7 +245,7 @@ const legalPages: Record<LegalView, LegalPageContent> = {
       {
         title: "Academic demonstrator",
         body:
-          "The student-submission build is intended for portfolio review and local exploration. It does not include paid plans, subscriptions, checkout, or billing workflows.",
+          "The student-submission build is intended for portfolio review and local exploration.",
       },
       {
         title: "No investment advice",
@@ -349,9 +266,9 @@ const legalPages: Record<LegalView, LegalPageContent> = {
           "Users may not misuse the demonstrator, attack infrastructure, scrape excessively, or use the project unlawfully.",
       },
       {
-        title: "No billing",
+        title: "Academic demonstrator",
         body:
-          "The student-submission build has no payment processing or billing portal.",
+          "The student-submission build focuses on the knowledge graph dataset, model, and analysis workflow.",
       },
       {
         title: "Consumer rights",
@@ -495,53 +412,18 @@ function lensIsActive(context: GraphContext, key: ContextLensKey): boolean {
   return context.activeLenses.includes(key);
 }
 
-function LockedUpgradeRow({
+function LockedLimitRow({
   label,
-  onUpgrade,
+  onOpen,
 }: {
   label: string;
-  onUpgrade: () => void;
+  onOpen: () => void;
 }) {
   return (
-    <button className="locked-upgrade-row" onClick={onUpgrade} type="button">
+    <button className="locked-limit-row" onClick={onOpen} type="button">
       <span>{label}</span>
-      <strong>Upgrade</strong>
+      <strong>Open</strong>
     </button>
-  );
-}
-
-function UpgradePromptModal({
-  prompt,
-  onClose,
-  onViewPlans,
-}: {
-  prompt: UpgradePrompt;
-  onClose: () => void;
-  onViewPlans: () => void;
-}) {
-  return (
-    <div className="upgrade-backdrop" role="presentation" onMouseDown={onClose}>
-      <section
-        aria-labelledby="upgrade-title"
-        aria-modal="true"
-        className="upgrade-modal"
-        onMouseDown={(event) => event.stopPropagation()}
-        role="dialog"
-      >
-        <button aria-label="Close upgrade prompt" className="upgrade-close" onClick={onClose} type="button">
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M6 6l12 12M18 6 6 18" />
-          </svg>
-        </button>
-        <span>{prompt.feature}</span>
-        <h2 id="upgrade-title">{prompt.title}</h2>
-        <p>{prompt.body}</p>
-        <div className="upgrade-actions">
-          <button className="upgrade-primary" onClick={onViewPlans} type="button">View Starter</button>
-          <button onClick={onClose} type="button">Keep previewing</button>
-        </div>
-      </section>
-    </div>
   );
 }
 
@@ -2068,16 +1950,10 @@ function AskPanel({
   selected,
   nodes,
   edges,
-  session,
-  onLoginRequired,
-  onOpenAccount,
 }: {
   selected: MarketNode;
   nodes: MarketNode[];
   edges: MarketEdge[];
-  session: SupabaseSession | null;
-  onLoginRequired: () => void;
-  onOpenAccount: () => void;
 }) {
   const [askToken, setAskToken] = useState(() => localStorage.getItem("ask_access_token") || "");
   const [usage, setUsage] = useState<AskUsage | null>(null);
@@ -2085,13 +1961,12 @@ function AskPanel({
   const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [error, setError] = useState("");
-  const useSupabaseAuth = Boolean(supabase) && !STUDENT_SUBMISSION_MODE;
-  const authToken = useSupabaseAuth ? session?.access_token || "" : askToken.trim();
+  const authToken = askToken.trim();
   const isLocalDevMode = usage?.user_id === "local_dev";
   const creditsRemaining = Number(usage?.credits_remaining || 0);
   const creditsPerPrompt = Number(usage?.credits_per_prompt || 1);
   const hasCredits = isLocalDevMode || !usage || creditsRemaining >= creditsPerPrompt;
-  const requiresTopUp = useSupabaseAuth && Boolean(session) && usage !== null && !hasCredits;
+  const requiresAccess = Boolean(usage) && !hasCredits;
 
   useEffect(() => {
     const headers: Record<string, string> = {};
@@ -2117,11 +1992,7 @@ function AskPanel({
   async function ask() {
     const trimmed = question.trim();
     if (!trimmed || status === "loading") return;
-    if (useSupabaseAuth && !session) {
-      onLoginRequired();
-      return;
-    }
-    if (requiresTopUp) {
+    if (requiresAccess) {
       setStatus("error");
       setError("The graph assistant is not available in the current local configuration.");
       return;
@@ -2160,7 +2031,7 @@ function AskPanel({
 
   return (
     <section className="ask-panel">
-      {!useSupabaseAuth && !isLocalDevMode ? (
+      {!isLocalDevMode ? (
         <div className="ask-access compact">
           <label>
             <span>Ask access</span>
@@ -2174,11 +2045,10 @@ function AskPanel({
           </label>
         </div>
       ) : null}
-      {requiresTopUp ? (
+      {requiresAccess ? (
         <div className="ask-credit-notice depleted">
           <strong>Assistant unavailable.</strong>
           <span>Use the Neo4j and graph explorer views for the portfolio demonstration.</span>
-          <button onClick={onOpenAccount} type="button">Close notice</button>
         </div>
       ) : null}
       <div className="chat-thread">
@@ -2202,16 +2072,16 @@ function AskPanel({
             }
           }}
           onChange={(event) => setQuestion(event.target.value)}
-          placeholder={requiresTopUp ? "Assistant unavailable in this local configuration." : `Ask about ${selected.label}, this graph, or general market context...`}
+          placeholder={requiresAccess ? "Assistant unavailable in this local configuration." : `Ask about ${selected.label}, this graph, or general market context...`}
           value={question}
         />
         <button
           className="send-button"
-          disabled={status === "loading" || !question.trim() || requiresTopUp}
+          disabled={status === "loading" || !question.trim() || requiresAccess}
           onClick={ask}
           type="button"
         >
-          {useSupabaseAuth && !session ? "Sign in" : "Send"}
+          Send
         </button>
       </div>
       {status === "error" ? (
@@ -2488,7 +2358,7 @@ function AnalyticsPage({
   onSelectRound,
   onSelectSlice,
   isFreePreview,
-  onUpgrade,
+  onLimited,
 }: {
   graph: MarketGraph;
   filters: AnalyticsFilters;
@@ -2497,7 +2367,7 @@ function AnalyticsPage({
   onSelectRound: (node: MarketNode) => void;
   onSelectSlice: (kind: AnalyticsBreakdown, label: string) => void;
   isFreePreview: boolean;
-  onUpgrade: (prompt: UpgradePrompt) => void;
+  onLimited: () => void;
 }) {
   const [activeSlice, setActiveSlice] = useState<{ kind: AnalyticsBreakdown; label: string } | null>(null);
   const [breakdown, setBreakdown] = useState<AnalyticsBreakdown>("domain");
@@ -2636,11 +2506,7 @@ function AnalyticsPage({
     .slice(0, isFreePreview ? FREE_PREVIEW_LIMITS.analyticsEvidenceRows : 14);
   const evidenceLimit = evidenceRows.length;
   const hasLockedAnalyticsRows = isFreePreview && activeRounds.length > evidenceRows.length;
-  const openAnalyticsUpgrade = () => onUpgrade({
-    feature: "Full analytics",
-    title: "Unlock the complete market view",
-    body: "Starter opens the full rankings, deeper slices, and the complete evidence table so investors can move past the preview.",
-  });
+  const openAnalyticsLimit = () => onLimited();
 
   return (
     <main className="analytics-page">
@@ -2731,18 +2597,18 @@ function AnalyticsPage({
                 setActiveSlice({ kind: breakdown, label: row.label });
               },
             })}
-            {isFreePreview ? <LockedUpgradeRow label="Unlock all slices" onUpgrade={openAnalyticsUpgrade} /> : null}
+            {isFreePreview ? <LockedLimitRow label="Show all slices" onOpen={openAnalyticsLimit} /> : null}
           </div>
         </article>
         <article className="analytics-card">
           <h2>Top companies</h2>
           {horizontalBars({ rows: topCompanies, valueFormatter: formatUsd, onSelect: onSelectNode })}
-          {isFreePreview ? <LockedUpgradeRow label="Show full company ranking" onUpgrade={openAnalyticsUpgrade} /> : null}
+          {isFreePreview ? <LockedLimitRow label="Show full company ranking" onOpen={openAnalyticsLimit} /> : null}
         </article>
         <article className="analytics-card">
           <h2>Top investors</h2>
           {horizontalBars({ rows: topInvestors, valueFormatter: formatUsd, onSelect: onSelectNode })}
-          {isFreePreview ? <LockedUpgradeRow label="Show full investor ranking" onUpgrade={openAnalyticsUpgrade} /> : null}
+          {isFreePreview ? <LockedLimitRow label="Show full investor ranking" onOpen={openAnalyticsLimit} /> : null}
         </article>
         <article className="analytics-card wide">
           <div className="slice-summary">
@@ -2809,9 +2675,9 @@ function AnalyticsPage({
               );
             })}
             {hasLockedAnalyticsRows ? (
-              <LockedUpgradeRow
-                label={`Unlock ${formatCount(activeRounds.length - evidenceRows.length)} more events`}
-                onUpgrade={openAnalyticsUpgrade}
+              <LockedLimitRow
+                label={`Show ${formatCount(activeRounds.length - evidenceRows.length)} more events`}
+                onOpen={openAnalyticsLimit}
               />
             ) : null}
           </div>
@@ -2902,13 +2768,13 @@ function NewsPage({
   graph,
   onSelectCompany,
   isFreePreview,
-  onUpgrade,
+  onLimited,
 }: {
   eventFeed: MarketEventFeed | null;
   graph: MarketGraph;
   onSelectCompany: (node: MarketNode) => void;
   isFreePreview: boolean;
-  onUpgrade: (prompt: UpgradePrompt) => void;
+  onLimited: () => void;
 }) {
   const [eventType, setEventType] = useState("__all__");
   const [region, setRegion] = useState("__all__");
@@ -2965,11 +2831,7 @@ function NewsPage({
   const confirmedIpoEvents = ipoEvents.filter((event) =>
     ["ipo_filing", "ipo_pricing", "public_listing"].includes(event.event_type),
   );
-  const openNewsUpgrade = () => onUpgrade({
-    feature: "Full market feed",
-    title: "Follow the full signal stream",
-    body: "Starter unlocks the complete market feed, graph jumps, IPO/DPO monitoring, and deeper source-backed signals for regular market tracking.",
-  });
+  const openNewsLimit = () => onLimited();
 
   if (!eventFeed) {
     return <main className="news-page"><div className="loading">Loading market events...</div></main>;
@@ -3060,7 +2922,7 @@ function NewsPage({
                   <div className="news-actions">
                     {company ? (
                       isFreePreview ? (
-                        <button onClick={openNewsUpgrade} type="button">Graph</button>
+                        <button onClick={openNewsLimit} type="button">Graph</button>
                       ) : (
                         <button onClick={() => onSelectCompany(company)} type="button">Graph</button>
                       )
@@ -3077,107 +2939,13 @@ function NewsPage({
               </p>
             )}
             {isFreePreview && latestEvents.length > visibleEvents.length ? (
-              <LockedUpgradeRow
-                label={`Unlock ${formatCount(latestEvents.length - visibleEvents.length)} more signals`}
-                onUpgrade={openNewsUpgrade}
+              <LockedLimitRow
+                label={`Show ${formatCount(latestEvents.length - visibleEvents.length)} more signals`}
+                onOpen={openNewsLimit}
               />
             ) : null}
           </div>
         </article>
-      </section>
-    </main>
-  );
-}
-
-function AuthControls({
-  session,
-  setSession,
-  onOpenLogin,
-  onOpenAccount,
-}: {
-  session: SupabaseSession | null;
-  setSession: (session: SupabaseSession | null) => void;
-  onOpenLogin: () => void;
-  onOpenAccount: () => void;
-}) {
-  async function signOut() {
-    if (!supabase) return;
-    await supabase.auth.signOut();
-    setSession(null);
-  }
-
-  if (session) {
-    return (
-      <div className="auth-controls signed-in">
-        <button className="profile-button" onClick={onOpenAccount} title="Profile" type="button" aria-label="Open profile">
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M20 21a8 8 0 0 0-16 0" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-        </button>
-        <button onClick={signOut} type="button">Sign out</button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="auth-controls">
-      <button className="auth-primary" onClick={onOpenLogin} type="button">Sign in</button>
-    </div>
-  );
-}
-
-function PricingPage({
-  currentPlan,
-  onChoosePlan,
-  onOpenLegal,
-}: {
-  currentPlan: string;
-  onChoosePlan: (planId: "free" | "starter" | "pro") => void;
-  onOpenLegal: (view: LegalView) => void;
-}) {
-  return (
-    <main className="legal-page">
-      <section className="legal-panel pricing-panel">
-        <header className="legal-header">
-          <span>Pricing</span>
-          <h1>Plans for AI market monitoring</h1>
-          <p>Start with a preview, then unlock the full graph, News monitor, analytics, and Ask workflow when it is useful enough to pay for.</p>
-        </header>
-        <div className="plan-grid pricing-grid">
-          {subscriptionPlans.map((plan) => (
-            <article
-              className={[
-                "plan-card",
-                plan.id === currentPlan ? "current" : "",
-                plan.id === "starter" && currentPlan !== "starter" ? "recommended" : "",
-              ].join(" ")}
-              key={plan.id}
-            >
-              <span>{plan.label}</span>
-              <h2>{plan.price}</h2>
-              <strong>{plan.askAllowance}</strong>
-              <p>{plan.description}</p>
-              <ul>
-                {plan.features.map((feature) => (
-                  <li key={feature}>{feature}</li>
-                ))}
-              </ul>
-              <button onClick={() => onChoosePlan(plan.id)} type="button">
-                {plan.id === currentPlan ? "Manage current plan" : plan.id === "free" ? "Use preview" : "Choose in account"}
-              </button>
-            </article>
-          ))}
-        </div>
-        <div className="legal-callout">
-          <strong>Important</strong>
-          <p>Paid access gives research tooling and source-backed market intelligence. It is not financial, investment, legal, tax, or accounting advice.</p>
-          <div className="legal-inline-links">
-            <button onClick={() => onOpenLegal("terms")} type="button">Terms</button>
-            <button onClick={() => onOpenLegal("privacy")} type="button">Privacy</button>
-            <button onClick={() => onOpenLegal("methodology")} type="button">Methodology</button>
-          </div>
-        </div>
       </section>
     </main>
   );
@@ -3229,609 +2997,6 @@ function LegalFooter({ onOpenLegal }: { onOpenLegal: (view: LegalView) => void }
     </footer>
   );
 }
-
-function AccountPage({
-  session,
-  onLoginRequired,
-  onBack,
-  onOpenLegal,
-}: {
-  session: SupabaseSession | null;
-  onLoginRequired: () => void;
-  onBack: () => void;
-  onOpenLegal: (view: LegalView) => void;
-}) {
-  const [usage, setUsage] = useState<AskUsage | null>(null);
-  const [billingError, setBillingError] = useState("");
-  const [billingBusy, setBillingBusy] = useState<string | null>(null);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [termsError, setTermsError] = useState(false);
-  const authToken = session?.access_token || "";
-
-  useEffect(() => {
-    if (!authToken) {
-      setUsage(null);
-      return;
-    }
-    fetch("/api/ask/usage", { headers: { "x-ask-token": authToken } })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload) => {
-        if (payload?.usage) setUsage(payload.usage);
-      })
-      .catch(() => undefined);
-  }, [authToken]);
-
-  const openCheckout = async (planId: "starter" | "pro") => {
-    if (!authToken) {
-      onLoginRequired();
-      return;
-    }
-    if (!acceptedTerms) {
-      setTermsError(true);
-      setBillingError("");
-      return;
-    }
-    setTermsError(false);
-    setBillingError("");
-    setBillingBusy(planId);
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-ask-token": authToken,
-        },
-        body: JSON.stringify({ plan_id: planId, email: session?.user.email }),
-      });
-      const payload = await response.json();
-      if (!response.ok || !payload.url) {
-        throw new Error(payload.error || "Checkout could not be started.");
-      }
-      window.location.href = payload.url;
-    } catch (error) {
-      setBillingError(error instanceof Error ? error.message : "Checkout could not be started.");
-      setBillingBusy(null);
-    }
-  };
-
-  const openBillingPortal = async () => {
-    if (!authToken) {
-      onLoginRequired();
-      return;
-    }
-    setBillingError("");
-    setBillingBusy("portal");
-    try {
-      const response = await fetch("/api/billing-portal", {
-        method: "POST",
-        headers: { "x-ask-token": authToken },
-      });
-      const payload = await response.json();
-      if (!response.ok || !payload.url) {
-        throw new Error(payload.error || "Billing portal could not be opened.");
-      }
-      window.location.href = payload.url;
-    } catch (error) {
-      setBillingError(error instanceof Error ? error.message : "Billing portal could not be opened.");
-      setBillingBusy(null);
-    }
-  };
-
-  if (!session) {
-    return (
-      <main className="account-page" onMouseDown={onBack}>
-        <section className="account-panel" onMouseDown={(event) => event.stopPropagation()}>
-          <div>
-            <span>Profile</span>
-            <h1>Sign in to manage your plan.</h1>
-            <p>Create an account to use the trial Ask allowance.</p>
-          </div>
-          <button className="account-primary" onClick={onLoginRequired} type="button">Sign in</button>
-        </section>
-      </main>
-    );
-  }
-
-  const creditsRemaining = Number(usage?.credits_remaining || 0);
-  const creditsPerPrompt = Number(usage?.credits_per_prompt || 1);
-  const currentPlan = usage?.plan || "free";
-  const currentPlanConfig = subscriptionPlans.find((plan) => plan.id === currentPlan) || subscriptionPlans[0];
-  const monthlyAskLimit = currentPlanConfig.monthlyAskLimit;
-  const allowancePeriod = currentPlan === "free" ? "total" : "/ month";
-  const subscriptionStatus = usage?.subscription_status || (currentPlan === "free" ? "trial" : "active");
-  const hasPaidPlan = currentPlan === "starter" || currentPlan === "pro";
-
-  return (
-    <main className="account-page" onMouseDown={onBack}>
-      <section className="account-panel" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="account-header">
-          <div>
-            <span>Profile</span>
-            <h1>Your account</h1>
-            <p>{session.user.email}</p>
-          </div>
-          <div className="account-balance">
-            <span>Ask allowance</span>
-            <strong>{usage ? `${formatCount(monthlyAskLimit)} ${allowancePeriod}` : "..."}</strong>
-            <small>{usage ? `${formatCount(creditsRemaining)} remaining - ${creditsPerPrompt} unit per answer` : "Loading usage..."}</small>
-          </div>
-        </div>
-
-        <div className="profile-summary">
-          <div>
-            <span>Current plan</span>
-            <strong>{currentPlanConfig.label}</strong>
-          </div>
-          <div>
-            <span>Status</span>
-            <strong>{subscriptionStatus.replace(/_/g, " ")}</strong>
-          </div>
-        </div>
-
-        <label className={["terms-acceptance", termsError ? "error" : ""].join(" ")}>
-          <input
-            checked={acceptedTerms}
-            onChange={(event) => {
-              setAcceptedTerms(event.target.checked);
-              if (event.target.checked) setTermsError(false);
-            }}
-            type="checkbox"
-          />
-          <span>
-            I accept the{" "}
-            <button onClick={() => onOpenLegal("terms")} type="button">Terms</button>
-            {" "}and{" "}
-            <button onClick={() => onOpenLegal("privacy")} type="button">Privacy Policy</button>
-            , and understand this platform provides research information, not investment advice.
-            {termsError ? <strong className="terms-error-text">Required before checkout.</strong> : null}
-          </span>
-        </label>
-
-        <div className="plan-grid">
-          {subscriptionPlans.map((plan) => (
-            <article
-              className={[
-                "plan-card",
-                plan.id === currentPlan ? "current" : "",
-                plan.id === "starter" && currentPlan !== "starter" ? "recommended" : "",
-              ].join(" ")}
-              key={plan.id}
-            >
-              <span>{plan.label}</span>
-              <h2>{plan.price}</h2>
-              <strong>{plan.askAllowance}</strong>
-              <p>{plan.description}</p>
-              <ul>
-                {plan.features.map((feature) => (
-                  <li key={feature}>{feature}</li>
-                ))}
-              </ul>
-              <button
-                disabled={billingBusy !== null || plan.id === currentPlan}
-                onClick={() => {
-                  if (plan.id === "starter" || plan.id === "pro") openCheckout(plan.id);
-                }}
-                type="button"
-              >
-                {plan.id === currentPlan ? "Current" : billingBusy === plan.id ? "Opening..." : plan.id === "free" ? "Included" : "Choose plan"}
-              </button>
-            </article>
-          ))}
-        </div>
-
-        <div className="account-billing">
-          <div>
-            <span>Billing</span>
-            <p>
-              {hasPaidPlan
-                ? "Manage payment method, invoices, cancellation, and plan changes through Stripe billing."
-                : "Billing management becomes available after choosing a paid plan."}
-            </p>
-          </div>
-          <button disabled={billingBusy !== null || !hasPaidPlan} onClick={openBillingPortal} type="button">
-            {billingBusy === "portal" ? "Opening..." : hasPaidPlan ? "Manage billing" : "No active billing"}
-          </button>
-        </div>
-        {billingError ? <p className="account-error">{billingError}</p> : null}
-      </section>
-    </main>
-  );
-}
-
-function AdminEventsPage({ session, onLoginRequired }: { session: SupabaseSession | null; onLoginRequired: () => void }) {
-  const [events, setEvents] = useState<AdminMarketEvent[]>([]);
-  const [statusFilter, setStatusFilter] = useState("needs_review");
-  const [message, setMessage] = useState("");
-  const [busyId, setBusyId] = useState("");
-  const authToken = session?.access_token || "";
-
-  const loadEvents = useCallback(() => {
-    if (!authToken) return;
-    setMessage("");
-    const query = statusFilter ? `?status=${encodeURIComponent(statusFilter)}` : "";
-    fetch(`/api/admin/events${query}`, { headers: { "x-ask-token": authToken } })
-      .then(async (response) => {
-        const payload = await response.json();
-        if (!response.ok) throw new Error(payload.error || "Could not load review events.");
-        setEvents(payload.events || []);
-      })
-      .catch((error) => {
-        setEvents([]);
-        setMessage(error instanceof Error ? error.message : "Could not load review events.");
-      });
-  }, [authToken, statusFilter]);
-
-  useEffect(() => {
-    loadEvents();
-  }, [loadEvents]);
-
-  const reviewEvent = async (event: AdminMarketEvent, status: string) => {
-    if (!authToken) {
-      onLoginRequired();
-      return;
-    }
-    setBusyId(`${event.candidate_id}:${status}`);
-    setMessage("");
-    try {
-      const response = await fetch(`/api/admin/events/${encodeURIComponent(event.candidate_id)}/review`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-ask-token": authToken,
-        },
-        body: JSON.stringify({ status }),
-      });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "Review update failed.");
-      setEvents((current) => current.filter((item) => item.candidate_id !== event.candidate_id));
-      setMessage(`${event.company_name} marked ${status.replace(/_/g, " ")}.`);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Review update failed.");
-    } finally {
-      setBusyId("");
-    }
-  };
-
-  const markPromotionReady = async (event: AdminMarketEvent) => {
-    if (!authToken) {
-      onLoginRequired();
-      return;
-    }
-    setBusyId(`${event.candidate_id}:promote`);
-    setMessage("");
-    try {
-      const response = await fetch(`/api/admin/events/${encodeURIComponent(event.candidate_id)}/promote`, {
-        method: "POST",
-        headers: { "x-ask-token": authToken },
-      });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "Promotion marker failed.");
-      setEvents((current) => current.filter((item) => item.candidate_id !== event.candidate_id));
-      setMessage(payload.promotion_hint || `${event.company_name} is ready for CSV promotion.`);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Promotion marker failed.");
-    } finally {
-      setBusyId("");
-    }
-  };
-
-  const statusOptions = [
-    { value: "needs_review", label: "Needs review" },
-    { value: "auto_ingested", label: "Auto ingested" },
-    { value: "approved", label: "Approved" },
-    { value: "promotion_ready", label: "Ready for CSV" },
-    { value: "rejected", label: "Rejected" },
-  ];
-  const statusLabel = (value: string) => value ? value.replace(/_/g, " ") : "All";
-  const fundingInView = events.reduce((sum, event) => sum + Number(event.amount_usd || 0), 0);
-  const highConfidenceCount = events.filter((event) => event.confidence === "high").length;
-  const publicMarketCount = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing").length;
-  const linkedCount = events.filter((event) => event.linked_startup_id).length;
-
-  if (!session) {
-    return (
-      <main className="admin-page">
-        <section className="admin-panel">
-          <span>Admin</span>
-          <h1>Sign in to review market events.</h1>
-          <p>Only configured admin accounts can access candidate review.</p>
-          <button className="account-primary" onClick={onLoginRequired} type="button">Sign in</button>
-        </section>
-      </main>
-    );
-  }
-
-  return (
-    <main className="admin-page">
-      <section className="admin-panel">
-        <div className="admin-header">
-          <div>
-            <span>Admin review</span>
-            <h1>Market event candidates</h1>
-            <p>Review auto-ingested public market, funding, valuation, and partnership signals before they influence the curated product surface.</p>
-          </div>
-          <button className="account-back" onClick={loadEvents} type="button">Refresh</button>
-        </div>
-        <div className="admin-status-tabs" role="tablist" aria-label="Candidate status filters">
-          {statusOptions.map((option) => (
-            <button
-              className={statusFilter === option.value ? "active" : ""}
-              key={option.value}
-              onClick={() => setStatusFilter(option.value)}
-              type="button"
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-        <div className="admin-summary">
-          <div>
-            <span>Queue</span>
-            <strong>{formatCount(events.length)}</strong>
-          </div>
-          <div>
-            <span>High confidence</span>
-            <strong>{formatCount(highConfidenceCount)}</strong>
-          </div>
-          <div>
-            <span>Linked amount</span>
-            <strong>{formatUsd(fundingInView)}</strong>
-          </div>
-          <div>
-            <span>Public path</span>
-            <strong>{formatCount(publicMarketCount)}</strong>
-          </div>
-          <div>
-            <span>Graph linked</span>
-            <strong>{formatCount(linkedCount)}</strong>
-          </div>
-        </div>
-        {message ? <p className="admin-message">{message}</p> : null}
-        <div className="admin-workbench">
-          <aside className="admin-review-guide" aria-label="Review workflow">
-            <span>Workflow</span>
-            <h2>Review order</h2>
-            <p>Open the source, confirm company identity, check amount or valuation when present, then approve only source-backed signals.</p>
-            <ol>
-              <li>Reject low-signal or mismatched news.</li>
-              <li>Approve visible market intelligence.</li>
-              <li>Mark graph-grade funding candidates ready for CSV promotion.</li>
-            </ol>
-          </aside>
-          <div className="admin-event-list">
-            {events.length ? events.map((event) => (
-              <article className="admin-event-card" key={event.candidate_id}>
-                <div className="admin-event-main">
-                  <div className="admin-event-kicker">
-                    <span>{eventLabel(event.event_type)}</span>
-                    {event.ipo_stage ? <span>{event.ipo_stage}</span> : null}
-                    <span>{event.confidence}</span>
-                    <span>{statusLabel(event.status)}</span>
-                  </div>
-                  <h2>{event.company_name}</h2>
-                  <p>{event.summary || event.notes || "No summary available."}</p>
-                  <div className="admin-source-line">
-                    <span>{event.source_type.replace(/_/g, " ")}</span>
-                    <span>{event.linked_startup_label || event.linked_startup_id ? `Graph: ${event.linked_startup_label || event.linked_startup_id}` : "No graph link"}</span>
-                  </div>
-                </div>
-                <div className="admin-event-meta">
-                  <div>
-                    <span>Date</span>
-                    <strong>{event.event_date || event.year || "No date"}</strong>
-                  </div>
-                  <div>
-                    <span>Region</span>
-                    <strong>{event.region || event.country || "No region"}</strong>
-                  </div>
-                  <div>
-                    <span>Amount</span>
-                    <strong>{event.amount_usd ? formatUsd(Number(event.amount_usd)) : "No amount"}</strong>
-                  </div>
-                  <div>
-                    <span>Valuation</span>
-                    <strong>{event.valuation_usd ? formatUsd(Number(event.valuation_usd)) : "No valuation"}</strong>
-                  </div>
-                </div>
-                <div className="admin-event-actions">
-                  <a href={event.source_url} rel="noreferrer" target="_blank">Source</a>
-                  <button className="admin-action-primary" disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "approved")} type="button">Approve</button>
-                  <button disabled={Boolean(busyId)} onClick={() => markPromotionReady(event)} type="button">Ready for CSV</button>
-                  <button className="admin-action-muted" disabled={Boolean(busyId)} onClick={() => reviewEvent(event, "rejected")} type="button">Reject</button>
-                </div>
-              </article>
-            )) : <p className="admin-empty">No candidates for {statusLabel(statusFilter)}.</p>}
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
-
-function LoginPage({
-  onComplete,
-  onRecoveryComplete,
-  recovery,
-}: {
-  onComplete: () => void;
-  onRecoveryComplete: () => void;
-  recovery: boolean;
-}) {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
-
-  if (!supabase) {
-    return (
-      <main className="login-page">
-        <section className="login-panel">
-          <div className="login-copy">
-            <span>Ask access</span>
-            <h1>Authentication is not configured.</h1>
-            <p>Supabase environment variables are required before user accounts can be enabled.</p>
-          </div>
-        </section>
-      </main>
-    );
-  }
-
-  const trimmedEmail = email.trim();
-  const canSubmit = recovery
-    ? password.length >= 8 && status !== "loading"
-    : trimmedEmail.length > 3 && password.length >= 8 && status !== "loading";
-
-  async function submitPasswordAuth(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!canSubmit || !supabase) return;
-    setStatus("loading");
-    setMessage("");
-    if (recovery) {
-      const { error } = await supabase.auth.updateUser({ password });
-      if (error) {
-        setStatus("error");
-        setMessage(error.message);
-        return;
-      }
-      setStatus("success");
-      setMessage("Password updated.");
-      onRecoveryComplete();
-      onComplete();
-      return;
-    }
-
-    const result =
-      mode === "signin"
-        ? await supabase.auth.signInWithPassword({ email: trimmedEmail, password })
-        : await supabase.auth.signUp({
-            email: trimmedEmail,
-            password,
-            options: { emailRedirectTo: window.location.origin },
-          });
-
-    if (result.error) {
-      setStatus("error");
-      setMessage(result.error.message);
-      return;
-    }
-
-    setStatus("success");
-    if (mode === "signup" && !result.data.session) {
-      setMessage("Check your email to confirm the account, then return to sign in.");
-      return;
-    }
-    setMessage("Signed in.");
-    onComplete();
-  }
-
-  async function signInWithGoogle() {
-    if (!supabase || status === "loading") return;
-    setStatus("loading");
-    setMessage("");
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin },
-    });
-    if (error) {
-      setStatus("error");
-      setMessage(error.message);
-    }
-  }
-
-  async function resetPassword() {
-    if (!trimmedEmail || !supabase || status === "loading") {
-      setStatus("error");
-      setMessage("Enter your email first.");
-      return;
-    }
-    setStatus("loading");
-    setMessage("");
-    const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail, {
-      redirectTo: window.location.origin,
-    });
-    if (error) {
-      setStatus("error");
-      setMessage(error.message);
-      return;
-    }
-    setStatus("success");
-    setMessage("Password reset email sent.");
-  }
-
-  return (
-    <main className="login-page">
-      <section className="login-panel">
-        <div className="login-copy">
-          <span>AI Market Graph</span>
-          <h1>Sign in to use your Ask allowance.</h1>
-          <p>
-            Use the graph and market intelligence freely. Sign in when you want the assistant to reason over the
-            visible network, funding rounds, investors, and sources.
-          </p>
-          <div className="login-proof">
-            <strong>What your account unlocks</strong>
-            <ul>
-              <li>Metered Ask access tied to your user account.</li>
-              <li>Credit top-ups through Stripe Checkout.</li>
-              <li>Session-based access without sharing API keys.</li>
-            </ul>
-          </div>
-        </div>
-        <form className="login-form" onSubmit={submitPasswordAuth}>
-          <div className="login-form-head">
-            <span>{recovery ? "Password recovery" : mode === "signin" ? "Welcome back" : "Create account"}</span>
-            <h2>{recovery ? "Set a new password" : mode === "signin" ? "Sign in" : "Start with an account"}</h2>
-          </div>
-          {!recovery ? <button className="google-button" onClick={signInWithGoogle} type="button">
-            Continue with Google
-          </button> : null}
-          {!recovery ? <div className="login-divider"><span>or</span></div> : null}
-          {!recovery ? <label>
-            Email
-            <input
-              autoComplete="email"
-              inputMode="email"
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-              type="email"
-              value={email}
-            />
-          </label> : null}
-          <label>
-            {recovery ? "New password" : "Password"}
-            <input
-              autoComplete={mode === "signin" && !recovery ? "current-password" : "new-password"}
-              minLength={8}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Minimum 8 characters"
-              type="password"
-              value={password}
-            />
-          </label>
-          <button className="login-submit" disabled={!canSubmit} type="submit">
-            {status === "loading" ? "Working..." : recovery ? "Update password" : mode === "signin" ? "Sign in" : "Create account"}
-          </button>
-          {!recovery ? <div className="login-secondary-actions">
-            <button
-              onClick={() => {
-                setMode((current) => (current === "signin" ? "signup" : "signin"));
-                setStatus("idle");
-                setMessage("");
-              }}
-              type="button"
-            >
-              {mode === "signin" ? "Create account" : "Use existing account"}
-            </button>
-            <button onClick={resetPassword} type="button">Reset password</button>
-          </div> : null}
-          {message ? <p className={`login-message ${status}`}>{message}</p> : null}
-        </form>
-      </section>
-    </main>
-  );
-}
-
 function toggle(list: string[], value: string): string[] {
   if (list.includes(value) && list.length === 1) return list;
   return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
@@ -3842,12 +3007,6 @@ export default function App() {
   const [eventFeed, setEventFeed] = useState<MarketEventFeed | null>(null);
   const [view, setView] = useState<AppView>(() => appViewFromPath(window.location.pathname));
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
-  const [session, setSession] = useState<SupabaseSession | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [usage, setUsage] = useState<AskUsage | null>(null);
-  const [upgradePrompt, setUpgradePrompt] = useState<UpgradePrompt | null>(null);
-  const [passwordRecovery, setPasswordRecovery] = useState(false);
-  const [postLoginAction, setPostLoginAction] = useState<"ask" | null>(null);
   const [graphViewportSignal, setGraphViewportSignal] = useState(0);
   const [selectedId, setSelectedId] = useState<string>("");
   const [years, setYears] = useState<string[]>([]);
@@ -3872,15 +3031,6 @@ export default function App() {
     }
     setView(nextView);
   }, []);
-
-  const openUpgradeDestination = useCallback(() => {
-    setUpgradePrompt(null);
-    if (STUDENT_SUBMISSION_MODE) {
-      navigateToView("graph");
-      return;
-    }
-    navigateToView(session ? "account" : "pricing");
-  }, [navigateToView, session]);
 
   useEffect(() => {
     fetch("/data/market_graph.json")
@@ -3907,69 +3057,11 @@ export default function App() {
 
   useEffect(() => {
     const initialView = appViewFromPath(window.location.pathname);
-    if (initialView === "pricing" && window.location.pathname === "/subscription") {
-      window.history.replaceState({}, "", viewPaths.pricing);
-    }
-    if (STUDENT_SUBMISSION_MODE && ["pricing", "login", "account", "admin"].includes(initialView)) {
-      window.history.replaceState({}, "", viewPaths.graph);
-      setView("graph");
-    } else {
-      setView(initialView);
-    }
+    setView(initialView);
     const onPopState = () => setView(appViewFromPath(window.location.pathname));
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, [navigateToView]);
-
-  useEffect(() => {
-    if (!supabase) return;
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      setSession(nextSession);
-      if (event === "PASSWORD_RECOVERY") {
-        setPasswordRecovery(true);
-        navigateToView("login");
-      }
-    });
-    return () => listener.subscription.unsubscribe();
-  }, [navigateToView]);
-
-  useEffect(() => {
-    if (session && view === "login" && !passwordRecovery) {
-      navigateToView("graph");
-      if (postLoginAction === "ask") {
-        setDrawerMode("ask");
-        setPostLoginAction(null);
-      }
-    }
-  }, [navigateToView, passwordRecovery, postLoginAction, session, view]);
-
-  useEffect(() => {
-    const authToken = session?.access_token || "";
-    if (!authToken) {
-      setUsage(null);
-      setIsAdmin(false);
-      if (view === "admin") navigateToView("graph");
-      return;
-    }
-    fetch("/api/admin/me", { headers: { "x-ask-token": authToken } })
-      .then((response) => (response.ok ? response.json() : { admin: false }))
-      .then((payload) => {
-        const admin = Boolean(payload?.admin);
-        setIsAdmin(admin);
-        if (!admin && view === "admin") navigateToView("graph");
-      })
-      .catch(() => {
-        setIsAdmin(false);
-        if (view === "admin") navigateToView("graph");
-      });
-    fetch("/api/ask/usage", { headers: { "x-ask-token": authToken } })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload) => {
-        if (payload?.usage) setUsage(payload.usage);
-      })
-      .catch(() => undefined);
-  }, [navigateToView, session?.access_token, view]);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -3998,8 +3090,7 @@ export default function App() {
 
   const index = useMemo(() => (graph ? buildIndex(graph) : undefined), [graph]);
   const selected = graph && selectedId ? graph.nodes.find((node) => node.id === selectedId) : undefined;
-  const currentPlan = usage?.plan || "free";
-  const isFreePreview = STUDENT_SUBMISSION_MODE ? false : currentPlan === "free";
+  const isFreePreview = false;
   const neighborhood = useMemo(() => {
     if (!graph || !index || !selected) return { nodes: [], edges: [] };
     return buildNeighborhood(selected, graph, index, graphContext, years, graphRegions, roundSizeMinUsd, isFreePreview);
@@ -4025,30 +3116,11 @@ export default function App() {
     setGraphViewportSignal((signal) => signal + 1);
   }, [alignGraphRegionWithSelection]);
 
-  const openLogin = useCallback((afterLogin: "ask" | null = null) => {
-    if (STUDENT_SUBMISSION_MODE) {
-      setDrawerMode(null);
-      navigateToView("graph");
-      return;
-    }
-    setPostLoginAction(afterLogin);
-    setDrawerMode(null);
-    navigateToView("login");
-  }, [navigateToView]);
-
   const openAskPanel = useCallback(() => {
-    if (!STUDENT_SUBMISSION_MODE && supabase && !session) {
-      openLogin("ask");
-      return;
-    }
     setDrawerMode((current) => (current === "ask" ? null : "ask"));
-  }, [openLogin, session]);
+  }, []);
 
-  const openGraphUpgrade = () => setUpgradePrompt({
-    feature: "Full graph",
-    title: "Unlock the full network",
-    body: "Starter unlocks entity-specific context lenses for investors, comparable companies, regions, domains, and deeper funding paths.",
-  });
+  const ignoreLockedContext = () => undefined;
 
   const startDrawerResize = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -4103,10 +3175,7 @@ export default function App() {
     "explorer-shell",
     view === "analytics" ? "analytics-shell" : "",
         view === "news" ? "news-shell" : "",
-        ((!STUDENT_SUBMISSION_MODE && view === "pricing") || isLegalView) ? "legal-shell" : "",
-        !STUDENT_SUBMISSION_MODE && view === "login" ? "login-shell" : "",
-        !STUDENT_SUBMISSION_MODE && view === "account" ? "account-shell" : "",
-        !STUDENT_SUBMISSION_MODE && view === "admin" ? "admin-shell" : "",
+        isLegalView ? "legal-shell" : "",
         drawerMode ? "has-right" : "no-right",
       ].join(" ")}
     >
@@ -4120,16 +3189,6 @@ export default function App() {
         <button className={view === "news" ? "active" : ""} onClick={() => navigateToView("news")} type="button">
           News
         </button>
-        {!STUDENT_SUBMISSION_MODE ? (
-          <button className={view === "pricing" ? "active" : ""} onClick={() => navigateToView("pricing")} type="button">
-            Pricing
-          </button>
-        ) : null}
-        {!STUDENT_SUBMISSION_MODE && isAdmin ? (
-          <button className={view === "admin" ? "active" : ""} onClick={() => navigateToView("admin")} type="button">
-            Admin
-          </button>
-        ) : null}
         <button
           className="theme-toggle"
           onClick={() => {
@@ -4140,54 +3199,16 @@ export default function App() {
         >
           {themeMode === "dark" ? "Light" : "Dark"}
         </button>
-        {!STUDENT_SUBMISSION_MODE ? (
-          <AuthControls
-            session={session}
-            setSession={setSession}
-            onOpenAccount={() => navigateToView("account")}
-            onOpenLogin={() => openLogin()}
-          />
-        ) : null}
       </nav>
-      {!STUDENT_SUBMISSION_MODE && view === "login" ? (
-        <LoginPage
-          onComplete={() => {
-            navigateToView("graph");
-            if (postLoginAction === "ask") {
-              setDrawerMode("ask");
-              setPostLoginAction(null);
-            }
-          }}
-          onRecoveryComplete={() => setPasswordRecovery(false)}
-          recovery={passwordRecovery}
-        />
-      ) : !STUDENT_SUBMISSION_MODE && view === "account" ? (
-        <AccountPage
-          session={session}
-          onBack={() => navigateToView("graph")}
-          onLoginRequired={() => openLogin()}
-          onOpenLegal={(target) => navigateToView(target)}
-        />
-      ) : !STUDENT_SUBMISSION_MODE && view === "pricing" ? (
-        <PricingPage
-          currentPlan={usage?.plan || "free"}
-          onChoosePlan={(planId) => {
-            if (planId === "free" && !session) navigateToView("graph");
-            else navigateToView(session ? "account" : "login");
-          }}
-          onOpenLegal={(target) => navigateToView(target)}
-        />
-      ) : isLegalView ? (
+      {isLegalView ? (
         <LegalPage page={view as LegalView} onOpenLegal={(target) => navigateToView(target)} />
-      ) : !STUDENT_SUBMISSION_MODE && view === "admin" ? (
-        <AdminEventsPage session={session} onLoginRequired={() => openLogin()} />
       ) : view === "news" ? (
         <NewsPage
           eventFeed={eventFeed}
           graph={graph}
           isFreePreview={isFreePreview}
           onSelectCompany={selectNodeAndOpenGraph}
-          onUpgrade={setUpgradePrompt}
+          onLimited={ignoreLockedContext}
         />
       ) : view === "analytics" ? (
         <AnalyticsPage
@@ -4197,7 +3218,7 @@ export default function App() {
           onSelectNode={selectNodeAndOpenGraph}
           onSelectRound={selectNodeAndOpenGraph}
           onSelectSlice={selectSliceAndOpenGraph}
-          onUpgrade={setUpgradePrompt}
+          onLimited={ignoreLockedContext}
           setFilters={setAnalyticsFilters}
         />
       ) : (
@@ -4285,7 +3306,7 @@ export default function App() {
             {isFreePreview ? (
               <div className="rail-group graph-context-locked rail-row" aria-label="Locked graph context">
                 <span>Context</span>
-                <button onClick={openGraphUpgrade} title="Unlock graph context lenses with Starter" type="button">
+                <button onClick={ignoreLockedContext} title="Show graph context lenses" type="button">
                   Full network
                 </button>
               </div>
@@ -4294,7 +3315,7 @@ export default function App() {
                 <ContextLensControls
                   context={graphContext}
                   locked={false}
-                  onLocked={openGraphUpgrade}
+                  onLocked={ignoreLockedContext}
                   selected={selected}
                   setContext={setGraphContext}
                 />
@@ -4338,10 +3359,7 @@ export default function App() {
           <AskPanel
             edges={neighborhood.edges}
             nodes={neighborhood.nodes}
-            onLoginRequired={() => openLogin("ask")}
-            onOpenAccount={() => navigateToView("account")}
             selected={selected}
-            session={session}
           />
         ) : null}
         {drawerMode === "details" ? (
@@ -4356,13 +3374,6 @@ export default function App() {
       ) : null}
       </>
       )}
-      {!STUDENT_SUBMISSION_MODE && upgradePrompt ? (
-        <UpgradePromptModal
-          prompt={upgradePrompt}
-          onClose={() => setUpgradePrompt(null)}
-          onViewPlans={openUpgradeDestination}
-        />
-      ) : null}
       <LegalFooter onOpenLegal={(target) => navigateToView(target)} />
     </div>
   );
