@@ -121,10 +121,9 @@ def main() -> int:
             },
         )
         domains.setdefault(domain_id, {"domain_id": domain_id, "name": event["ai_domain"]})
-        domain_role = "primary" if startups[startup_id]["primary_domain"] == event["ai_domain"] else "secondary"
         startup_domains.setdefault(
             (startup_id, domain_id),
-            {"startup_id": startup_id, "domain_id": domain_id, "role": domain_role},
+            {"startup_id": startup_id, "domain_id": domain_id, "role": "primary"},
         )
 
         rounds.append(
