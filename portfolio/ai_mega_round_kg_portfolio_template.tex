@@ -1,0 +1,738 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{amssymb}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+\graphicspath{{screenshots/}{portfolio/screenshots/}}
+
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible
+}
+\lstset{style=code}
+
+\newcommand{\projecttitle}{Analysing the AI Investment Landscape using Knowledge Graphs}
+\newcommand{\studentname}{Michael Pertl}
+\newcommand{\coursename}{Knowledge Graphs}
+\newcommand{\submissiondate}{\today}
+\newcommand{\checkedbox}{\(\boxtimes\)}
+\newcommand{\emptybox}{\(\square\)}
+
+\newcommand{\screenshot}[2]{
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{#1}{
+      \includegraphics[width=0.92\textwidth]{#1}
+    }{
+      \fbox{
+        \begin{minipage}[c][6cm][c]{0.86\textwidth}
+          \centering
+          Screenshot placeholder\\[0.4em]
+          \texttt{#1}\\[0.4em]
+          #2
+        \end{minipage}
+      }
+    }
+    \caption{#2}
+  \end{figure}
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\LARGE \textbf{Knowledge Graphs Mini-Project Portfolio}\par}
+  \vspace{1.5cm}
+  {\Large \projecttitle\par}
+  \vspace{2cm}
+  \begin{tabular}{rl}
+    Project Title: & \projecttitle \\
+    Name: & \studentname \\
+    Course: & \coursename \\
+    Mode: & \checkedbox{} 6 ECTS \quad \emptybox{} 3 ECTS \\
+    Date: & \submissiondate \\
+  \end{tabular}
+  \vfill
+  \begin{minipage}{0.86\textwidth}
+    \small
+    This document follows the portfolio pro forma: first a learning-outcome
+    self-assessment and declaration, then the actual mini-project report.
+    Replace all placeholder text before submission.
+  \end{minipage}
+\end{titlepage}
+
+\section*{Learning Outcome Self-Assessment}
+\addcontentsline{toc}{section}{Learning Outcome Self-Assessment}
+
+The project mainly addresses real-world and financial Knowledge Graph
+applications. The primary focus is on LO9 and LO10. The portfolio also shows
+basic proficiency in LO4, LO5, LO6, LO7, LO11, and LO12. LO1 and LO3 are not
+claimed because the project does not implement Knowledge Graph Embeddings or
+Graph Neural Networks. LO2 and LO8 are also not claimed as separate learning
+outcomes because logical knowledge representation and KG evolution are not the
+central contribution of this mini-project.
+
+\subsection*{Representations}
+
+\begin{longtable}{p{0.11\textwidth}p{0.39\textwidth}p{0.16\textwidth}p{0.24\textwidth}}
+\toprule
+LO & Learning outcome & Claim & Where discussed \\
+\midrule
+\endhead
+LO1 & Understand and apply Knowledge Graph Embeddings &
+\emptybox{} basic \quad \emptybox{} exceeded &
+Not claimed. The project deliberately focuses on property graph modelling,
+Cypher analysis, and application design rather than KGE models such as TransE,
+ComplEx, or ConvE. \\
+\addlinespace
+LO2 & Understand and apply logical knowledge in KGs &
+\emptybox{} basic \quad \emptybox{} exceeded &
+Not claimed as a separate LO. The project uses constraints and validation
+rules, but it does not implement recursive logical reasoning or existential
+object creation as a main method. \\
+\addlinespace
+LO3 & Understand and apply Graph Neural Networks &
+\emptybox{} basic \quad \emptybox{} exceeded &
+Not claimed. The project does not train or apply a GNN; graph structure is used
+through Neo4j queries and network analysis rather than neural message passing. \\
+\addlinespace
+LO4 & Compare different Knowledge Graph data models from database, semantic web, machine learning and data science communities &
+\checkedbox{} basic \quad \emptybox{} exceeded &
+Basic proficiency: the portfolio explains why a Neo4j property graph was used
+instead of a purely tabular model, and contrasts this choice with RDF/Semantic
+Web and ML-oriented graph representations in Section~\ref{sec:model}. \\
+\bottomrule
+\end{longtable}
+
+\subsection*{Systems}
+
+\begin{longtable}{p{0.11\textwidth}p{0.39\textwidth}p{0.16\textwidth}p{0.24\textwidth}}
+\toprule
+LO & Learning outcome & Claim & Where discussed \\
+\midrule
+\endhead
+LO5 & Design and implement architectures of a Knowledge Graph &
+\checkedbox{} basic \quad \emptybox{} exceeded &
+Basic proficiency: the project implements a KG architecture from raw evidence
+CSV files to processed tables, Neo4j import files, Cypher constraints, analysis
+queries, and an optional web application. See Sections~\ref{sec:model},
+\ref{sec:pipeline}, and~\ref{sec:neo4j}. \\
+\addlinespace
+LO6 & Describe and apply scalable reasoning methods in Knowledge Graphs &
+\checkedbox{} basic \quad \emptybox{} exceeded &
+Basic proficiency: the project applies scalable graph querying in Neo4j to
+derive regional funding totals, domain concentration, investor participation,
+co-investment pairs, and cross-region investor links. See Sections~\ref{sec:neo4j}
+and~\ref{sec:results}. \\
+\addlinespace
+LO7 & Apply a system to create a Knowledge Graph &
+\checkedbox{} basic \quad \emptybox{} exceeded &
+Basic proficiency: the project creates a Neo4j KG from curated public funding
+evidence using Python normalization scripts and Cypher import queries. See
+Sections~\ref{sec:pipeline} and~\ref{sec:neo4j}. \\
+\addlinespace
+LO8 & Apply a system to evolve a Knowledge Graph &
+\emptybox{} basic \quad \emptybox{} exceeded &
+Not claimed as a separate LO. The repository supports refreshable data
+generation, but the portfolio does not focus on KG completion, rule learning,
+link prediction, or schema evolution. \\
+\bottomrule
+\end{longtable}
+
+\subsection*{Applications}
+
+\begin{longtable}{p{0.11\textwidth}p{0.39\textwidth}p{0.16\textwidth}p{0.24\textwidth}}
+\toprule
+LO & Learning outcome & Claim & Where discussed \\
+\midrule
+\endhead
+LO9 & Describe and design real-world applications of Knowledge Graphs &
+\checkedbox{} basic \quad \emptybox{} exceeded &
+Main focus: the project designs a real-world KG application for analysing the
+AI investment ecosystem and provides an optional graph explorer. See
+Sections~\ref{sec:introduction},~\ref{sec:results}, and~\ref{sec:webapp}. \\
+\addlinespace
+LO10 & Describe financial Knowledge Graph applications &
+\checkedbox{} basic \quad \emptybox{} exceeded &
+Main focus: the project applies KG methods to venture funding and investment
+network analysis, including investor concentration, co-investment structure,
+regional comparison, and sector funding flows. See Sections~\ref{sec:scope}
+and~\ref{sec:results}. \\
+\addlinespace
+LO11 & Apply a system to provide services through a Knowledge Graph &
+\checkedbox{} basic \quad \emptybox{} exceeded &
+Basic proficiency: the React web application and graph export show how the KG
+can provide an exploration service beyond direct Cypher queries. See
+Section~\ref{sec:webapp}. \\
+\addlinespace
+LO12 & Describe connections between KGs, ML and AI &
+\checkedbox{} basic \quad \emptybox{} exceeded &
+Basic proficiency: the project studies AI companies using KG techniques and
+discusses how symbolic graph analysis differs from, and could complement,
+ML-based approaches such as embeddings or GNNs. See Sections~\ref{sec:introduction}
+and~\ref{sec:conclusion}. \\
+\bottomrule
+\end{longtable}
+
+\newpage
+\section*{Additional Information}
+\addcontentsline{toc}{section}{Additional Information}
+
+This information has no effect on marking according to the pro forma. Fill it
+out honestly before submission.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.62\textwidth}p{0.25\textwidth}}
+\toprule
+Question & Answer \\
+\midrule
+How many hours did you spend on your mini-project? & \texttt{<XX>} hours \\
+How many hours did you spend on portfolio document preparation? & \texttt{<XX>} hours \\
+\bottomrule
+\end{tabular}
+\caption{Time-spent declaration placeholders.}
+\end{table}
+
+\section*{Declaration}
+\addcontentsline{toc}{section}{Declaration}
+
+\emptybox{} I confirm that I have marked all parts generated by Generative AI
+or otherwise copied from other sources and given any prompt I used either in a
+footnote or in an appendix, making clear which parts are generated by which
+prompts or similar.
+
+\vspace{1em}
+\noindent
+Generative AI use in the mini-project:
+\emptybox{} I used it for roughly \texttt{<XX>\%} of the mini-project.
+
+\vspace{0.5em}
+\noindent
+\textit{Description:} \texttt{<Describe which parts were generated with AI and
+which parts you implemented, checked, curated, interpreted, or wrote yourself.>}
+
+\vspace{1em}
+\noindent
+Generative AI use in this document:
+\emptybox{} I used it for roughly \texttt{<XX>\%} of this document.
+
+\vspace{0.5em}
+\noindent
+\textit{Description:} \texttt{<Describe AI assistance for drafting, structure,
+tables, wording, or LaTeX formatting.>}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section*{Portfolio Report}
+\addcontentsline{toc}{section}{Portfolio Report}
+
+In paragraphs where a learning outcome is explicitly discussed, references such
+as (LO5), (LO7), or (LO10) are included to match the pro forma instructions.
+
+\section{Introduction and Motivation}
+\label{sec:introduction}
+
+\subsection{Motivation}
+
+The AI ecosystem is growing rapidly, with complex relationships between
+startups, venture capital firms, corporate investors, countries, regions,
+funding rounds, and technological domains. These relationships are difficult to
+analyse using traditional tabular data alone because many of the relevant
+questions are relational: which investors repeatedly co-invest, which domains
+attract the largest funding rounds, which companies connect multiple investor
+groups, and how regional funding patterns develop over time.
+
+\subsection{Problem}
+
+The problem addressed in this mini-project is that public AI funding
+information is fragmented across news articles, press releases, trackers, and
+company announcements. This makes it challenging to identify investor focus,
+venture-capital collaboration patterns, regional differences, and emerging AI
+application areas based on where large amounts of capital flow.
+
+\subsection{Solution}
+
+The solution is a self-curated Knowledge Graph application for analysing AI
+mega-round investment networks (LO9, LO10). The graph integrates public funding
+events, investors, AI startups, AI domains, countries, regions, and time using a
+Neo4j property graph. This allows structured Cypher queries over investor
+participation, sector concentration, co-investment relationships, temporal
+development, and regional comparison.
+
+\subsection{Research Question}
+
+\begin{quote}
+How do major regional AI mega-round funding networks differ in terms of investor
+concentration, sector focus, co-investment structure, and temporal development
+from 2024 to 2026?
+\end{quote}
+
+\subsection{Project Goal}
+
+The project builds a reproducible data pipeline and Neo4j property graph for
+analysing public AI mega-round funding events. It also includes an optional web
+application as an exploration layer, but the analytical source of truth is the
+curated CSV data and Neo4j graph.
+
+\subsection{Implemented Steps}
+
+The project follows these practical steps:
+
+\begin{enumerate}
+  \item collect and curate public funding evidence;
+  \item filter for AI-native or AI-infrastructure companies and USD 100M+
+        mega-rounds;
+  \item classify startups into AI domains and assign countries and regions;
+  \item build a Neo4j property graph with startups, investors, funding rounds,
+        domains, countries, and regions;
+  \item analyse sector concentration, investor networks, co-investment pairs,
+        regional differences, and temporal development;
+  \item provide an optional web application as a graph exploration service.
+\end{enumerate}
+
+\section{Dataset Scope and Limitations}
+\label{sec:scope}
+
+\subsection{Inclusion Criteria}
+
+A funding event is included only if all of the following conditions are met:
+
+\begin{enumerate}
+  \item The company is AI-native or AI-infrastructure-related.
+  \item The company headquarters or primary operating identity can be assigned
+        to a documented country and region.
+  \item The funding event occurred between 2024 and 2026.
+  \item The round amount is at least USD 100 million or equivalent.
+  \item A public source confirms the amount, date or year, and at least one
+        investor.
+  \item The event has a source URL.
+\end{enumerate}
+
+\subsection{Current Dataset Size}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+Entity or relationship & Count \\
+\midrule
+Funding events & 201 \\
+Startups & 160 \\
+Investors & 520 \\
+Investor participations & 1,156 \\
+AI domains & 14 \\
+Countries & 15 \\
+Regions & 9 \\
+\bottomrule
+\end{tabular}
+\caption{Current validated dataset size.}
+\end{table}
+
+\subsection{Regional Coverage}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+Region & 2024 rounds & 2025 rounds & 2026 rounds \\
+\midrule
+US & 52 & 63 & 35 \\
+Europe & 8 & 15 & 9 \\
+China & 4 & 0 & 1 \\
+Israel & 1 & 5 & 1 \\
+Canada & 2 & 1 & 0 \\
+UAE / Gulf & 1 & 0 & 0 \\
+India & 0 & 1 & 0 \\
+Singapore & 0 & 0 & 1 \\
+Other Global & 1 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{Funding event counts by region and year.}
+\end{table}
+
+\subsection{Important Caveat}
+
+This graph represents curated publicly reported AI mega-rounds above the USD
+100 million threshold. It does not represent the full AI startup ecosystem. It
+is biased toward visible late-stage and capital-intensive companies. Therefore,
+the findings should be interpreted as statements about this curated public
+mega-round dataset, not as claims about all AI investment.
+
+\section{Knowledge Graph Model}
+\label{sec:model}
+
+\subsection{Core Model}
+
+The graph uses funding rounds as first-class nodes because each round has its
+own amount, date, round type, source URL, confidence level, and investor
+participation list.
+
+The chosen representation is a Neo4j property graph (LO4). This is suitable for
+the project because funding events and investor participations naturally have
+properties such as amount, date, role, confidence, and source URL. A purely
+tabular model would make co-investment and neighbourhood queries less direct.
+An RDF/Semantic Web model could also represent the domain, but the mini-project
+focuses on exploratory graph analytics with Cypher rather than ontology
+reasoning. Machine-learning graph representations such as embeddings or GNNs
+are not used because the project scope emphasizes transparent data modelling
+and interpretable financial network analysis.
+
+\begin{lstlisting}[language={}]
+(:Startup)-[:RAISED]->(:FundingRound)
+(:Investor)-[:PARTICIPATED_IN {role}]->(:FundingRound)
+(:Startup)-[:OPERATES_IN {role}]->(:AIDomain)
+(:Startup)-[:HEADQUARTERED_IN]->(:Country)
+(:Country)-[:PART_OF]->(:Region)
+\end{lstlisting}
+
+\subsection{Node Types}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+Node label & Purpose \\
+\midrule
+Startup & AI startup or AI infrastructure company \\
+FundingRound & Publicly reported qualifying funding event \\
+Investor & VC, corporate investor, investment manager, or other participant \\
+AIDomain & Primary or secondary AI sector classification \\
+Country & Documented company country \\
+Region & Analytical regional grouping \\
+\bottomrule
+\end{tabular}
+\caption{Main graph node types.}
+\end{table}
+
+\subsection{Relationship Types}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+Relationship & Meaning \\
+\midrule
+RAISED & Startup raised a funding round \\
+PARTICIPATED\_IN & Investor participated in a funding round \\
+OPERATES\_IN & Startup belongs to an AI domain \\
+HEADQUARTERED\_IN & Startup is assigned to a country \\
+PART\_OF & Country belongs to an analytical region \\
+\bottomrule
+\end{tabular}
+\caption{Main graph relationship types.}
+\end{table}
+
+\section{Data Pipeline}
+\label{sec:pipeline}
+
+\subsection{Pipeline Overview}
+
+The pipeline is deterministic and CSV-based. Raw evidence is kept in
+\texttt{data/raw/}. Processed normalized tables are written to
+\texttt{data/processed/}. Neo4j import-ready CSV files are written to
+\texttt{data/neo4j\_import/}.
+
+This architecture separates evidence collection, validation, normalization,
+graph import, and application export (LO5, LO7). Raw data remains auditable,
+processed data is reproducible, and the Neo4j graph can be rebuilt from the
+CSV pipeline.
+
+\begin{lstlisting}[language={}]
+data/raw/funding_events_raw.csv
+        |
+        v
+scripts/validate_raw_data.py
+        |
+        v
+scripts/normalize_raw_data.py
+        |
+        v
+data/processed/*.csv
+        |
+        v
+data/neo4j_import/*.csv
+        |
+        v
+Neo4j import using queries/00_schema.cypher and queries/01_import.cypher
+\end{lstlisting}
+
+\subsection{Main Commands}
+
+\begin{lstlisting}[language=bash]
+python3 scripts/validate_raw_data.py
+python3 scripts/normalize_raw_data.py
+python3 scripts/build_growth_metrics.py
+python3 scripts/report_data_quality.py
+python3 -m unittest discover -s tests -v
+\end{lstlisting}
+
+\subsection{Validation Rules}
+
+The validation script checks required fields, controlled region vocabulary,
+valid year range, minimum funding threshold, source URLs, investor presence,
+domain presence, and duplicate event identifiers. Rows are not silently dropped.
+
+\section{Neo4j Import and Validation}
+\label{sec:neo4j}
+
+\subsection{Starting Neo4j}
+
+\begin{lstlisting}[language=bash]
+docker compose up -d
+\end{lstlisting}
+
+Neo4j Browser:
+
+\begin{lstlisting}[language={}]
+http://localhost:7474
+username: neo4j
+password: startupkg2026
+\end{lstlisting}
+
+\subsection{Import Commands}
+
+\begin{lstlisting}[language=bash]
+docker exec -i startupkg-neo4j cypher-shell -u neo4j -p startupkg2026 < queries/00_schema.cypher
+docker exec -i startupkg-neo4j cypher-shell -u neo4j -p startupkg2026 < queries/01_import.cypher
+docker exec -i startupkg-neo4j cypher-shell -u neo4j -p startupkg2026 < queries/02_validation.cypher
+\end{lstlisting}
+
+\subsection{Validation Screenshot}
+
+\screenshot{neo4j_validation_counts.png}{Neo4j validation counts for nodes and relationships.}
+
+\section{Analysis Results}
+\label{sec:results}
+
+This section should use result tables from \texttt{queries/04\_final\_results.cypher}.
+Replace or extend the tables below with exported Neo4j Browser results.
+
+\subsection{Querying and Derived Insights}
+
+The project applies Neo4j and Cypher as the main reasoning and analytics system
+(LO6). The queries do not infer hidden facts with embeddings or GNNs. Instead,
+they derive interpretable graph-level insights from explicit evidence:
+aggregated funding volume, repeated investor participation, co-investment
+pairs, cross-region investor activity, and startup funding trajectories. This
+matches the project scope because the key requirement is transparent analysis
+of a curated financial evidence graph.
+
+\subsection{Funding by Region and Year}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llrr}
+\toprule
+Region & Year & Rounds & Amount USD bn \\
+\midrule
+US & 2024 & 52 & 43.16 \\
+US & 2025 & 63 & 78.20 \\
+US & 2026 & 35 & 237.54 \\
+Europe & 2024 & 8 & 4.00 \\
+Europe & 2025 & 15 & 6.36 \\
+Europe & 2026 & 9 & 6.68 \\
+China & 2024 & 4 & 2.71 \\
+China & 2026 & 1 & 2.00 \\
+\bottomrule
+\end{tabular}
+\caption{Selected funding volume by region and year.}
+\end{table}
+
+\subsection{Domain Totals}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+AI domain & Startups & Rounds & Amount USD bn \\
+\midrule
+Foundation Models / LLMs & 25 & 36 & 319.39 \\
+AI Infrastructure & 27 & 32 & 22.24 \\
+Enterprise AI & 22 & 28 & 6.50 \\
+Coding Agents / Developer Tools & 9 & 11 & 6.21 \\
+Robotics / Physical AI & 11 & 13 & 5.84 \\
+AI Chips / Semiconductors & 15 & 17 & 5.74 \\
+\bottomrule
+\end{tabular}
+\caption{Largest AI domains by funding volume in the curated dataset.}
+\end{table}
+
+\subsection{Most Active Investors}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrr}
+\toprule
+Investor & Participated rounds & Lead rounds \\
+\midrule
+NVIDIA & 39 & 3 \\
+Lightspeed Venture Partners & 29 & 8 \\
+Andreessen Horowitz & 27 & 10 \\
+Sequoia Capital & 25 & 8 \\
+General Catalyst & 24 & 8 \\
+\bottomrule
+\end{tabular}
+\caption{Selected most active investors by participation count.}
+\end{table}
+
+\subsection{Preliminary Interpretation}
+
+Within this curated public mega-round dataset, funding volume is heavily
+concentrated in US-based companies and in foundation model companies. Investor
+participation also appears concentrated around a small group of recurring VC,
+corporate, and investment-manager actors. Cross-region participation suggests
+that several US and global investors connect otherwise regional funding
+subgraphs (LO9, LO10).
+
+These findings must be interpreted carefully because 2026 is partial-year data
+and because several large strategic funding rounds strongly affect total funding
+volume.
+
+\section{Graph Visualizations}
+\label{sec:visualizations}
+
+Use \texttt{queries/05\_visualization\_views.cypher} and switch the Neo4j
+Browser result view to Graph. Add screenshots below.
+
+\subsection{AI Infrastructure Network}
+
+\screenshot{neo4j_ai_infrastructure_network.png}{AI Infrastructure startup, round, and investor network.}
+
+\subsection{Foundation Models / LLM Network}
+
+\screenshot{neo4j_foundation_models_network.png}{Foundation Models / LLM startup, round, and investor network.}
+
+\subsection{Cross-Region Investor Network}
+
+\screenshot{neo4j_cross_region_investors.png}{Investors participating across multiple startup regions.}
+
+\subsection{Startup Neighborhood}
+
+\screenshot{neo4j_mistral_neighborhood.png}{Mistral AI neighborhood with rounds, investors, domains, country, and region.}
+
+\section{Optional Web Application}
+\label{sec:webapp}
+
+In addition to the Neo4j analysis workflow, the project includes a React-based
+web application for exploring the graph export. The web app is an optional
+interface for inspecting companies, investors, regions, domains, and market
+events. This demonstrates how a KG can provide a service to users through
+visual exploration and filtering (LO11). It is not a replacement for the Neo4j
+analytical layer; it is an additional presentation and exploration interface.
+
+\subsection{Running the Web App}
+
+\begin{lstlisting}[language=bash]
+./start.sh
+\end{lstlisting}
+
+or manually:
+
+\begin{lstlisting}[language=bash]
+cd web
+npm install
+npm run dev
+\end{lstlisting}
+
+\subsection{Web App Screenshots}
+
+\screenshot{web_app_graph_explorer.png}{React web app graph explorer.}
+
+\screenshot{web_app_company_detail.png}{React web app company or filtered detail view.}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+The project shows how a knowledge graph can support analysis of public AI
+mega-round funding networks. The graph connects startups, funding rounds,
+investors, AI domains, countries, regions, and time. This structure supports
+regional comparison, investor concentration analysis, co-investment analysis,
+domain-level funding comparison, and company-level funding trajectories.
+
+The main limitation is that the dataset is curated and threshold-based. It
+captures large publicly reported AI funding events, not the full AI startup or
+AI investment landscape.
+
+The project also illustrates the connection between Knowledge Graphs, AI, and
+Machine Learning (LO12). The subject matter is the AI investment ecosystem, but
+the method is symbolic and graph-based rather than ML-based. This makes the
+results explainable: every relationship can be traced back to a public funding
+event and source URL. Future work could add ML-oriented KG methods such as
+link prediction or embeddings, but those are intentionally outside the current
+scope.
+
+\section{Appendix}
+
+\subsection{Repository Structure}
+
+\begin{lstlisting}[language={}]
+docs/
+data/raw/
+data/processed/
+data/neo4j_import/
+scripts/
+queries/
+tests/
+web/
+app/
+\end{lstlisting}
+
+\subsection{Important Files}
+
+\begin{itemize}
+  \item \texttt{data/raw/funding\_events\_raw.csv}: core evidence table.
+  \item \texttt{scripts/validate\_raw\_data.py}: raw data validation.
+  \item \texttt{scripts/normalize\_raw\_data.py}: normalized CSV generation.
+  \item \texttt{queries/00\_schema.cypher}: constraints and indexes.
+  \item \texttt{queries/01\_import.cypher}: Neo4j CSV import.
+  \item \texttt{queries/04\_final\_results.cypher}: final analysis tables.
+  \item \texttt{queries/05\_visualization\_views.cypher}: graph screenshots.
+\end{itemize}
+
+\subsection{Suggested Screenshot Filenames}
+
+Place screenshots in \texttt{portfolio/screenshots/} with these names:
+
+\begin{lstlisting}[language={}]
+neo4j_validation_counts.png
+neo4j_ai_infrastructure_network.png
+neo4j_foundation_models_network.png
+neo4j_cross_region_investors.png
+neo4j_mistral_neighborhood.png
+web_app_graph_explorer.png
+web_app_company_detail.png
+\end{lstlisting}
+
+\subsection{Careful Wording}
+
+Use cautious wording in the final report:
+
+\begin{quote}
+Within this curated public AI mega-round dataset, the graph suggests ...
+\end{quote}
+
+Avoid wording that implies complete market coverage.
+
+\end{document}
