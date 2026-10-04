@@ -78,6 +78,13 @@ tests/             Data validation tests
 
 ## Recommended Workflow
 
+For a complete validated refresh, run `python3 scripts/refresh_platform.py`.
+Add `--discover` to poll RSS. Tavily is disabled unless explicitly requested with
+`--tavily`. Complete structured funding evidence is ingested automatically;
+incomplete or conflicting rows are quarantined. Analytics now includes
+coverage/provider health, comparable-period funding, median rounds and
+concentration sensitivity. See [investor product operations and priorities](docs/INVESTOR_PRODUCT_NEXT.md).
+
 1. Collect raw funding events in `data/raw/funding_events_raw.csv`.
 2. For new events, stage rows in `data/raw/new_funding_events.csv`.
 3. Dry-run ingestion with `python3 scripts/ingest_funding_events.py`.
@@ -267,4 +274,13 @@ See `docs/MARKET_EVENT_MONITORING.md`.
 
 ## Dataset Limitation
 
+The October 3, 2026 refresh adds seven verified events and rebuilds the platform
+export. See [refresh research and next priorities](docs/REFRESH_RESEARCH_2026_10_03.md)
+for source links, remaining coverage gaps, and trading-agent feasibility.
+
 This project does not represent the entire AI investment landscape. It represents a curated dataset of publicly reported AI mega-rounds above the selected threshold. The results are therefore suitable for analysing major investor networks, sector focus, and capital concentration, but not for measuring the full population of AI startups.
+# Automatic Ingestion
+
+See [automatic evidence ingestion](docs/AUTOMATIC_INGESTION.md) for the no-admin
+structured funding path and quarantine rules. Tavily discovery is opt-in and is
+not called by the default refresh.

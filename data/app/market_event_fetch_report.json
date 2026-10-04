@@ -1,14 +1,12 @@
 {
-  "fetched_at": "2026-05-29T08:18:37.703676+00:00",
+  "fetched_at": "2026-10-03T10:21:57.549809+00:00",
   "active_feeds": 6,
-  "successful_feeds": 6,
-  "failed_feeds": 0,
-  "matching_candidates": 11,
+  "successful_feeds": 5,
+  "failed_feeds": 1,
+  "matching_candidates": 4,
   "added_events": 4,
   "candidate_status_counts": {
-    "auto_ingested": 4,
-    "staged": 6,
-    "needs_review": 1
+    "needs_review": 4
   },
   "feeds": [
     {
@@ -16,14 +14,14 @@
       "url": "https://techcrunch.com/feed/",
       "status": "ok",
       "items_fetched": 20,
-      "items_matched": 2
+      "items_matched": 0
     },
     {
       "name": "Sifted",
       "url": "https://sifted.eu/feed/",
       "status": "ok",
       "items_fetched": 24,
-      "items_matched": 0
+      "items_matched": 1
     },
     {
       "name": "EU-Startups",
@@ -35,22 +33,23 @@
     {
       "name": "VentureBeat AI",
       "url": "https://venturebeat.com/category/ai/feed/",
-      "status": "ok",
-      "items_fetched": 7,
-      "items_matched": 5
+      "status": "failed",
+      "error": "HTTP Error 429: Too Many Requests",
+      "items_fetched": 0,
+      "items_matched": 0
     },
     {
       "name": "PRNewswire Technology",
       "url": "https://www.prnewswire.com/rss/technology-latest-news/technology-latest-news-list.rss",
       "status": "ok",
       "items_fetched": 20,
-      "items_matched": 1
+      "items_matched": 0
     },
     {
       "name": "BusinessWire Technology",
       "url": "https://feed.businesswire.com/rss/home/?rss=G1QFDERJXkJeGVtQWw==",
       "status": "ok",
-      "items_fetched": 14,
+      "items_fetched": 0,
       "items_matched": 0
     }
   ]

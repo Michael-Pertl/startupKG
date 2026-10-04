@@ -28,7 +28,7 @@ startup_clickhouse,ClickHouse,US,USA,AI Infrastructure,2025,1,350000000,35000000
 startup_clickhouse,ClickHouse,US,USA,AI Infrastructure,2026,1,400000000,750000000
 startup_codeium,Codeium,US,USA,Coding Agents / Developer Tools,2024,1,150000000,150000000
 startup_cognition,Cognition,US,USA,Coding Agents / Developer Tools,2025,1,400000000,400000000
-startup_cognition,Cognition,US,USA,Coding Agents / Developer Tools,2026,1,1000000000,1400000000
+startup_cognition,Cognition,US,USA,Coding Agents / Developer Tools,2026,2,3000000000,3400000000
 startup_cohere,Cohere,Canada,Canada,Foundation Models / LLMs,2024,1,500000000,500000000
 startup_cohere,Cohere,Canada,Canada,Foundation Models / LLMs,2025,1,500000000,1000000000
 startup_constant,Constant,US,USA,AI Infrastructure,2024,1,333000000,333000000
@@ -59,6 +59,7 @@ startup_fal,Fal,US,USA,Creative / Generative Media,2025,2,265000000,265000000
 startup_fieldai,FieldAI,US,USA,Robotics / Physical AI,2025,1,314000000,314000000
 startup_figure_ai,Figure AI,US,USA,Robotics / Physical AI,2024,1,675000000,675000000
 startup_fireworks_ai,Fireworks AI,US,USA,AI Infrastructure,2025,1,250000000,250000000
+startup_fireworks_ai,Fireworks AI,US,USA,AI Infrastructure,2026,1,1505000000,1755000000
 startup_flapping_airplanes,Flapping Airplanes,US,USA,Foundation Models / LLMs,2026,1,180000000,180000000
 startup_fractile,Fractile,Europe,United Kingdom,AI Chips / Semiconductors,2026,1,220000000,220000000
 startup_fundguard,FundGuard,US,USA,Fintech AI,2024,1,100000000,100000000
@@ -77,10 +78,13 @@ startup_harmattan_ai,Harmattan AI,Europe,France,Defense / Security AI,2026,1,200
 startup_harmonic,Harmonic,US,USA,Foundation Models / LLMs,2025,1,100000000,100000000
 startup_harvey,Harvey,US,USA,Enterprise AI,2024,1,100000000,100000000
 startup_harvey,Harvey,US,USA,Enterprise AI,2025,2,600000000,700000000
+startup_harvey,Harvey,US,USA,Enterprise AI,2026,2,750000000,1450000000
 startup_havoc,Havoc,US,USA,Defense / Security AI,2026,1,100000000,100000000
 startup_hebbia,Hebbia,US,USA,Search / Knowledge Agents,2024,1,130000000,130000000
 startup_helsing,Helsing,Europe,Germany,Defense / Security AI,2024,1,487000000,487000000
 startup_helsing,Helsing,Europe,Germany,Defense / Security AI,2025,1,690000000,1177000000
+startup_hiddenlayer,HiddenLayer,US,USA,Defense / Security AI,2026,1,100000000,100000000
+startup_higgsfield,Higgsfield,US,USA,Creative / Generative Media,2026,1,400000000,400000000
 startup_hippocratic_ai,Hippocratic AI,US,USA,Healthcare AI / Drug Discovery,2025,2,267000000,267000000
 startup_ineffable_intelligence,Ineffable Intelligence,Europe,United Kingdom,Foundation Models / LLMs,2026,1,1100000000,1100000000
 startup_inferact,Inferact,US,USA,AI Infrastructure,2026,1,150000000,150000000
@@ -99,17 +103,19 @@ startup_lightmatter,Lightmatter,US,USA,AI Chips / Semiconductors,2024,1,40000000
 startup_lila_sciences,Lila Sciences,US,USA,Healthcare AI / Drug Discovery,2025,2,550000000,550000000
 startup_liquid_ai,Liquid AI,US,USA,Foundation Models / LLMs,2024,1,250000000,250000000
 startup_livekit,LiveKit,US,USA,AI Infrastructure,2026,1,100000000,100000000
-startup_lovable,Lovable,Europe,Sweden,Coding Agents / Developer Tools,2025,1,200000000,200000000
+startup_lovable,Lovable,Europe,Sweden,Coding Agents / Developer Tools,2025,2,530000000,530000000
+startup_lovable,Lovable,Europe,Sweden,Coding Agents / Developer Tools,2026,1,400000000,930000000
 startup_luma_ai,Luma AI,US,USA,Creative / Generative Media,2025,1,900000000,900000000
 startup_magic,Magic,US,USA,Coding Agents / Developer Tools,2024,1,320000000,320000000
 startup_majestic_labs,Majestic Labs,Israel,Israel,AI Infrastructure,2025,1,100000000,100000000
+startup_maven_robotics,Maven Robotics,US,USA,Robotics / Physical AI,2026,1,100000000,100000000
 startup_mercor,Mercor,US,USA,Data / Analytics,2025,2,450000000,450000000
 startup_merge_labs,Merge Labs,US,USA,Healthcare AI / Drug Discovery,2026,1,250000000,250000000
 startup_mind_robotics,Mind Robotics,US,USA,Robotics / Physical AI,2026,2,900000000,900000000
 startup_minimax,MiniMax,China,China,Foundation Models / LLMs,2024,1,600000000,600000000
 startup_mistral_ai,Mistral AI,Europe,France,Foundation Models / LLMs,2024,1,645000000,645000000
 startup_mistral_ai,Mistral AI,Europe,France,Foundation Models / LLMs,2025,1,1990000000,2635000000
-startup_mistral_ai,Mistral AI,Europe,France,Foundation Models / LLMs,2026,1,830000000,3465000000
+startup_mistral_ai,Mistral AI,Europe,France,Foundation Models / LLMs,2026,2,4314200000,6949200000
 startup_modal,Modal,US,USA,AI Infrastructure,2026,1,355000000,355000000
 startup_modular,Modular,US,USA,AI Infrastructure,2025,1,250000000,250000000
 startup_moonshot_ai,Moonshot AI,China,China,Foundation Models / LLMs,2024,1,1000000000,1000000000
@@ -149,6 +155,7 @@ startup_runway,Runway,US,USA,Creative / Generative Media,2026,1,315000000,315000
 startup_safe_superintelligence,Safe Superintelligence,US,USA,Foundation Models / LLMs,2024,1,1000000000,1000000000
 startup_sakana_ai,Sakana AI,Other Global,Japan,Foundation Models / LLMs,2024,1,100000000,100000000
 startup_sandboxaq,SandboxAQ,US,USA,Enterprise AI,2024,1,300000000,300000000
+startup_sarvam_ai,Sarvam AI,India,India,Foundation Models / LLMs,2026,1,234000000,234000000
 startup_scale_ai,Scale AI,US,USA,Data / Analytics,2024,1,1000000000,1000000000
 startup_scout_ai,Scout AI,US,USA,Defense / Security AI,2026,1,100000000,100000000
 startup_sesame,Sesame,US,USA,Creative / Generative Media,2025,1,250000000,250000000

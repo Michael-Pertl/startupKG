@@ -90,6 +90,13 @@ def main() -> int:
         print(f"Market event not found: {args.event_id}", file=sys.stderr)
         return 2
 
+    if event["status"] != "approved" or event["event_type"] != "funding_round":
+        print("Only approved funding-round evidence can be promoted.", file=sys.stderr)
+        return 1
+    if not args.round_date:
+        print("Provide --round-date with the verified financing date; publication date is not a close date.", file=sys.stderr)
+        return 1
+
     startup_name = args.startup_name or event["company_name"]
     startup_context = load_startup_context().get(startup_name.lower(), {})
     round_date = args.round_date or event["event_date"]

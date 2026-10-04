@@ -7,6 +7,7 @@ import csv
 import json
 from collections import Counter, defaultdict
 from itertools import combinations
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -188,6 +189,9 @@ def main() -> int:
             confidence=row["confidence"],
             source_type=row["source_type"],
             source_url=row["source_url"],
+            amount_original=row.get("amount_original", ""),
+            amount_currency=row.get("amount_currency", "USD"),
+            evidence_notes=row.get("evidence_notes", ""),
             importance_score=amount,
         )
         add_edge(
@@ -274,14 +278,15 @@ def main() -> int:
         "metadata": {
             "title": "Global AI Mega-Round Market Graph",
             "generated_from": "data/processed/*.csv",
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "latest_funding_date": max((row["round_date"] for row in rounds.values() if row["round_date"]), default=""),
             "round_count": len(rounds),
             "startup_count": len(startups),
             "investor_count": len(investors),
             "edge_count": len(edges),
             "scope_note": (
-                "Publicly sourced AI funding evidence. Mega-round coverage is strongest for 2024-2026 "
-                "USD100M+ events; broader ecosystem history is partial until company metrics and historical "
-                "funding tables are enriched."
+                "Curated publicly reported AI mega-rounds of USD100M or more in 2024-2026. "
+                "Coverage is incomplete and regionally uneven; this is not the full AI startup ecosystem."
             ),
         },
         "facets": {

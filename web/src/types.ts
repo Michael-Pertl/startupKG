@@ -54,6 +54,8 @@ export type MarketGraph = {
     investor_count: number;
     edge_count: number;
     scope_note: string;
+    generated_at?: string;
+    latest_funding_date?: string;
   };
   facets: {
     years: string[];

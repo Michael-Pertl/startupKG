@@ -71,9 +71,15 @@ def main() -> int:
     seen_event_ids = load_existing_event_ids(RAW_FILE)
     existing_ids = set(seen_event_ids)
     errors: list[str] = []
+    existing_rows = read_rows(RAW_FILE)[1] if RAW_FILE.exists() else []
+    semantic_keys = {(row["startup_name"].strip().casefold(), row["round_date"], row["amount_usd"]) for row in existing_rows if row["round_date"]}
     for line_no, row in enumerate(staged_rows, start=2):
         event_id = row["event_id"].strip()
         errors.extend(validate_row(row, line_no, seen_event_ids))
+        key = (row["startup_name"].strip().casefold(), row["round_date"], row["amount_usd"])
+        if row["round_date"] and key in semantic_keys:
+            errors.append(f"line {line_no}: duplicate company/date/amount; review existing financing evidence")
+        semantic_keys.add(key)
         if event_id in existing_ids:
             errors.append(f"line {line_no}: event_id already exists in {RAW_FILE.name}: {event_id}")
 

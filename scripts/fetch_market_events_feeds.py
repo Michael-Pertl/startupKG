@@ -9,6 +9,7 @@ and appends visible ``auto_ingested`` monitoring events.
 from __future__ import annotations
 
 import csv
+import hashlib
 import email.utils
 import json
 import re
@@ -18,6 +19,11 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+
+try:
+    from .fetch_market_events_tavily import funding_amount, published_date, infer_status
+except ImportError:
+    from fetch_market_events_tavily import funding_amount, published_date, infer_status
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -178,13 +184,7 @@ def infer_company(title: str, known_companies: dict[str, dict[str, str]]) -> str
 
 
 def parse_date(value: str) -> str:
-    if not value:
-        return date.today().isoformat()
-    try:
-        parsed = email.utils.parsedate_to_datetime(value)
-        return parsed.date().isoformat()
-    except (TypeError, ValueError):
-        return value[:10] if re.match(r"\d{4}-\d{2}-\d{2}", value) else date.today().isoformat()
+    return published_date({"published_date": value})
 
 
 def strip_html(value: str) -> str:
@@ -255,21 +255,10 @@ def make_event(entry: dict[str, str], known_companies: dict[str, dict[str, str]]
     context = known_companies.get(company.lower(), {})
     event_type = infer_event_type(text)
     event_date = entry["published"]
-    event_id = f"rss_{slugify(company)}_{event_date.replace('-', '')}_{slugify(event_type)}"
-    amount_usd = money_to_int(MONEY_PATTERN.search(text))
-    status = "auto_ingested"
-    review_note = ""
-    if event_type == "funding_round":
-        parsed_amount = int(amount_usd) if amount_usd else None
-        if parsed_amount is not None and parsed_amount < MIN_FUNDING_USD:
-            status = "staged"
-            review_note = f" Hidden from News because detected amount is below USD{MIN_FUNDING_USD:,}."
-        elif parsed_amount is None:
-            status = "needs_review"
-            review_note = " Amount not detected; manually verify whether this meets the mega-round threshold."
-    elif is_low_signal(text):
-        status = "staged"
-        review_note = " Hidden from News because the item looks like a low-signal announcement."
+    date_key = event_date.replace('-', '') or hashlib.sha256(entry["url"].encode()).hexdigest()[:12]
+    event_id = f"rss_{slugify(company)}_{date_key}_{slugify(event_type)}"
+    amount_usd = funding_amount(entry["title"]) or funding_amount(entry["summary"])
+    status, review_note = infer_status(event_type, amount_usd, text)
     return {
         "event_id": event_id,
         "company_name": company,
@@ -285,7 +274,7 @@ def make_event(entry: dict[str, str], known_companies: dict[str, dict[str, str]]
         "confidence": entry["confidence"],
         "status": status,
         "summary": entry["title"],
-        "notes": f"Auto-ingested from RSS feed: {entry['feed_name']}.{review_note}",
+        "notes": f"Discovered {date.today().isoformat()} from RSS feed: {entry['feed_name']}. Publication date is not a confirmed funding close date.{review_note}",
     }
 
 
@@ -294,7 +283,7 @@ def dedupe(existing: list[dict[str, str]], candidates: list[dict[str, str]]) -> 
     seen_urls = {row["source_url"].strip().lower() for row in rows if row.get("source_url", "").strip()}
     seen_keys = {
         (row["company_name"].strip().lower(), row["event_date"].strip(), row["event_type"].strip())
-        for row in rows
+        for row in rows if row["event_date"]
     }
     added = 0
     for row in candidates:
@@ -302,7 +291,7 @@ def dedupe(existing: list[dict[str, str]], candidates: list[dict[str, str]]) -> 
             continue
         key = (row["company_name"].lower(), row["event_date"], row["event_type"])
         url = row["source_url"].lower()
-        if url in seen_urls or key in seen_keys:
+        if url in seen_urls or (row["event_date"] and key in seen_keys):
             continue
         rows.append(row)
         seen_urls.add(url)
@@ -384,7 +373,7 @@ def main() -> int:
         f"added {added} new market events."
     )
     print(f"Wrote fetch report to {FETCH_REPORT_FILE.relative_to(ROOT)}.")
-    return 0 if failures < len(feeds) else 1
+    return 0 if failures == 0 else 1
 
 
 if __name__ == "__main__":

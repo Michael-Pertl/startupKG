@@ -69,6 +69,8 @@ startup_harvey,Harvey,US,USA,San Francisco,Enterprise AI,https://www.harvey.ai,2
 startup_havoc,Havoc,US,USA,Providence,Defense / Security AI,,,,,,,,,,
 startup_hebbia,Hebbia,US,USA,New York,Search / Knowledge Agents,,,,,,,,,,
 startup_helsing,Helsing,Europe,Germany,Munich,Defense / Security AI,https://helsing.ai,2021,Torsten Reil; Gundbert Scherf; Niklas Kossen,,,,Defense AI software; autonomous defense systems,https://helsing.ai/company,high,European defense AI company.
+startup_hiddenlayer,HiddenLayer,US,USA,Austin,Defense / Security AI,,,,,,,,,,
+startup_higgsfield,Higgsfield,US,USA,San Francisco,Creative / Generative Media,,,,,,,,,,
 startup_hippocratic_ai,Hippocratic AI,US,USA,Palo Alto,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_humans,humans&,US,USA,San Francisco,Enterprise AI,,,,,,,,,,
 startup_ineffable_intelligence,Ineffable Intelligence,Europe,United Kingdom,London,Foundation Models / LLMs,,,,,,,,,,
@@ -90,6 +92,7 @@ startup_lovable,Lovable,Europe,Sweden,Stockholm,Coding Agents / Developer Tools,
 startup_luma_ai,Luma AI,US,USA,San Francisco,Creative / Generative Media,https://lumalabs.ai,2021,Amit Jain; Alex Yu,,,,Dream Machine; generative video; world models,https://lumalabs.ai/company,medium,Profile enrichment starter.
 startup_magic,Magic,US,USA,San Francisco,Coding Agents / Developer Tools,,,,,,,,,,
 startup_majestic_labs,Majestic Labs,Israel,Israel,Tel Aviv,AI Infrastructure,,,,,,,,,,
+startup_maven_robotics,Maven Robotics,US,USA,Santa Clara,Robotics / Physical AI,,,,,,,,,,
 startup_mercor,Mercor,US,USA,San Francisco,Data / Analytics,,,,,,,,,,
 startup_merge_labs,Merge Labs,US,USA,San Francisco,Healthcare AI / Drug Discovery,,,,,,,,,,
 startup_mind_robotics,Mind Robotics,US,USA,Palo Alto,Robotics / Physical AI,https://www.mindrobotics.ai,2026,,,,,AI-powered industrial robotics,https://techcrunch.com/2026/03/11/rivian-mind-robotics-series-a-500m-fund-raise-industrial-ai-powered-robots/,medium,Rivian spinout; official profile fields should be strengthened when source available.
@@ -128,6 +131,7 @@ startup_runway,Runway,US,USA,New York,Creative / Generative Media,https://runway
 startup_safe_superintelligence,Safe Superintelligence,US,USA,Palo Alto,Foundation Models / LLMs,https://ssi.inc,2024,Ilya Sutskever; Daniel Gross; Daniel Levy,,,,Safe superintelligence research lab,https://ssi.inc,medium,Profile enrichment starter.
 startup_sakana_ai,Sakana AI,Other Global,Japan,Tokyo,Foundation Models / LLMs,,,,,,,,,,
 startup_sandboxaq,SandboxAQ,US,USA,Palo Alto,Enterprise AI,,,,,,,,,,
+startup_sarvam_ai,Sarvam AI,India,India,Bengaluru,Foundation Models / LLMs,,,,,,,,,,
 startup_scale_ai,Scale AI,US,USA,San Francisco,Data / Analytics,https://scale.com,2016,Alexandr Wang,,,,Data engine for AI; labeling; RLHF and evaluation data,https://scale.com/about,high,Training data and AI data infrastructure.
 startup_scout_ai,Scout AI,US,USA,Sunnyvale,Defense / Security AI,,,,,,,,,,
 startup_sesame,Sesame,US,USA,San Francisco,Creative / Generative Media,,,,,,,,,,

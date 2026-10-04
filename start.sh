@@ -22,13 +22,7 @@ trap cleanup EXIT INT TERM
 
 cd "$WEB_DIR"
 
-python3 "$ROOT_DIR/scripts/fetch_market_events_feeds.py" || true
-if [ -n "${TAVILY_API_KEY:-}" ]; then
-  echo "TAVILY_API_KEY found. Running optional Tavily enrichment."
-  python3 "$ROOT_DIR/scripts/fetch_market_events_tavily.py" || true
-fi
-python3 "$ROOT_DIR/scripts/validate_market_events.py"
-python3 "$ROOT_DIR/scripts/build_market_events.py"
+python3 "$ROOT_DIR/scripts/refresh_platform.py" --discover
 
 if [ ! -d node_modules ]; then
   echo "Installing web dependencies..."

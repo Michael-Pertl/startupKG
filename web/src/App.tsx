@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import cytoscape, { Core, ElementDefinition, NodeSingular } from "cytoscape";
 import { MarketEdge, MarketEvent, MarketEventFeed, MarketGraph, MarketNode, NodeKind } from "./types";
 import { formatCount, formatUsd } from "./format";
+import { DataHealth } from "./DataHealth";
+import { periodMetrics, selectResearchRounds } from "./investorAnalytics";
 import { supabase, SupabaseSession } from "./supabaseClient";
 import "./styles.css";
 
@@ -1865,6 +1867,7 @@ function EntityProfile({ node }: { node?: MarketNode }) {
         ) : null}
       </div>
       {node.notable_products ? <p>{node.notable_products}</p> : null}
+      {node.kind === "round" && node.evidence_notes ? <details><summary>Evidence notes</summary><p>{String(node.evidence_notes)}</p></details> : null}
     </section>
   );
 }
@@ -2501,6 +2504,10 @@ function AnalyticsPage({
 }) {
   const [activeSlice, setActiveSlice] = useState<{ kind: AnalyticsBreakdown; label: string } | null>(null);
   const [breakdown, setBreakdown] = useState<AnalyticsBreakdown>("domain");
+  const [comparable, setComparable] = useState(true);
+  const [equityOnly, setEquityOnly] = useState(true);
+  const [excludeLargest, setExcludeLargest] = useState(false);
+  const cutoff = graph.metadata.latest_funding_date || graph.nodes.filter((node) => node.kind === "round").map((node) => String(node.round_date || "")).sort().pop() || "2026-12-31";
 
   const roundToStartup = useMemo(() => {
     const byId = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -2526,7 +2533,7 @@ function AnalyticsPage({
   }, [graph.edges, graph.nodes]);
 
   const filteredRounds = useMemo(() => {
-    return graph.nodes
+    const scoped = graph.nodes
       .filter((node) => node.kind === "round")
       .filter((round) => {
         const startup = roundToStartup.get(round.id);
@@ -2535,9 +2542,11 @@ function AnalyticsPage({
         if (startup?.region && !filters.regions.includes(startup.region)) return false;
         if (startup?.country && !filters.countries.includes(startup.country)) return false;
         if (startup?.domain && !filters.domains.includes(startup.domain)) return false;
-        return true;
+        return round.confidence !== "low";
       });
-  }, [filters, graph.nodes, roundToStartup]);
+    return selectResearchRounds(scoped, { comparable, equityOnly, excludeLargest, cutoff });
+  }, [filters, graph.nodes, roundToStartup, comparable, equityOnly, excludeLargest, cutoff]);
+  const periods = periodMetrics(filteredRounds, filters.years);
 
   const filteredStartups = useMemo(() => {
     const ids = new Set(filteredRounds.map((round) => roundToStartup.get(round.id)?.id).filter(Boolean));
@@ -2647,7 +2656,7 @@ function AnalyticsPage({
       <header className="analytics-header">
         <div>
           <div className="eyebrow">Market dashboard</div>
-          <h1>AI funding growth</h1>
+          <h1>AI investment landscape</h1>
         </div>
         <div className="analytics-filters">
           <AnalyticsSelect
@@ -2682,6 +2691,20 @@ function AnalyticsPage({
           />
         </div>
       </header>
+
+      <DataHealth />
+      <section className="research-periods" aria-label="Funding over time">
+        <div className="research-controls">
+          <h2>Funding over time</h2>
+          <label><input type="checkbox" checked={comparable} onChange={(event) => setComparable(event.target.checked)} />Same period through {cutoff.slice(5)}</label>
+          <label><input type="checkbox" checked={equityOnly} onChange={(event) => setEquityOnly(event.target.checked)} />Exclude debt, secondary and commitments</label>
+          <label><input type="checkbox" checked={excludeLargest} onChange={(event) => setExcludeLargest(event.target.checked)} />Exclude largest round per year</label>
+        </div>
+        <div className="research-table-scroll"><table className="research-table">
+          <thead><tr><th>Period</th><th>Reported funding</th><th>Rounds</th><th>Companies</th><th>Median round</th><th>Top 5 round share</th></tr></thead>
+          <tbody>{periods.map((period) => <tr key={period.year}><td>{period.year}{comparable ? ` through ${cutoff.slice(5)}` : " (available evidence)"}</td><td>{formatUsd(period.funding)}</td><td>{period.events}</td><td>{period.companies}</td><td>{period.events ? formatUsd(period.median) : "-"}</td><td>{period.events ? `${(period.topFiveShare * 100).toFixed(1)}%` : "-"}</td></tr>)}</tbody>
+        </table></div>
+      </section>
 
       <section className="analytics-kpis">
         <div>
@@ -2740,7 +2763,7 @@ function AnalyticsPage({
           {isFreePreview ? <LockedUpgradeRow label="Show full company ranking" onUpgrade={openAnalyticsUpgrade} /> : null}
         </article>
         <article className="analytics-card">
-          <h2>Top investors</h2>
+          <h2>Investors by linked round volume</h2>
           {horizontalBars({ rows: topInvestors, valueFormatter: formatUsd, onSelect: onSelectNode })}
           {isFreePreview ? <LockedUpgradeRow label="Show full investor ranking" onUpgrade={openAnalyticsUpgrade} /> : null}
         </article>
@@ -2912,8 +2935,9 @@ function NewsPage({
 }) {
   const [eventType, setEventType] = useState("__all__");
   const [region, setRegion] = useState("__all__");
-  const [newsMode, setNewsMode] = useState<"ipo" | "latest">("ipo");
+  const [newsMode, setNewsMode] = useState<"ipo" | "latest">("latest");
   const [query, setQuery] = useState("");
+  const [includeDiscoveries, setIncludeDiscoveries] = useState(false);
 
   const companyByName = useMemo(() => {
     const mapping = new Map<string, MarketNode>();
@@ -2934,6 +2958,7 @@ function NewsPage({
   const events = useMemo(() => {
     return (eventFeed?.events || []).filter((event) => {
       if (event.status === "staged" || event.status === "rejected") return false;
+      if (!includeDiscoveries && event.status !== "approved") return false;
       if (eventType !== "__all__" && event.event_type !== eventType) return false;
       if (region !== "__all__" && event.region !== region) return false;
       const text = [
@@ -2951,7 +2976,7 @@ function NewsPage({
       ].join(" ").toLowerCase();
       return text.includes(query.toLowerCase().trim());
     }).sort((left, right) => String(right.event_date || "").localeCompare(String(left.event_date || "")));
-  }, [eventFeed, eventType, query, region]);
+  }, [eventFeed, eventType, query, region, includeDiscoveries]);
 
   const publicMarketEvents = events.filter((event) => event.event_type.includes("ipo") || event.event_type === "public_listing");
   const ipoEvents = publicMarketEvents.filter((event) => linkedCompanyForEvent(event));
@@ -3008,6 +3033,7 @@ function NewsPage({
       </section>
 
       <div className="news-mode-row">
+        <label><input type="checkbox" checked={includeDiscoveries} onChange={(event) => setIncludeDiscoveries(event.target.checked)} />Include unreviewed discoveries</label>
         <div className="news-view-toggle" role="tablist" aria-label="News views">
           <button className={newsMode === "ipo" ? "active" : ""} onClick={() => setNewsMode("ipo")} type="button">
             IPO/DPO Watch

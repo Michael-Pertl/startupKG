@@ -1,0 +1,62 @@
+{
+  "completed_at": "2026-10-04T14:48:51.311533+00:00",
+  "status": "ok",
+  "discovery_requested": false,
+  "steps": [
+    {
+      "script": "validate_raw_data.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "auto_ingest_funding.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "validate_raw_data.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "validate_startup_profiles.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "validate_market_events.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "normalize_raw_data.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "build_growth_metrics.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "init_startup_profiles.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "validate_startup_profiles.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "build_app_graph.py",
+      "exit_code": 0,
+      "status": "ok"
+    },
+    {
+      "script": "build_market_events.py",
+      "exit_code": 0,
+      "status": "ok"
+    }
+  ]
+}

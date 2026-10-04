@@ -3,6 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
+import { mergeMarketEventRows } from "./market-event-merge.mjs";
 
 function loadEnvFile(path) {
   if (!existsSync(path)) return;
@@ -392,6 +393,7 @@ function marketEventSignal(row) {
   const eventType = row.event_type || "";
   const status = row.status || "";
   const amountUsd = Number(row.amount_usd || 0);
+  if (status !== "approved") return ["review_queue", "Unreviewed discovery item"];
   if (
     status === "approved" &&
     MARKET_EVENT_CORE_TYPES.has(eventType) &&
@@ -462,22 +464,22 @@ function marketEventPayload(rows, source = "supabase") {
 }
 
 async function publicMarketEvents() {
+  const fallback = readJsonFile(resolve(DIST_DIR, "data", "market_events.json"), null);
   if (supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from("market_event_candidates")
       .select("*")
-      .in("status", [...MARKET_EVENT_VISIBLE_STATUS])
+      .in("status", [...MARKET_EVENT_VISIBLE_STATUS, "rejected", "staged"])
       .order("event_date", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false })
       .limit(500);
-    if (!error && data?.length) return marketEventPayload(data, "supabase");
+    if (!error && data?.length) return marketEventPayload(mergeMarketEventRows(fallback?.events || [], data), "curated_and_supabase");
     if (!error) {
       console.warn("Supabase market events are empty; falling back to static JSON.");
     } else {
       console.warn(`Could not read Supabase market events; falling back to static JSON: ${error.message}`);
     }
   }
-  const fallback = readJsonFile(resolve(DIST_DIR, "data", "market_events.json"), null);
   if (fallback) return { ...fallback, metadata: { ...fallback.metadata, source: "static_json" } };
   return marketEventPayload([], "empty");
 }

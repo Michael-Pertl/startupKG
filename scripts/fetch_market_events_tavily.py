@@ -10,11 +10,14 @@ funding graph.
 from __future__ import annotations
 
 import csv
+import argparse
+import hashlib
 import json
 import os
 import re
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
@@ -27,6 +30,7 @@ RAW_FILE = RAW_DIR / "market_events_raw.csv"
 STARTUPS_FILE = ROOT / "data" / "processed" / "startups.csv"
 TAVILY_URL = "https://api.tavily.com/search"
 MIN_FUNDING_USD = 100_000_000
+REPORT_FILE = ROOT / "data" / "app" / "tavily_fetch_report.json"
 
 FIELDNAMES = [
     "event_id",
@@ -204,11 +208,22 @@ def money_to_int(match: re.Match[str] | None) -> str:
 
 
 def source_metadata(url: str) -> tuple[str, str]:
-    host = urlparse(url).netloc.lower().removeprefix("www.")
+    host = (urlparse(url).hostname or "").lower().removeprefix("www.")
     for domain, metadata in SOURCE_TYPE_BY_DOMAIN.items():
-        if host.endswith(domain):
+        if host == domain or host.endswith("." + domain):
             return metadata
-    return ("other", "medium")
+    return ("other", "low")
+
+
+def funding_amount(text: str) -> str:
+    # A valuation, revenue figure or non-USD amount is not round proceeds.
+    match = re.search(
+        r"\b(?:raises?|raised|raising|secured|secures|closed|closes|funding of)\s+"
+        r"(?:(?:over|more than|approximately|about)\s+)?(?:US\$|USD\s*|\$)"
+        r"\s*([0-9]+(?:\.[0-9]+)?)\s*(billion|bn|million|m)\b",
+        text, re.IGNORECASE,
+    )
+    return money_to_int(match)
 
 
 def infer_event_type(text: str) -> str:
@@ -251,13 +266,13 @@ def infer_status(event_type: str, amount: str, text: str) -> tuple[str, str]:
             return ("needs_review", " Amount not detected; manually verify whether this meets the mega-round threshold.")
     if is_low_signal(text):
         return ("staged", " Hidden from News because the item looks like a low-signal announcement.")
-    return ("auto_ingested", "")
+    return ("needs_review", " Discovery only; verify article, financing status and event date before approval.")
 
 
 def infer_company(title: str, known_companies: dict[str, dict[str, str]]) -> str:
     lower_title = title.lower()
     for company in sorted(known_companies, key=len, reverse=True):
-        if company in lower_title:
+        if re.search(r"(?<!\w)" + re.escape(company) + r"(?!\w)", lower_title):
             return known_companies[company].get("name", "") or company.title()
 
     cleaned = re.sub(r"^[^A-Za-z0-9]+", "", title).strip()
@@ -271,13 +286,20 @@ def published_date(result: dict[str, object]) -> str:
     if raw:
         date_match = re.search(r"\d{4}-\d{2}-\d{2}", raw)
         if date_match:
-            return date_match.group(0)
+            try:
+                return date.fromisoformat(date_match.group(0)).isoformat()
+            except ValueError:
+                return ""
         for date_format in ("%b %d, %Y", "%B %d, %Y", "%d %b %Y", "%d %B %Y", "%m/%d/%Y"):
             try:
                 return datetime.strptime(raw, date_format).date().isoformat()
             except ValueError:
                 continue
-    return date.today().isoformat()
+        try:
+            return parsedate_to_datetime(raw).date().isoformat()
+        except (TypeError, ValueError):
+            pass
+    return ""
 
 
 def tavily_search(api_key: str, query: str, max_results: int) -> list[dict[str, object]]:
@@ -288,7 +310,10 @@ def tavily_search(api_key: str, query: str, max_results: int) -> list[dict[str, 
         "max_results": max_results,
         "include_answer": False,
         "include_raw_content": False,
-        "days": int(os.environ.get("TAVILY_DAYS", "14")),
+        "start_date": os.environ.get("TAVILY_START_DATE") or (date.today() - timedelta(days=int(os.environ.get("TAVILY_DAYS", "14")))).isoformat(),
+        "end_date": os.environ.get("TAVILY_END_DATE") or date.today().isoformat(),
+        "include_published_date": True,
+        "filter_by_published_date": True,
     }
     request = Request(
         TAVILY_URL,
@@ -301,7 +326,10 @@ def tavily_search(api_key: str, query: str, max_results: int) -> list[dict[str, 
     )
     with urlopen(request, timeout=30) as response:
         body = json.loads(response.read().decode("utf-8"))
-    return list(body.get("results", []))
+    results = body.get("results")
+    if not isinstance(results, list) or any(not isinstance(result, dict) for result in results):
+        raise ValueError("Invalid Tavily search response")
+    return results
 
 
 def make_event(result: dict[str, object], query: str, known_companies: dict[str, dict[str, str]]) -> dict[str, str]:
@@ -314,10 +342,11 @@ def make_event(result: dict[str, object], query: str, known_companies: dict[str,
     event_date = published_date(result)
     event_type = infer_event_type(text)
     source_type, confidence = source_metadata(url)
-    amount = money_to_int(MONEY_PATTERN.search(text))
+    amount = funding_amount(title) or funding_amount(content)
     valuation = money_to_int(VALUATION_PATTERN.search(text))
     status, review_note = infer_status(event_type, amount, text)
-    event_id = f"auto_{slugify(company)}_{event_date.replace('-', '')}_{slugify(event_type)}"
+    date_key = event_date.replace('-', '') or hashlib.sha256(url.encode()).hexdigest()[:12]
+    event_id = f"auto_{slugify(company)}_{date_key}_{slugify(event_type)}"
 
     return {
         "event_id": event_id,
@@ -334,7 +363,7 @@ def make_event(result: dict[str, object], query: str, known_companies: dict[str,
         "confidence": confidence,
         "status": status,
         "summary": title,
-        "notes": f"Auto-ingested from Tavily query: {query}.{review_note}",
+        "notes": f"Discovered {date.today().isoformat()} from Tavily query: {query}. Publication date is not a confirmed funding close date.{review_note}",
     }
 
 
@@ -347,7 +376,7 @@ def dedupe(existing: list[dict[str, str]], candidates: list[dict[str, str]]) -> 
             row["event_date"].strip(),
             row["event_type"].strip(),
         )
-        for row in rows
+        for row in rows if row["event_date"]
     }
     added = 0
     for row in candidates:
@@ -355,7 +384,7 @@ def dedupe(existing: list[dict[str, str]], candidates: list[dict[str, str]]) -> 
             continue
         key = (row["company_name"].lower(), row["event_date"], row["event_type"])
         url = row["source_url"].lower()
-        if url in seen_urls or key in seen_keys:
+        if url in seen_urls or (row["event_date"] and key in seen_keys):
             continue
         rows.append(row)
         seen_urls.add(url)
@@ -364,14 +393,53 @@ def dedupe(existing: list[dict[str, str]], candidates: list[dict[str, str]]) -> 
     return rows, added
 
 
+def load_tavily_settings() -> None:
+    # Read only Tavily settings; do not execute shell expressions in env files.
+    for path in (ROOT / ".env", ROOT / "web" / ".env.local"):
+        if not path.exists():
+            continue
+        for line in path.read_text(encoding="utf-8").splitlines():
+            key, separator, value = line.strip().removeprefix("export ").partition("=")
+            if separator and key.startswith("TAVILY_"):
+                os.environ.setdefault(key, value.strip().strip('"').strip("'"))
+
+
+def write_report(report: dict[str, object]) -> None:
+    REPORT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    REPORT_FILE.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="One live search without changing evidence rows.")
+    args = parser.parse_args()
+    load_tavily_settings()
+    report: dict[str, object] = {"attempted_at": datetime.now(timezone.utc).isoformat(), "status": "not_configured", "queries_completed": 0, "added_events": 0, "check_only": args.check}
     api_key = os.environ.get("TAVILY_API_KEY", "").strip()
     if not api_key:
+        write_report(report)
         print("Missing TAVILY_API_KEY. Skipping Tavily market-event fetch.", file=sys.stderr)
         return 2
 
-    max_results = int(os.environ.get("TAVILY_MAX_RESULTS", "5"))
-    max_queries = int(os.environ.get("TAVILY_MAX_QUERIES", "40"))
+    try:
+        max_results = int(os.environ.get("TAVILY_MAX_RESULTS", "5"))
+        max_queries = int(os.environ.get("TAVILY_MAX_QUERIES", "30"))
+        if not 1 <= max_results <= 20 or not 1 <= max_queries <= 200:
+            raise ValueError("query/result limits out of range")
+        days = int(os.environ.get("TAVILY_DAYS", "14"))
+        if not 1 <= days <= 366:
+            raise ValueError("days out of range")
+        start = date.fromisoformat(os.environ.get("TAVILY_START_DATE") or (date.today() - timedelta(days=days)).isoformat())
+        end = date.fromisoformat(os.environ.get("TAVILY_END_DATE") or date.today().isoformat())
+        if start > end or end > date.today():
+            raise ValueError("invalid search date window")
+    except ValueError:
+        report.update(status="invalid_configuration")
+        write_report(report)
+        return 2
+    if args.check:
+        max_queries = 1
+    report.update(search_start=start.isoformat(), search_end=end.isoformat())
     existing = read_csv(RAW_FILE)
     known_companies = load_company_context()
     queries = build_queries(known_companies, max_queries)
@@ -386,12 +454,18 @@ def main() -> int:
                 content = str(result.get("content") or "")
                 if text_matches(f"{title} {content}"):
                     candidates.append(make_event(result, query, known_companies))
-    except (HTTPError, URLError, TimeoutError) as error:
-        print(f"Tavily fetch failed: {error}", file=sys.stderr)
+    except (HTTPError, URLError, TimeoutError, ValueError) as error:
+        code = error.code if isinstance(error, HTTPError) else None
+        report.update(status="failed", http_status=code, queries_completed=max(0, query_count - 1))
+        write_report(report)
+        print(f"Tavily fetch failed (HTTP status {code or 'unavailable'}); evidence unchanged.", file=sys.stderr)
         return 1
 
     rows, added = dedupe(existing, candidates)
-    write_csv(RAW_FILE, rows)
+    if not args.check:
+        write_csv(RAW_FILE, rows)
+    report.update(status="ok", queries_completed=query_count, matching_candidates=len(candidates), added_events=0 if args.check else added, completed_at=datetime.now(timezone.utc).isoformat())
+    write_report(report)
     status_counts: dict[str, int] = {}
     for row in candidates:
         status_counts[row["status"]] = status_counts.get(row["status"], 0) + 1
