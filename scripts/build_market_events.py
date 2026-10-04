@@ -82,6 +82,9 @@ def signal_metadata(row: dict[str, str]) -> tuple[str, str]:
     status = row["status"]
     amount_usd = int_or_none(row["amount_usd"])
 
+    if status != "approved":
+        return ("review_queue", "Unreviewed discovery item")
+
     if (
         status == "approved"
         and event_type in CORE_EVENT_TYPES
@@ -142,6 +145,30 @@ def main() -> int:
             }
         )
 
+    events.sort(key=lambda event: (event["event_date"], event["event_id"]), reverse=True)
+    # Curated funding evidence supplies the timeline independently of discovery health.
+    startups = {row["startup_id"]: row for row in read_csv(STARTUPS_FILE)}
+    existing_keys = {(event["company_name"].casefold(), event["event_date"], event["event_type"]) for event in events if event["status"] == "approved"}
+    for funding in read_csv(ROOT / "data" / "processed" / "funding_rounds.csv"):
+        if funding["confidence"] == "low" or not funding["round_date"]:
+            continue
+        company = startups[funding["startup_id"]]
+        key = (company["name"].casefold(), funding["round_date"], "funding_round")
+        if key in existing_keys or any(term in funding["round_type"].lower() for term in ("debt", "commitment", "secondary", "loan")):
+            continue
+        events = [event for event in events if (event["company_name"].casefold(), event["event_date"], event["event_type"]) != key]
+        events.append({
+            "event_id": "curated_" + funding["round_id"], "company_name": company["name"],
+            "event_type": "funding_round", "ipo_stage": "", "event_date": funding["round_date"],
+            "year": funding["year"], "country": company["country"], "region": company["region"],
+            "amount_usd": int(funding["amount_usd"]), "valuation_usd": None,
+            "source_url": funding["source_url"], "source_type": funding["source_type"],
+            "confidence": funding["confidence"], "status": "approved", "signal_tier": "core_signal",
+            "signal_label": "Curated funding evidence", "linked_startup_id": funding["startup_id"],
+            "linked_startup_label": company["name"], "summary": company["name"] + " - " + funding["round_type"],
+            "notes": funding.get("evidence_notes", ""),
+        })
+        existing_keys.add(key)
     events.sort(key=lambda event: (event["event_date"], event["event_id"]), reverse=True)
     payload = {
         "metadata": {

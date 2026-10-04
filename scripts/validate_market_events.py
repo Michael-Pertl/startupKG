@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import re
 import sys
+from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -100,8 +101,15 @@ def validate_row(
         errors.append(f"line {line_no}: event_type is not allowed")
 
     event_date = row["event_date"].strip()
-    if not DATE_RE.match(event_date):
-        errors.append(f"line {line_no}: event_date must be YYYY-MM-DD")
+    if event_date:
+        try:
+            date.fromisoformat(event_date)
+            if not DATE_RE.match(event_date):
+                raise ValueError()
+        except ValueError:
+            errors.append(f"line {line_no}: event_date must be a valid YYYY-MM-DD")
+    elif row["status"] not in {"needs_review", "staged", "rejected"}:
+        errors.append(f"line {line_no}: reviewed/visible events require a confirmed date")
 
     year = row["year"].strip()
     if year != event_date[:4]:
@@ -131,9 +139,10 @@ def validate_row(
         errors.append(f"line {line_no}: visible events require a summary")
 
     key = (company.lower(), event_date, event_type)
-    if key in seen_keys:
+    if event_date and key in seen_keys:
         errors.append(f"line {line_no}: duplicate company/date/type event {company} {event_date} {event_type}")
-    seen_keys.add(key)
+    if event_date:
+        seen_keys.add(key)
 
     return errors
 

@@ -1,0 +1,36 @@
+# Automatic evidence ingestion
+
+The refresh pipeline no longer requires an administrator's approval for complete
+structured funding evidence. Place records with the raw funding schema in
+`data/raw/new_funding_events.csv`; every refresh automatically validates and
+appends qualifying records. The inbox is preserved. Repeat refreshes skip exact
+duplicates; conflicts and incomplete records are quarantined in the audit report
+`data/app/automatic_ingestion_report.json`, not silently discarded.
+
+```bash
+python3 scripts/refresh_platform.py --discover
+```
+
+Automatic acceptance currently requires high-confidence press-release or Reuters
+evidence, a confirmed nonfuture financing date, USD amounts with matching original
+amount, documented country/region, AI domain, and at least one investor. These are
+structural gates, not proof that an arbitrary submitted URL supports the fields.
+The inbox must come from a trusted structured source adapter, not public submissions.
+RSS currently provides discovery snippets only; it does not extract all required
+funding evidence and therefore does not populate this inbox automatically. A future
+source adapter must supply these fields with evidence before end-to-end discovery
+can become fully automatic. No single-admin approval is required by this ingestion path.
+
+Tavily is **off by default**, including the startup refresh. Only explicitly use
+`--tavily` after resuming the provider. A paused Render connection is not changed
+by local code. No production schedule or deployment was enabled by this change.
+
+Use one refresh writer at a time (for example a scheduler with `flock`); the CSV
+append path is not a concurrent multiworker datastore. For production, move
+transactional ingestion and unique event keys to the existing database before
+enabling multiple workers. Source validation and structured extraction are the
+next release priority, followed by investor watchlists and weekly change digests.
+
+The graph represents curated publicly reported AI mega-rounds of USD100M or more,
+not the full AI startup ecosystem. Automatic acceptance does not make coverage
+complete or independently verify all historical evidence.

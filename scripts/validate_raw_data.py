@@ -6,6 +6,8 @@ from __future__ import annotations
 import csv
 import sys
 from pathlib import Path
+from datetime import date
+from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -94,6 +96,8 @@ def validate_row(row: dict[str, str], line_no: int, seen_event_ids: set[str]) ->
 
     if not row["startup_name"].strip():
         errors.append(f"line {line_no}: startup_name is empty")
+    if not row["country"].strip():
+        errors.append(f"line {line_no}: country is empty")
 
     if row["region"].strip() not in ALLOWED_REGIONS:
         errors.append(f"line {line_no}: region must be one of {sorted(ALLOWED_REGIONS)}")
@@ -107,13 +111,21 @@ def validate_row(row: dict[str, str], line_no: int, seen_event_ids: set[str]) ->
         month = parse_int(month_raw, "month", line_no, errors)
         if month is not None and not 1 <= month <= 12:
             errors.append(f"line {line_no}: month must be between 1 and 12")
+    if row["round_date"].strip():
+        try:
+            parsed_date = date.fromisoformat(row["round_date"])
+            if parsed_date.year != year or (month_raw and parsed_date.month != int(month_raw)):
+                errors.append(f"line {line_no}: round_date does not match year/month")
+        except ValueError:
+            errors.append(f"line {line_no}: round_date must be a valid ISO date")
 
     amount_usd = parse_int(row["amount_usd"].strip(), "amount_usd", line_no, errors)
     if amount_usd is not None and amount_usd < 100_000_000:
         errors.append(f"line {line_no}: amount_usd is below 100000000")
 
-    if not row["source_url"].strip():
-        errors.append(f"line {line_no}: source_url is empty")
+    url = urlparse(row["source_url"].strip())
+    if url.scheme not in {"http", "https"} or not url.hostname:
+        errors.append(f"line {line_no}: source_url must be an absolute HTTP(S) URL")
 
     if not (row["lead_investors"].strip() or row["participating_investors"].strip()):
         errors.append(f"line {line_no}: at least one investor field must be present")
