@@ -34,16 +34,72 @@ def build_health(funding: list[dict[str, str]], investors: list[dict[str, str]],
         "unreviewed_events": sum(row["status"] in {"needs_review", "auto_ingested", "staged"} for row in events),
         "undated_funding_events": sum(not row["round_date"] for row in funding),
         "low_confidence_events": sum(row["confidence"] == "low" for row in funding),
+        "source_rechecked_events": sum(row.get("verification_status") == "core_fields_checked" for row in funding),
+        "amount_basis_counts": dict(Counter(row.get("amount_basis", "reported_round") for row in funding)),
         "regions": [{"region": name, "events": count, "latest_date": max((row["round_date"] for row in funding if row["region"] == name), default=""), "small_sample": count < 10} for name, count in sorted(regional.items())],
     }
 
 
+def assurance(payload, now=None):
+    now = now or datetime.now(timezone.utc)
+    blockers = []
+    def recent(value, hours):
+        try:
+            recorded = datetime.fromisoformat(value.replace("Z", "+00:00"))
+            age = (now - recorded).total_seconds() / 3600
+            return recorded.tzinfo is not None and 0 <= age <= hours
+        except (AttributeError, TypeError, ValueError):
+            return False
+    if payload.get("pipeline", {}).get("status") not in {"ok", "degraded"} or not recent(payload.get("pipeline", {}).get("completed_at"), 72):
+        blockers.append("No successful refresh within 72 hours")
+    rss = payload.get("rss", {})
+    if not recent(rss.get("fetched_at"), 48):
+        blockers.append("Public-source discovery has not succeeded within 48 hours")
+    if not rss.get("active_feeds") or rss.get("successful_feeds", 0) < rss.get("active_feeds", 0):
+        blockers.append("One or more configured public feeds are unavailable")
+    if payload.get("source_rechecked_events", 0) < payload["funding_events"]:
+        blockers.append("Historical funding evidence has not been fully rechecked")
+    if payload["unknown_investors"]:
+        blockers.append("Investor country/type metadata is incomplete")
+    if payload["low_confidence_events"] or payload["undated_funding_events"] or not payload["funding_events"]:
+        blockers.append("Core evidence is empty, uncertain or missing dates")
+    if payload.get("evidence_error"):
+        blockers.append("Sourced corrections or evidence metadata failed validation")
+    if payload.get("snapshot_matches_evidence") is False:
+        blockers.append("Published graph does not match current evidence")
+    return {"status": "limited_preview" if blockers else "operational_checks_passed",
+            "evaluated_at": now.isoformat(), "blockers": blockers,
+            "note": "Operational checks are not certification of accuracy or complete market coverage."}
+
+
 def main() -> int:
-    payload = build_health(rows("data/raw/funding_events_raw.csv"), rows("data/processed/investors.csv"), rows("data/raw/market_events_raw.csv"))
+    try:
+        from .funding_evidence import apply_evidence, evidence_digest
+    except ImportError:
+        from funding_evidence import apply_evidence, evidence_digest
+    funding = rows("data/raw/funding_events_raw.csv")
+    error = None
+    try:
+        funding = apply_evidence(funding)
+    except ValueError:
+        error = "Effective evidence validation failed; this report uses original raw counts, not corrected evidence."
+    payload = build_health(funding, rows("data/processed/investors.csv"), rows("data/raw/market_events_raw.csv"))
+    if error:
+        payload["evidence_error"] = error
+    graph_metadata = report("market_graph.json").get("metadata", {})
+    payload["evidence_digest"] = evidence_digest(funding)
+    payload["snapshot_id"] = graph_metadata.get("snapshot_id")
+    payload["snapshot_matches_evidence"] = not error and payload["evidence_digest"] == graph_metadata.get("evidence_digest")
     payload.update(tavily=report("tavily_fetch_report.json"), rss=report("market_event_fetch_report.json"), pipeline=report("pipeline_report.json"))
+    payload["tavily"]["enabled_for_last_refresh"] = payload["pipeline"].get("tavily_requested", False)
+    payload["automatic_ingestion"] = report("automatic_ingestion_report.json")
+    payload["assurance"] = assurance(payload)
     for folder in (ROOT / "data" / "app", ROOT / "web" / "public" / "data"):
         folder.mkdir(parents=True, exist_ok=True)
-        (folder / "data_health.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        target = folder / "data_health.json"
+        temporary = target.with_suffix(".tmp")
+        temporary.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(target)
     print("Built coverage and pipeline health report.")
     return 0
 

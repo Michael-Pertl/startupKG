@@ -97,6 +97,9 @@ Then test in an incognito browser:
 
 ## 7. Do Not Launch Until
 
+- `python3 scripts/check_customer_readiness.py --require-ready` passes on current
+  production reports; see `docs/CUSTOMER_READINESS.md` for data-specific gaps.
+
 - Ask is not in local auth mode.
 - Stripe webhooks work in test mode.
 - Supabase trial credits appear for a new user.

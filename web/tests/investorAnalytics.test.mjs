@@ -16,6 +16,13 @@ const rounds = [
   { id: 'c', year: '2026', round_date: '2026-04-01', amount_usd: 200, startup_id: 'one', round_type: 'Debt financing' },
   { id: 'd', year: '2026', round_date: '', amount_usd: 800, startup_id: 'two', round_type: 'Series B' },
 ];
+test('commitments cannot enter the default equity comparison under a growth label', () => {
+  const examples = ['committed_capital', 'includes_prior_commitments', 'mixed_primary_secondary', 'upper_bound'].map((amount_basis, index) => ({
+    id: String(index), kind: 'round', round_type: 'Growth round', amount_basis,
+  }));
+  assert.deepEqual(selectResearchRounds(examples, { comparable: false, equityOnly: true, cutoff: '', excludeLargest: false }), []);
+  assert.equal(selectResearchRounds(examples, { comparable: false, equityOnly: false, cutoff: '', excludeLargest: false }).length, 4);
+});
 test('comparable periods exclude later dates, missing dates and debt', () => {
   const selected = selectResearchRounds(rounds, { comparable: true, equityOnly: true, cutoff: '2026-09-08', excludeLargest: false });
   assert.deepEqual(selected.map(row => row.id), ['a']);

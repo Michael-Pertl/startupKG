@@ -166,7 +166,7 @@ def main() -> int:
             "confidence": funding["confidence"], "status": "approved", "signal_tier": "core_signal",
             "signal_label": "Curated funding evidence", "linked_startup_id": funding["startup_id"],
             "linked_startup_label": company["name"], "summary": company["name"] + " - " + funding["round_type"],
-            "notes": funding.get("evidence_notes", ""),
+            "notes": funding.get("evidence_notes", "") + " Amount basis: " + funding.get("amount_basis", "reported_round"),
         })
         existing_keys.add(key)
     events.sort(key=lambda event: (event["event_date"], event["event_id"]), reverse=True)

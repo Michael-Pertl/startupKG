@@ -35,3 +35,7 @@ class AutomaticIngestionTest(unittest.TestCase):
 
     def test_missing_columns_are_quarantined(self):
         self.assertFalse(select_rows([{"event_id": "incomplete"}], [])[0])
+
+    def test_commitments_and_targets_do_not_auto_enter_funding_totals(self):
+        for notes in ("Includes prior commitments", "Up to USD300M planned", "Cumulative total funding"):
+            self.assertFalse(select_rows([dict(self.row, notes=notes)], [])[0])

@@ -279,8 +279,14 @@ export. See [refresh research and next priorities](docs/REFRESH_RESEARCH_2026_10
 for source links, remaining coverage gaps, and trading-agent feasibility.
 
 This project does not represent the entire AI investment landscape. It represents a curated dataset of publicly reported AI mega-rounds above the selected threshold. The results are therefore suitable for analysing major investor networks, sector focus, and capital concentration, but not for measuring the full population of AI startups.
-# Automatic Ingestion
+## Automatic Ingestion
 
 See [automatic evidence ingestion](docs/AUTOMATIC_INGESTION.md) for the no-admin
 structured funding path and quarantine rules. Tavily discovery is opt-in and is
 not called by the default refresh.
+
+## Customer Readiness
+
+See [customer readiness and sourced corrections](docs/CUSTOMER_READINESS.md).
+Run `python3 scripts/check_customer_readiness.py --require-ready` before a paid
+release. A successful rebuild is not proof of source accuracy or market coverage.

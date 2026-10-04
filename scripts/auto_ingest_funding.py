@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Automatically ingest complete structured evidence; quarantine uncertain records."""
 
-import csv
 import json
+import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -39,6 +39,8 @@ def select_rows(candidates, existing):
                 errors.append("Foreign currency or amount-basis differences need sourced conversion")
             if not row["round_type"].strip():
                 errors.append("Round type is required")
+            if re.search(r"\b(commitments?|cumulative|target|anticipated|planned|debt|secondary|credit|loan)\b|\bup to\b", row["round_type"] + " " + row["notes"], re.I):
+                errors.append("Ambiguous financing basis requires structured source reconciliation")
             key = (row["startup_name"].strip().casefold(), row["round_date"])
             if key in keys:
                 errors.append("Existing company/date evidence; reconcile possible tranche or correction")

@@ -84,23 +84,16 @@ def make_round_ids(events: list[dict[str, str]]) -> dict[str, str]:
 
 def main() -> int:
     events = read_csv(RAW_DIR / "funding_events_raw.csv")
-    corrections_path = RAW_DIR / "funding_event_corrections.csv"
-    corrections = read_csv(corrections_path) if corrections_path.exists() else []
-    by_id = {row["event_id"]: row for row in events}
-    seen_corrections = set()
-    for correction in corrections:
-        key = (correction["event_id"], correction["field"])
-        if key in seen_corrections or key[0] not in by_id or key[1] != "amount_usd":
-            raise ValueError(f"Invalid or duplicate funding correction: {key}")
-        if not correction["source_url"].startswith("https://") or not correction["reviewed_at"] or not correction["reason"]:
-            raise ValueError(f"Unsourced funding correction: {key}")
-        if int(correction["value"]) < 100_000_000:
-            raise ValueError(f"Correction below inclusion threshold: {key}")
-        by_id[key[0]][key[1]] = correction["value"]
-        by_id[key[0]]["notes"] += f" Correction reviewed {correction['reviewed_at']}: {correction['reason']}. Source: {correction['source_url']}"
-        seen_corrections.add(key)
-    mappings = load_investor_mapping()
+    # Corrections can change dates, but existing graph identifiers must remain stable.
     round_ids = make_round_ids(events)
+    from funding_evidence import apply_evidence
+    from validate_raw_data import validate_row
+    events = apply_evidence(events)
+    seen = set()
+    errors = [error for number, event in enumerate(events, 2) for error in validate_row(event, number, seen)]
+    if errors:
+        raise ValueError("Effective evidence failed validation: " + "; ".join(errors))
+    mappings = load_investor_mapping()
 
     startups: dict[str, dict[str, str]] = {}
     countries: dict[str, dict[str, str]] = {}
@@ -157,6 +150,9 @@ def main() -> int:
                 "amount_original": event["amount_original"],
                 "amount_currency": event["amount_currency"],
                 "evidence_notes": event["notes"],
+                "amount_basis": event["amount_basis"],
+                "verification_status": event["verification_status"],
+                "source_checked_at": event["source_checked_at"],
             }
         )
 
@@ -206,6 +202,9 @@ def main() -> int:
                 "amount_original",
                 "amount_currency",
                 "evidence_notes",
+                "amount_basis",
+                "verification_status",
+                "source_checked_at",
             ],
             sorted(rounds, key=lambda row: (row["year"], row["month"], row["startup_id"], row["round_id"])),
         ),

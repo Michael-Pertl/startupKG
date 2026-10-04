@@ -4,7 +4,8 @@ export function selectResearchRounds(rounds: MarketNode[], options: {
   equityOnly: boolean; comparable: boolean; cutoff: string; excludeLargest: boolean;
 }): MarketNode[] {
   let selected = rounds.filter((round) => {
-    if (options.equityOnly && /debt|secondary|commitment|credit|loan/i.test(String(round.round_type || ""))) return false;
+    if (options.equityOnly && (/debt|secondary|commitment|credit|loan/i.test(String(round.round_type || ""))
+      || ["debt", "secondary", "mixed_primary_secondary", "upper_bound", "committed_capital", "includes_prior_commitments"].includes(String(round.amount_basis || "")))) return false;
     if (options.comparable && (!round.round_date || String(round.round_date).slice(5) > options.cutoff.slice(5))) return false;
     return true;
   });

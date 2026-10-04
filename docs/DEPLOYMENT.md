@@ -13,13 +13,7 @@ Stripe secrets are never exposed to the browser.
 ## Build Locally
 
 ```bash
-python3 scripts/validate_raw_data.py
-python3 scripts/validate_market_events.py
-python3 scripts/normalize_raw_data.py
-python3 scripts/build_growth_metrics.py
-python3 scripts/init_startup_profiles.py
-python3 scripts/build_app_graph.py
-python3 scripts/build_market_events.py
+python3 scripts/refresh_platform.py
 cd web
 npm ci
 npm run build
@@ -66,15 +60,17 @@ curl http://127.0.0.1:8080/api/health
 The response intentionally reports only whether services are configured, not the
 secret values.
 
+Service health alone does not verify the deployed data. After redeploying, run
+`python3 scripts/check_deployed_data.py --url https://aimarketgraph.com` to compare
+the live graph and coverage report against the local snapshot fingerprints.
+
 ## Automated Data Refresh
 
 Run data refresh outside the web container, then rebuild/redeploy the static
 bundle:
 
 ```bash
-python3 scripts/fetch_market_events_feeds.py
-python3 scripts/validate_market_events.py
-python3 scripts/build_market_events.py
+python3 scripts/refresh_platform.py --discover
 cd web && npm run build
 ```
 

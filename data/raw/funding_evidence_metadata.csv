@@ -1,0 +1,3 @@
+event_id,amount_basis,verification_status,source_checked_at,source_url,notes
+evt_openai_2026_growth,committed_capital,core_fields_checked,2026-10-04,https://openai.com/index/accelerating-the-next-phase-ai/,Company confirms close amount and named investors; committed capital is not proof of cash disbursement; investor roster remains partial
+evt_anthropic_2026_series_h,includes_prior_commitments,core_fields_checked,2026-10-04,https://www.anthropic.com/news/series-h,Company confirms amount date and named investors; reported total includes USD15B of prior hyperscaler commitments; do not label the whole amount fresh cash
