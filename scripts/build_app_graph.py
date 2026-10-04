@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import csv
 import json
+import hashlib
 from collections import Counter, defaultdict
 from itertools import combinations
 from datetime import datetime, timezone
@@ -73,9 +74,18 @@ def add_edge(
 
 
 def main() -> int:
+    from funding_evidence import apply_evidence, evidence_digest
     startups = {row["startup_id"]: row for row in read_csv(PROCESSED_DIR / "startups.csv")}
     investors = {row["investor_id"]: row for row in read_csv(PROCESSED_DIR / "investors.csv")}
     rounds = {row["round_id"]: row for row in read_csv(PROCESSED_DIR / "funding_rounds.csv")}
+    effective = apply_evidence(read_csv(RAW_DIR / "funding_events_raw.csv"))
+    evidence_by_id = {row["event_id"]: row for row in effective}
+    fields = ("amount_usd", "round_date", "source_url", "round_type", "amount_basis", "verification_status", "source_checked_at")
+    if len(rounds) != len(effective) or any(
+        row.get("event_id") not in evidence_by_id or any(row.get(field) != evidence_by_id[row["event_id"]].get(field) for field in fields)
+        for row in rounds.values()
+    ):
+        raise ValueError("Processed rounds do not match effective evidence; run the validated refresh before publishing.")
     participations = read_csv(PROCESSED_DIR / "participations.csv")
     profiles = {
         row["startup_id"]: row
@@ -177,6 +187,7 @@ def main() -> int:
             f"{startup['name']} {row['year']} {row['round_type']}",
             "round",
             startup_id=row["startup_id"],
+            event_id=row["event_id"],
             startup_name=startup["name"],
             amount_usd=amount,
             round_type=row["round_type"],
@@ -192,6 +203,9 @@ def main() -> int:
             amount_original=row.get("amount_original", ""),
             amount_currency=row.get("amount_currency", "USD"),
             evidence_notes=row.get("evidence_notes", ""),
+            amount_basis=row.get("amount_basis", "reported_round"),
+            verification_status=row.get("verification_status", "not_rechecked"),
+            source_checked_at=row.get("source_checked_at", ""),
             importance_score=amount,
         )
         add_edge(
@@ -279,6 +293,7 @@ def main() -> int:
             "title": "Global AI Mega-Round Market Graph",
             "generated_from": "data/processed/*.csv",
             "generated_at": datetime.now(timezone.utc).isoformat(),
+            "evidence_digest": evidence_digest(effective),
             "latest_funding_date": max((row["round_date"] for row in rounds.values() if row["round_date"]), default=""),
             "round_count": len(rounds),
             "startup_count": len(startups),
@@ -286,7 +301,8 @@ def main() -> int:
             "edge_count": len(edges),
             "scope_note": (
                 "Curated publicly reported AI mega-rounds of USD100M or more in 2024-2026. "
-                "Coverage is incomplete and regionally uneven; this is not the full AI startup ecosystem."
+                "Coverage is incomplete and regionally uneven; this is not the full AI startup ecosystem. "
+                "Graph totals are reported financing amounts, including mixed transactions and commitments, not cash disbursed."
             ),
         },
         "facets": {
@@ -299,6 +315,7 @@ def main() -> int:
         "nodes": sorted(node_values, key=lambda node: (node["kind"], node["label"])),
         "edges": edges,
     }
+    payload["metadata"]["snapshot_id"] = hashlib.sha256(json.dumps({"nodes": payload["nodes"], "edges": edges}, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
     for path in (APP_DATA_DIR / "market_graph.json", WEB_DATA_DIR / "market_graph.json"):
         write_json(path, payload)

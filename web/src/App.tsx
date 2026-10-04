@@ -1847,6 +1847,10 @@ function EntityProfile({ node }: { node?: MarketNode }) {
             <strong>{node.confidence}</strong>
           </div>
         ) : null}
+        {node.kind === "round" ? <>
+          <div><span>Amount basis</span><strong>{String(node.amount_basis || "reported_round").replace(/_/g, " ")}</strong></div>
+          <div><span>Source recheck</span><strong>{node.source_checked_at ? String(node.source_checked_at) : "Not recorded"}</strong></div>
+        </> : null}
         {node.mega_round_count ? (
           <div>
             <span>Mega-rounds</span>
@@ -2697,7 +2701,7 @@ function AnalyticsPage({
         <div className="research-controls">
           <h2>Funding over time</h2>
           <label><input type="checkbox" checked={comparable} onChange={(event) => setComparable(event.target.checked)} />Same period through {cutoff.slice(5)}</label>
-          <label><input type="checkbox" checked={equityOnly} onChange={(event) => setEquityOnly(event.target.checked)} />Exclude debt, secondary and commitments</label>
+          <label><input type="checkbox" checked={equityOnly} onChange={(event) => setEquityOnly(event.target.checked)} />Exclude debt, mixed funding and commitments</label>
           <label><input type="checkbox" checked={excludeLargest} onChange={(event) => setExcludeLargest(event.target.checked)} />Exclude largest round per year</label>
         </div>
         <div className="research-table-scroll"><table className="research-table">
@@ -2708,7 +2712,7 @@ function AnalyticsPage({
 
       <section className="analytics-kpis">
         <div>
-          <span>Visible funding</span>
+          <span>Reported funding</span>
           <strong>{formatUsd(totalFunding)}</strong>
         </div>
         <div>

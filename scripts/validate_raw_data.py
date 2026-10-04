@@ -114,6 +114,8 @@ def validate_row(row: dict[str, str], line_no: int, seen_event_ids: set[str]) ->
     if row["round_date"].strip():
         try:
             parsed_date = date.fromisoformat(row["round_date"])
+            if parsed_date.isoformat() != row["round_date"] or parsed_date > date.today():
+                errors.append(f"line {line_no}: round_date must be canonical ISO and not in the future")
             if parsed_date.year != year or (month_raw and parsed_date.month != int(month_raw)):
                 errors.append(f"line {line_no}: round_date does not match year/month")
         except ValueError:

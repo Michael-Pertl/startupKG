@@ -4,6 +4,7 @@ import { extname, join, resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { mergeMarketEventRows } from "./market-event-merge.mjs";
+import { canonicalContext } from "./canonical-context.mjs";
 
 function loadEnvFile(path) {
   if (!existsSync(path)) return;
@@ -977,6 +978,7 @@ function readBody(request) {
 function compactNode(node) {
   return {
     id: node.id,
+    event_id: node.event_id,
     label: node.label,
     kind: node.kind,
     region: node.region,
@@ -997,6 +999,10 @@ function compactNode(node) {
     confidence: node.confidence,
     source_type: node.source_type,
     source_url: node.source_url,
+    amount_basis: node.amount_basis,
+    source_checked_at: node.source_checked_at,
+    verification_status: node.verification_status,
+    evidence_notes: node.evidence_notes,
   };
 }
 
@@ -1225,10 +1231,16 @@ createServer(async (request, response) => {
     }
 
     const payload = JSON.parse(await readBody(request));
-    const selected = compactNode(payload.selected || {});
-    const nodes = (payload.neighborhood?.nodes || []).slice(0, 80).map(compactNode);
+    const graph = readJsonFile(resolve(DIST_DIR, "data", "market_graph.json"), null);
+    if (!graph) {
+      sendJson(response, 503, { error: "Published graph evidence is unavailable. No credits were deducted." });
+      return;
+    }
+    const canonical = canonicalContext(graph, payload);
+    const selected = compactNode(canonical.selected);
+    const nodes = canonical.nodes.map(compactNode);
     const nodeById = new Map(nodes.map((node) => [node.id, node]));
-    const edges = (payload.neighborhood?.edges || []).slice(0, 140).map((edge) => compactEdge(edge, nodeById));
+    const edges = canonical.edges.map((edge) => compactEdge(edge, nodeById));
     const history = Array.isArray(payload.messages)
       ? payload.messages
           .slice(-8)
@@ -1242,6 +1254,8 @@ createServer(async (request, response) => {
       "When the answer depends on graph data, ground it in the supplied graph context and say when the context is incomplete.",
       "For general explanatory questions, you may use general knowledge, but clearly separate it from graph evidence with wording like 'In general' or 'Outside the graph context'.",
       "Never invent graph facts such as valuations, revenue, investors, dates, or funding history. If a value is not in the graph context, say it is not shown in the graph context.",
+      "Reported amounts are not necessarily cash disbursed. Preserve amount_basis distinctions for committed capital, prior commitments, debt and lower bounds. Missing source rechecks mean accuracy has not been independently re-established.",
+      "Use the dataset scope and latest evidence date when answering current-landscape questions. Export time is not a coverage cutoff; do not claim exhaustive or real-time market coverage.",
       "Do not infer facts from URL slugs or article titles unless the same fact appears in a provided field.",
       "When discussing a specific funding event, include the source URL if it is available in the context, but do not over-format the answer.",
       "Be investor-useful without giving buy/sell advice or personalized financial recommendations.",
@@ -1250,7 +1264,7 @@ createServer(async (request, response) => {
     ].join(" ");
 
     const summary = summarizeContext(selected, nodes, edges);
-    const context = JSON.stringify({ summary, selected, nodes, edges }, null, 2);
+    const context = JSON.stringify({ summary, selected, nodes, edges, evidence: canonical.evidence }, null, 2);
     const messages = [
       { role: "system", content: system },
       {

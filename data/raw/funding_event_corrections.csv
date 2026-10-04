@@ -1,2 +1,7 @@
 event_id,field,value,source_url,reviewed_at,reason
 evt_mistral_ai_2026_series_d,amount_usd,3484200000,https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX%3AC%2F2026%2F04602,2026-10-03,EUR3B multiplied by ECB reference EURUSD 1.1614 for 2026-09-08; replaces illustrative rate without modifying original evidence
+evt_openai_2026_growth,amount_usd,122000000000,https://openai.com/index/accelerating-the-next-phase-ai/,2026-10-04,Final March update replaces February announcement for the same financing; not an additional round
+evt_openai_2026_growth,amount_original,122000000000,https://openai.com/index/accelerating-the-next-phase-ai/,2026-10-04,USD committed capital reported at final close
+evt_openai_2026_growth,round_date,2026-03-31,https://openai.com/index/accelerating-the-next-phase-ai/,2026-10-04,Use the explicitly reported closing announcement date
+evt_openai_2026_growth,month,3,https://openai.com/index/accelerating-the-next-phase-ai/,2026-10-04,Month matches closing announcement date
+evt_openai_2026_growth,source_url,https://openai.com/index/accelerating-the-next-phase-ai/,https://openai.com/index/accelerating-the-next-phase-ai/,2026-10-04,Use final company funding update while preserving original evidence

@@ -2,13 +2,15 @@
   "metadata": {
     "title": "Global AI Mega-Round Market Graph",
     "generated_from": "data/processed/*.csv",
-    "generated_at": "2026-10-04T14:48:50.672682+00:00",
+    "generated_at": "2026-10-04T15:17:09.936863+00:00",
+    "evidence_digest": "70bbe3238d33a74e0a1396e33194791ddac7f8e585343819313939f757fdd00b",
     "latest_funding_date": "2026-09-10",
     "round_count": 212,
     "startup_count": 164,
     "investor_count": 574,
     "edge_count": 2724,
-    "scope_note": "Curated publicly reported AI mega-rounds of USD100M or more in 2024-2026. Coverage is incomplete and regionally uneven; this is not the full AI startup ecosystem."
+    "scope_note": "Curated publicly reported AI mega-rounds of USD100M or more in 2024-2026. Coverage is incomplete and regionally uneven; this is not the full AI startup ecosystem. Graph totals are reported financing amounts, including mixed transactions and commitments, not cash disbursed.",
+    "snapshot_id": "031e4e2172bb085b9bccae79097dad405c0660dc36124636c31ecc98975bbc8a"
   },
   "facets": {
     "years": [
@@ -167,8 +169,8 @@
       "label": "USA",
       "kind": "country",
       "region": "US",
-      "funding_usd": 363746500000,
-      "importance_score": 363746500000
+      "funding_usd": 375746500000,
+      "importance_score": 375746500000
     },
     {
       "id": "country::United Arab Emirates",
@@ -260,8 +262,8 @@
       "id": "domain::Foundation Models / LLMs",
       "label": "Foundation Models / LLMs",
       "kind": "domain",
-      "funding_usd": 323111200000,
-      "importance_score": 323111200000
+      "funding_usd": 335111200000,
+      "importance_score": 335111200000
     },
     {
       "id": "domain::Healthcare AI / Drug Discovery",
@@ -869,8 +871,8 @@
       "website": "https://www.amazon.com",
       "participated_rounds": 5,
       "lead_rounds": 1,
-      "linked_funding_usd": 176362000000,
-      "importance_score": 1673447283
+      "linked_funding_usd": 188362000000,
+      "importance_score": 1765926376
     },
     {
       "id": "investor_amplify_partners",
@@ -4805,8 +4807,8 @@
       "website": "https://www.nvidia.com",
       "participated_rounds": 41,
       "lead_rounds": 3,
-      "linked_funding_usd": 181765200000,
-      "importance_score": 1750623304
+      "linked_funding_usd": 193765200000,
+      "importance_score": 1842617427
     },
     {
       "id": "investor_nventures",
@@ -6065,8 +6067,8 @@
       "website": "https://group.softbank",
       "participated_rounds": 6,
       "lead_rounds": 4,
-      "linked_funding_usd": 159175000000,
-      "importance_score": 1544383159
+      "linked_funding_usd": 171175000000,
+      "importance_score": 1638525592
     },
     {
       "id": "investor_softbank_vision_fund",
@@ -7232,14 +7234,15 @@
       "id": "region::US",
       "label": "US",
       "kind": "region",
-      "funding_usd": 363746500000,
-      "importance_score": 363746500000
+      "funding_usd": 375746500000,
+      "importance_score": 375746500000
     },
     {
       "id": "round_7ai_2025_series_a_12",
       "label": "7AI 2025 Series A",
       "kind": "round",
       "startup_id": "startup_7ai",
+      "event_id": "evt_7ai_2025_series_a",
       "startup_name": "7AI",
       "amount_usd": 130000000,
       "round_type": "Series A",
@@ -7255,6 +7258,9 @@
       "amount_original": "130000000",
       "amount_currency": "USD",
       "evidence_notes": "Cybersecurity AI agents startup; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 130000000
     },
     {
@@ -7262,6 +7268,7 @@
       "label": "AI21 Labs 2025 Series D",
       "kind": "round",
       "startup_id": "startup_ai21_labs",
+      "event_id": "evt_ai21_labs_2025_series_d",
       "startup_name": "AI21 Labs",
       "amount_usd": 300000000,
       "round_type": "Series D",
@@ -7277,6 +7284,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "Israeli enterprise AI / language model company; Axios newsletter reports USD300M Series D from Google and Nvidia.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -7284,6 +7294,7 @@
       "label": "AKASA 2024 Funding round",
       "kind": "round",
       "startup_id": "startup_akasa",
+      "event_id": "evt_akasa_2024_funding_round",
       "startup_name": "AKASA",
       "amount_usd": 120000000,
       "round_type": "Funding round",
@@ -7299,6 +7310,9 @@
       "amount_original": "120000000",
       "amount_currency": "USD",
       "evidence_notes": "Healthcare revenue-cycle automation platform; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 120000000
     },
     {
@@ -7306,6 +7320,7 @@
       "label": "AMI Labs 2026 Seed",
       "kind": "round",
       "startup_id": "startup_ami_labs",
+      "event_id": "evt_ami_labs_2026_seed",
       "startup_name": "AMI Labs",
       "amount_usd": 1030000000,
       "round_type": "Seed",
@@ -7321,6 +7336,9 @@
       "amount_original": "890000000",
       "amount_currency": "EUR",
       "evidence_notes": "Yann LeCun's Paris-headquartered world-model AI startup; EUR890M reported as USD1.03B.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1030000000
     },
     {
@@ -7328,6 +7346,7 @@
       "label": "Abnormal Security 2024 Series D",
       "kind": "round",
       "startup_id": "startup_abnormal_security",
+      "event_id": "evt_abnormal_security_2024_series_d",
       "startup_name": "Abnormal Security",
       "amount_usd": 250000000,
       "round_type": "Series D",
@@ -7343,6 +7362,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "AI-driven email security company; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -7350,6 +7372,7 @@
       "label": "Abridge 2025 Series D",
       "kind": "round",
       "startup_id": "startup_abridge",
+      "event_id": "evt_abridge_2025_series_d",
       "startup_name": "Abridge",
       "amount_usd": 250000000,
       "round_type": "Series D",
@@ -7365,6 +7388,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Generative AI platform for clinical conversations; company announcement confirms USD250M Series D.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -7372,6 +7398,7 @@
       "label": "Abridge 2025 Series E",
       "kind": "round",
       "startup_id": "startup_abridge",
+      "event_id": "evt_abridge_2025_series_e",
       "startup_name": "Abridge",
       "amount_usd": 300000000,
       "round_type": "Series E",
@@ -7387,6 +7414,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "AI clinical documentation / ambient scribe company; STAT reports Series E led by Andreessen Horowitz.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -7394,6 +7424,7 @@
       "label": "AlphaSense 2024 Series F",
       "kind": "round",
       "startup_id": "startup_alphasense",
+      "event_id": "evt_alphasense_2024_series_f",
       "startup_name": "AlphaSense",
       "amount_usd": 650000000,
       "round_type": "Series F",
@@ -7409,6 +7440,9 @@
       "amount_original": "650000000",
       "amount_currency": "USD",
       "evidence_notes": "AI market-intelligence and enterprise search platform; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 650000000
     },
     {
@@ -7416,6 +7450,7 @@
       "label": "Ambience Healthcare 2025 Series C",
       "kind": "round",
       "startup_id": "startup_ambience_healthcare",
+      "event_id": "evt_ambience_healthcare_2025_series_c",
       "startup_name": "Ambience Healthcare",
       "amount_usd": 243000000,
       "round_type": "Series C",
@@ -7431,6 +7466,9 @@
       "amount_original": "243000000",
       "amount_currency": "USD",
       "evidence_notes": "AI healthcare operating-system startup; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 243000000
     },
     {
@@ -7438,6 +7476,7 @@
       "label": "Anthropic 2025 Series E",
       "kind": "round",
       "startup_id": "startup_anthropic",
+      "event_id": "evt_anthropic_2025_series_e",
       "startup_name": "Anthropic",
       "amount_usd": 3500000000,
       "round_type": "Series E",
@@ -7453,6 +7492,9 @@
       "amount_original": "3500000000",
       "amount_currency": "USD",
       "evidence_notes": "First of two 2025 Anthropic mega-rounds in the source list.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 3500000000
     },
     {
@@ -7460,6 +7502,7 @@
       "label": "Anthropic 2025 Series F",
       "kind": "round",
       "startup_id": "startup_anthropic",
+      "event_id": "evt_anthropic_2025_series_f",
       "startup_name": "Anthropic",
       "amount_usd": 13000000000,
       "round_type": "Series F",
@@ -7475,6 +7518,9 @@
       "amount_original": "13000000000",
       "amount_currency": "USD",
       "evidence_notes": "Second 2025 Anthropic mega-round; multiple co-leads listed.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 13000000000
     },
     {
@@ -7482,6 +7528,7 @@
       "label": "Anthropic 2026 Series G",
       "kind": "round",
       "startup_id": "startup_anthropic",
+      "event_id": "evt_anthropic_2026_series_g",
       "startup_name": "Anthropic",
       "amount_usd": 30000000000,
       "round_type": "Series G",
@@ -7497,6 +7544,9 @@
       "amount_original": "30000000000",
       "amount_currency": "USD",
       "evidence_notes": "Company announcement states Series G was led by GIC and Coatue; participant list shortened to named significant investors from the announcement.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 30000000000
     },
     {
@@ -7504,6 +7554,7 @@
       "label": "Anthropic 2026 Series H",
       "kind": "round",
       "startup_id": "startup_anthropic",
+      "event_id": "evt_anthropic_2026_series_h",
       "startup_name": "Anthropic",
       "amount_usd": 65000000000,
       "round_type": "Series H",
@@ -7518,7 +7569,10 @@
       "source_url": "https://www.anthropic.com/news/series-h",
       "amount_original": "65000000000",
       "amount_currency": "USD",
-      "evidence_notes": "Company announcement states Series H raised USD65B at USD965B post-money valuation; includes USD15B of previously committed hyperscaler investments.",
+      "evidence_notes": "Company announcement states Series H raised USD65B at USD965B post-money valuation; includes USD15B of previously committed hyperscaler investments. Evidence assessment: Company confirms amount date and named investors; reported total includes USD15B of prior hyperscaler commitments; do not label the whole amount fresh cash",
+      "amount_basis": "includes_prior_commitments",
+      "verification_status": "core_fields_checked",
+      "source_checked_at": "2026-10-04",
       "importance_score": 65000000000
     },
     {
@@ -7526,6 +7580,7 @@
       "label": "Applied Intuition 2025 Series F",
       "kind": "round",
       "startup_id": "startup_applied_intuition",
+      "event_id": "evt_applied_intuition_2025_series_f",
       "startup_name": "Applied Intuition",
       "amount_usd": 600000000,
       "round_type": "Series F",
@@ -7541,6 +7596,9 @@
       "amount_original": "600000000",
       "amount_currency": "USD",
       "evidence_notes": "Autonomous vehicle embedded intelligence and simulation platform; source says round includes USD200M primary and USD400M secondary, so do not interpret all capital as new company cash.",
+      "amount_basis": "mixed_primary_secondary",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 600000000
     },
     {
@@ -7548,6 +7606,7 @@
       "label": "Atlan 2024 Series C",
       "kind": "round",
       "startup_id": "startup_atlan",
+      "event_id": "evt_atlan_2024_series_c",
       "startup_name": "Atlan",
       "amount_usd": 105000000,
       "round_type": "Series C",
@@ -7563,6 +7622,9 @@
       "amount_original": "105000000",
       "amount_currency": "USD",
       "evidence_notes": "Data and AI governance platform; included as data infrastructure for enterprise AI readiness.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 105000000
     },
     {
@@ -7570,6 +7632,7 @@
       "label": "Augment 2024 Series B",
       "kind": "round",
       "startup_id": "startup_augment",
+      "event_id": "evt_augment_2024_series_b",
       "startup_name": "Augment",
       "amount_usd": 227000000,
       "round_type": "Series B",
@@ -7585,6 +7648,9 @@
       "amount_original": "227000000",
       "amount_currency": "USD",
       "evidence_notes": "AI coding assistance startup; included after coding-agent omission review.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 227000000
     },
     {
@@ -7592,6 +7658,7 @@
       "label": "Axelera AI 2026 Funding round",
       "kind": "round",
       "startup_id": "startup_axelera_ai",
+      "event_id": "evt_axelera_ai_2026_funding_round",
       "startup_name": "Axelera AI",
       "amount_usd": 250000000,
       "round_type": "Funding round",
@@ -7607,6 +7674,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Netherlands AI semiconductor company; amount reported by Tech.eu as more than USD250M.",
+      "amount_basis": "lower_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -7614,6 +7684,7 @@
       "label": "Baichuan AI 2024 Series A",
       "kind": "round",
       "startup_id": "startup_baichuan_ai",
+      "event_id": "evt_baichuan_ai_2024_series_a",
       "startup_name": "Baichuan AI",
       "amount_usd": 688000000,
       "round_type": "Series A",
@@ -7629,6 +7700,9 @@
       "amount_original": "5000000000",
       "amount_currency": "CNY",
       "evidence_notes": "Chinese AI tiger / model startup; USD value from reported 5B yuan / USD687.6M.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 688000000
     },
     {
@@ -7636,6 +7710,7 @@
       "label": "Baseten 2025 Series D",
       "kind": "round",
       "startup_id": "startup_baseten",
+      "event_id": "evt_baseten_2025_series_d",
       "startup_name": "Baseten",
       "amount_usd": 150000000,
       "round_type": "Series D",
@@ -7651,6 +7726,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "AI inference infrastructure platform; added as prior in-scope Baseten round from TechCrunch 2025 tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -7658,6 +7736,7 @@
       "label": "Baseten 2026 Series E",
       "kind": "round",
       "startup_id": "startup_baseten",
+      "event_id": "evt_baseten_2026_series_e",
       "startup_name": "Baseten",
       "amount_usd": 300000000,
       "round_type": "Series E",
@@ -7673,6 +7752,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "AI inference infrastructure platform.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -7680,6 +7762,7 @@
       "label": "Basis 2026 Series B",
       "kind": "round",
       "startup_id": "startup_basis",
+      "event_id": "evt_basis_2026_series_b",
       "startup_name": "Basis",
       "amount_usd": 100000000,
       "round_type": "Series B",
@@ -7695,6 +7778,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Reuters mirror confirms USD100M Series B for agentic AI accounting startup; investor detail supplemented from company-syndicated release.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -7702,6 +7788,7 @@
       "label": "Black Forest Labs 2025 Series B",
       "kind": "round",
       "startup_id": "startup_black_forest_labs",
+      "event_id": "evt_black_forest_labs_2025_series_b",
       "startup_name": "Black Forest Labs",
       "amount_usd": 300000000,
       "round_type": "Series B",
@@ -7717,6 +7804,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "German frontier AI visual generation lab behind FLUX; Reuters/Yahoo source reports USD300M Series B co-led by Salesforce Ventures and Anjney Midha (AMP).",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -7724,6 +7814,7 @@
       "label": "Blaize 2024 Series D",
       "kind": "round",
       "startup_id": "startup_blaize",
+      "event_id": "evt_blaize_2024_series_d",
       "startup_name": "Blaize",
       "amount_usd": 106000000,
       "round_type": "Series D",
@@ -7739,6 +7830,9 @@
       "amount_original": "106000000",
       "amount_currency": "USD",
       "evidence_notes": "AI computing platform company; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 106000000
     },
     {
@@ -7746,6 +7840,7 @@
       "label": "Bright Machines 2024 Series C",
       "kind": "round",
       "startup_id": "startup_bright_machines",
+      "event_id": "evt_bright_machines_2024_series_c",
       "startup_name": "Bright Machines",
       "amount_usd": 106000000,
       "round_type": "Series C",
@@ -7761,6 +7856,9 @@
       "amount_original": "106000000",
       "amount_currency": "USD",
       "evidence_notes": "Smart robotics and AI-driven manufacturing software company; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 106000000
     },
     {
@@ -7768,6 +7866,7 @@
       "label": "Celestial AI 2024 Series C",
       "kind": "round",
       "startup_id": "startup_celestial_ai",
+      "event_id": "evt_celestial_ai_2024_series_c",
       "startup_name": "Celestial AI",
       "amount_usd": 175000000,
       "round_type": "Series C",
@@ -7783,6 +7882,9 @@
       "amount_original": "175000000",
       "amount_currency": "USD",
       "evidence_notes": "Optical interconnect platform for AI data centers; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 175000000
     },
     {
@@ -7790,6 +7892,7 @@
       "label": "Celestial AI 2025 Series C",
       "kind": "round",
       "startup_id": "startup_celestial_ai",
+      "event_id": "evt_celestial_ai_2025_series_c",
       "startup_name": "Celestial AI",
       "amount_usd": 250000000,
       "round_type": "Series C",
@@ -7805,6 +7908,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Follow-on optical interconnect AI infrastructure round; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -7812,6 +7918,7 @@
       "label": "Cerebras Systems 2025 Series G",
       "kind": "round",
       "startup_id": "startup_cerebras_systems",
+      "event_id": "evt_cerebras_2025_series_g",
       "startup_name": "Cerebras Systems",
       "amount_usd": 1100000000,
       "round_type": "Series G",
@@ -7827,6 +7934,9 @@
       "amount_original": "1100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI infrastructure and wafer-scale chip company; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1100000000
     },
     {
@@ -7834,6 +7944,7 @@
       "label": "Chai Discovery 2025 Series B",
       "kind": "round",
       "startup_id": "startup_chai_discovery",
+      "event_id": "evt_chai_discovery_2025_series_b",
       "startup_name": "Chai Discovery",
       "amount_usd": 130000000,
       "round_type": "Series B",
@@ -7849,6 +7960,9 @@
       "amount_original": "130000000",
       "amount_currency": "USD",
       "evidence_notes": "Biotech AI model company; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 130000000
     },
     {
@@ -7856,6 +7970,7 @@
       "label": "ClickHouse 2025 Series C",
       "kind": "round",
       "startup_id": "startup_clickhouse",
+      "event_id": "evt_clickhouse_2025_series_c",
       "startup_name": "ClickHouse",
       "amount_usd": 350000000,
       "round_type": "Series C",
@@ -7871,6 +7986,9 @@
       "amount_original": "350000000",
       "amount_currency": "USD",
       "evidence_notes": "Real-time analytics and data infrastructure company; included because the round and company positioning explicitly focus on AI/ML and agent-facing data workloads.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 350000000
     },
     {
@@ -7878,6 +7996,7 @@
       "label": "ClickHouse 2026 Series D",
       "kind": "round",
       "startup_id": "startup_clickhouse",
+      "event_id": "evt_clickhouse_2026_series_d",
       "startup_name": "ClickHouse",
       "amount_usd": 400000000,
       "round_type": "Series D",
@@ -7893,6 +8012,9 @@
       "amount_original": "400000000",
       "amount_currency": "USD",
       "evidence_notes": "Series D tied to analytics and AI infrastructure expansion, Langfuse acquisition, and LLM observability.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 400000000
     },
     {
@@ -7900,6 +8022,7 @@
       "label": "Codeium 2024 Series C",
       "kind": "round",
       "startup_id": "startup_codeium",
+      "event_id": "evt_codeium_2024_series_c",
       "startup_name": "Codeium",
       "amount_usd": 150000000,
       "round_type": "Series C",
@@ -7915,6 +8038,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "AI coding assistant company later known for Windsurf; included under coding agents / developer tools.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -7922,6 +8048,7 @@
       "label": "Cognition 2025 Funding round",
       "kind": "round",
       "startup_id": "startup_cognition",
+      "event_id": "evt_cognition_2025_funding_round",
       "startup_name": "Cognition",
       "amount_usd": 400000000,
       "round_type": "Funding round",
@@ -7937,6 +8064,9 @@
       "amount_original": "400000000",
       "amount_currency": "USD",
       "evidence_notes": "AI coding agent company behind Devin; TechCrunch/Bloomberg report identifies Founders Fund as lead.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 400000000
     },
     {
@@ -7944,6 +8074,7 @@
       "label": "Cognition 2026 Funding round",
       "kind": "round",
       "startup_id": "startup_cognition",
+      "event_id": "evt_cognition_2026_funding_round",
       "startup_name": "Cognition",
       "amount_usd": 1000000000,
       "round_type": "Funding round",
@@ -7959,6 +8090,9 @@
       "amount_original": "1000000000",
       "amount_currency": "USD",
       "evidence_notes": "TechCrunch reports Cognition raised more than USD1B at USD25B pre-money valuation; amount_usd uses conservative USD1B floor.",
+      "amount_basis": "lower_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1000000000
     },
     {
@@ -7966,6 +8100,7 @@
       "label": "Cognition 2026 Series E",
       "kind": "round",
       "startup_id": "startup_cognition",
+      "event_id": "evt_cognition_2026_series_e",
       "startup_name": "Cognition",
       "amount_usd": 2000000000,
       "round_type": "Series E",
@@ -7981,6 +8116,9 @@
       "amount_original": "2000000000",
       "amount_currency": "USD",
       "evidence_notes": "Reviewed 2026-10-03; company says over USD2B; stored amount is lower bound; investor abbreviations expanded only where unambiguous; location retained from existing profile.",
+      "amount_basis": "lower_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 2000000000
     },
     {
@@ -7988,6 +8126,7 @@
       "label": "Cohere 2024 Series D",
       "kind": "round",
       "startup_id": "startup_cohere",
+      "event_id": "evt_cohere_2024_series_d",
       "startup_name": "Cohere",
       "amount_usd": 500000000,
       "round_type": "Series D",
@@ -8003,6 +8142,9 @@
       "amount_original": "500000000",
       "amount_currency": "USD",
       "evidence_notes": "Toronto enterprise generative AI company; included as major non-US foundation model / enterprise LLM player.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 500000000
     },
     {
@@ -8010,6 +8152,7 @@
       "label": "Cohere 2025 Funding round",
       "kind": "round",
       "startup_id": "startup_cohere",
+      "event_id": "evt_cohere_2025_funding_round",
       "startup_name": "Cohere",
       "amount_usd": 500000000,
       "round_type": "Funding round",
@@ -8025,6 +8168,9 @@
       "amount_original": "500000000",
       "amount_currency": "USD",
       "evidence_notes": "Second Cohere mega-round in scope; BNN Bloomberg reports USD500M at USD6.8B valuation.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 500000000
     },
     {
@@ -8032,6 +8178,7 @@
       "label": "Constant 2024 Growth round",
       "kind": "round",
       "startup_id": "startup_constant",
+      "event_id": "evt_vultr_2024_growth",
       "startup_name": "Constant",
       "amount_usd": 333000000,
       "round_type": "Growth round",
@@ -8047,6 +8194,9 @@
       "amount_original": "333000000",
       "amount_currency": "USD",
       "evidence_notes": "Cloud and GPU infrastructure provider operating as Vultr; legal company name Constant.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 333000000
     },
     {
@@ -8054,6 +8204,7 @@
       "label": "CoreWeave 2024 Series C",
       "kind": "round",
       "startup_id": "startup_coreweave",
+      "event_id": "evt_coreweave_2024_series_c",
       "startup_name": "CoreWeave",
       "amount_usd": 1100000000,
       "round_type": "Series C",
@@ -8069,6 +8220,9 @@
       "amount_original": "1100000000",
       "amount_currency": "USD",
       "evidence_notes": "GPU cloud infrastructure provider; included from TechCrunch 2024 US AI mega-round list.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1100000000
     },
     {
@@ -8076,6 +8230,7 @@
       "label": "Crusoe 2024 Series D",
       "kind": "round",
       "startup_id": "startup_crusoe",
+      "event_id": "evt_crusoe_2024_series_d",
       "startup_name": "Crusoe",
       "amount_usd": 600000000,
       "round_type": "Series D",
@@ -8091,6 +8246,9 @@
       "amount_original": "600000000",
       "amount_currency": "USD",
       "evidence_notes": "Vertically integrated AI cloud and AI data center provider.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 600000000
     },
     {
@@ -8098,6 +8256,7 @@
       "label": "Cursor 2025 Series C",
       "kind": "round",
       "startup_id": "startup_cursor",
+      "event_id": "evt_cursor_2025_series_c",
       "startup_name": "Cursor",
       "amount_usd": 900000000,
       "round_type": "Series C",
@@ -8113,6 +8272,9 @@
       "amount_original": "900000000",
       "amount_currency": "USD",
       "evidence_notes": "Company also raised a later 2025 round; represented as separate event below.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 900000000
     },
     {
@@ -8120,6 +8282,7 @@
       "label": "Cursor 2025 Series D",
       "kind": "round",
       "startup_id": "startup_cursor",
+      "event_id": "evt_cursor_2025_growth_nov",
       "startup_name": "Cursor",
       "amount_usd": 2300000000,
       "round_type": "Series D",
@@ -8135,6 +8298,9 @@
       "amount_original": "2300000000",
       "amount_currency": "USD",
       "evidence_notes": "Follow-up source reports Series D co-led by Accel and Coatue.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 2300000000
     },
     {
@@ -8142,6 +8308,7 @@
       "label": "Cyera 2024 Series C",
       "kind": "round",
       "startup_id": "startup_cyera",
+      "event_id": "evt_cyera_2024_series_c",
       "startup_name": "Cyera",
       "amount_usd": 300000000,
       "round_type": "Series C",
@@ -8157,6 +8324,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "AI data security company with Israeli roots; assigned US by San Mateo headquarters for current graph.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -8164,6 +8334,7 @@
       "label": "Cyera 2024 Series D",
       "kind": "round",
       "startup_id": "startup_cyera",
+      "event_id": "evt_cyera_2024_series_d",
       "startup_name": "Cyera",
       "amount_usd": 300000000,
       "round_type": "Series D",
@@ -8179,6 +8350,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "Second 2024 Cyera mega-round; investor details should be expanded if final analysis emphasizes cyber investors.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -8186,6 +8360,7 @@
       "label": "Databricks 2024 Series J",
       "kind": "round",
       "startup_id": "startup_databricks",
+      "event_id": "evt_databricks_2024_series_j",
       "startup_name": "Databricks",
       "amount_usd": 10000000000,
       "round_type": "Series J",
@@ -8201,6 +8376,9 @@
       "amount_original": "10000000000",
       "amount_currency": "USD",
       "evidence_notes": "Data and AI platform company; included as mature AI/data infrastructure analogous to OpenAI and ClickHouse late-stage rows.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 10000000000
     },
     {
@@ -8208,6 +8386,7 @@
       "label": "Decagon 2026 Series D",
       "kind": "round",
       "startup_id": "startup_decagon",
+      "event_id": "evt_decagon_2026_series_d",
       "startup_name": "Decagon",
       "amount_usd": 250000000,
       "round_type": "Series D",
@@ -8223,6 +8402,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Conversational AI customer-support platform; added from TechCrunch 2026 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -8230,6 +8412,7 @@
       "label": "Decart 2025 Series B",
       "kind": "round",
       "startup_id": "startup_decart",
+      "event_id": "evt_decart_2025_series_b",
       "startup_name": "Decart",
       "amount_usd": 100000000,
       "round_type": "Series B",
@@ -8245,6 +8428,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Israeli AI company focused on GPU optimization and real-time video generation models.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -8252,6 +8438,7 @@
       "label": "DeepL 2024 Growth round",
       "kind": "round",
       "startup_id": "startup_deepl",
+      "event_id": "evt_deepl_2024_growth",
       "startup_name": "DeepL",
       "amount_usd": 300000000,
       "round_type": "Growth round",
@@ -8267,6 +8454,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "AI translation company; round included primary and secondary components.",
+      "amount_basis": "mixed_primary_secondary",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -8274,6 +8464,7 @@
       "label": "Deepgram 2026 Series C",
       "kind": "round",
       "startup_id": "startup_deepgram",
+      "event_id": "evt_deepgram_2026_series_c",
       "startup_name": "Deepgram",
       "amount_usd": 130000000,
       "round_type": "Series C",
@@ -8289,6 +8480,9 @@
       "amount_original": "130000000",
       "amount_currency": "USD",
       "evidence_notes": "Reuters mirror; voice AI API/platform.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 130000000
     },
     {
@@ -8296,6 +8490,7 @@
       "label": "DevRev 2024 Series A",
       "kind": "round",
       "startup_id": "startup_devrev",
+      "event_id": "evt_devrev_2024_series_a",
       "startup_name": "DevRev",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -8311,6 +8506,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI support-agent and customer platform startup; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -8318,6 +8516,7 @@
       "label": "Distyl AI 2025 Series B",
       "kind": "round",
       "startup_id": "startup_distyl_ai",
+      "event_id": "evt_distyl_ai_2025_series_b",
       "startup_name": "Distyl AI",
       "amount_usd": 175000000,
       "round_type": "Series B",
@@ -8333,6 +8532,9 @@
       "amount_original": "175000000",
       "amount_currency": "USD",
       "evidence_notes": "Enterprise AI software company; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 175000000
     },
     {
@@ -8340,6 +8542,7 @@
       "label": "Dream Security 2025 Early-stage round",
       "kind": "round",
       "startup_id": "startup_dream_security",
+      "event_id": "evt_dream_security_2025_early_stage",
       "startup_name": "Dream Security",
       "amount_usd": 100000000,
       "round_type": "Early-stage round",
@@ -8355,6 +8558,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI cybersecurity company for critical infrastructure; included under defense/security AI.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -8362,6 +8568,7 @@
       "label": "EPG Singapore 2026 Series B+",
       "kind": "round",
       "startup_id": "startup_epg_singapore",
+      "event_id": "evt_epg_singapore_2026_series_b_plus",
       "startup_name": "EPG Singapore",
       "amount_usd": 100000000,
       "round_type": "Series B+",
@@ -8377,6 +8584,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Modular AI data-center infrastructure company; include as AI infrastructure with classification caveat.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -8384,6 +8594,7 @@
       "label": "ElevenLabs 2025 Series C",
       "kind": "round",
       "startup_id": "startup_elevenlabs",
+      "event_id": "evt_elevenlabs_2025_series_c",
       "startup_name": "ElevenLabs",
       "amount_usd": 180000000,
       "round_type": "Series C",
@@ -8399,6 +8610,9 @@
       "amount_original": "180000000",
       "amount_currency": "USD",
       "evidence_notes": "Voice AI; company has London and New York presence, assigned Europe based on origin/headquarters commonly reported as London.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 180000000
     },
     {
@@ -8406,6 +8620,7 @@
       "label": "ElevenLabs 2026 Series D",
       "kind": "round",
       "startup_id": "startup_elevenlabs",
+      "event_id": "evt_elevenlabs_2026_series_d",
       "startup_name": "ElevenLabs",
       "amount_usd": 500000000,
       "round_type": "Series D",
@@ -8421,6 +8636,9 @@
       "amount_original": "500000000",
       "amount_currency": "USD",
       "evidence_notes": "2026 partial-year European voice AI mega-round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 500000000
     },
     {
@@ -8428,6 +8646,7 @@
       "label": "EliseAI 2025 Series E",
       "kind": "round",
       "startup_id": "startup_eliseai",
+      "event_id": "evt_eliseai_2025_series_e",
       "startup_name": "EliseAI",
       "amount_usd": 250000000,
       "round_type": "Series E",
@@ -8443,6 +8662,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Healthcare and housing automation AI platform; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -8450,6 +8672,7 @@
       "label": "EnCharge AI 2024 Series B",
       "kind": "round",
       "startup_id": "startup_encharge_ai",
+      "event_id": "evt_encharge_ai_2024_series_b",
       "startup_name": "EnCharge AI",
       "amount_usd": 100000000,
       "round_type": "Series B",
@@ -8465,6 +8688,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI inference chip startup; source reports more than USD100M and amount rounded to threshold.",
+      "amount_basis": "lower_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -8472,6 +8698,7 @@
       "label": "Enfabrica 2024 Series C",
       "kind": "round",
       "startup_id": "startup_enfabrica",
+      "event_id": "evt_enfabrica_2024_series_c",
       "startup_name": "Enfabrica",
       "amount_usd": 115000000,
       "round_type": "Series C",
@@ -8487,6 +8714,9 @@
       "amount_original": "115000000",
       "amount_currency": "USD",
       "evidence_notes": "AI networking chip startup; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 115000000
     },
     {
@@ -8494,6 +8724,7 @@
       "label": "Etched 2024 Series A",
       "kind": "round",
       "startup_id": "startup_etched",
+      "event_id": "evt_etched_2024_series_a",
       "startup_name": "Etched",
       "amount_usd": 120000000,
       "round_type": "Series A",
@@ -8509,6 +8740,9 @@
       "amount_original": "120000000",
       "amount_currency": "USD",
       "evidence_notes": "AI chip startup building specialized transformer inference ASICs.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 120000000
     },
     {
@@ -8516,6 +8750,7 @@
       "label": "Eudia 2025 Series A",
       "kind": "round",
       "startup_id": "startup_eudia",
+      "event_id": "evt_eudia_2025_series_a",
       "startup_name": "Eudia",
       "amount_usd": 105000000,
       "round_type": "Series A",
@@ -8531,6 +8766,9 @@
       "amount_original": "105000000",
       "amount_currency": "USD",
       "evidence_notes": "Legal AI / augmented intelligence platform for Fortune 500 legal teams; amount reported as up to USD105M.",
+      "amount_basis": "upper_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 105000000
     },
     {
@@ -8538,6 +8776,7 @@
       "label": "EvenUp 2024 Series D",
       "kind": "round",
       "startup_id": "startup_evenup",
+      "event_id": "evt_evenup_2024_series_d",
       "startup_name": "EvenUp",
       "amount_usd": 135000000,
       "round_type": "Series D",
@@ -8553,6 +8792,9 @@
       "amount_original": "135000000",
       "amount_currency": "USD",
       "evidence_notes": "AI legaltech company for personal injury workflows; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 135000000
     },
     {
@@ -8560,6 +8802,7 @@
       "label": "EvenUp 2025 Series E",
       "kind": "round",
       "startup_id": "startup_evenup",
+      "event_id": "evt_evenup_2025_series_e",
       "startup_name": "EvenUp",
       "amount_usd": 150000000,
       "round_type": "Series E",
@@ -8575,6 +8818,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "Second in-scope legal AI round; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -8582,6 +8828,7 @@
       "label": "EvolutionaryScale 2024 Seed",
       "kind": "round",
       "startup_id": "startup_evolutionaryscale",
+      "event_id": "evt_evolutionaryscale_2024_seed",
       "startup_name": "EvolutionaryScale",
       "amount_usd": 142000000,
       "round_type": "Seed",
@@ -8597,6 +8844,9 @@
       "amount_original": "142000000",
       "amount_currency": "USD",
       "evidence_notes": "Biology foundation-model startup developing ESM3; included under healthcare/drug discovery due protein design focus.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 142000000
     },
     {
@@ -8604,6 +8854,7 @@
       "label": "Fal 2025 Series C",
       "kind": "round",
       "startup_id": "startup_fal",
+      "event_id": "evt_fal_2025_series_c",
       "startup_name": "Fal",
       "amount_usd": 125000000,
       "round_type": "Series C",
@@ -8619,6 +8870,9 @@
       "amount_original": "125000000",
       "amount_currency": "USD",
       "evidence_notes": "Generative media infrastructure platform.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 125000000
     },
     {
@@ -8626,6 +8880,7 @@
       "label": "Fal 2025 Series D",
       "kind": "round",
       "startup_id": "startup_fal",
+      "event_id": "evt_fal_2025_series_d",
       "startup_name": "Fal",
       "amount_usd": 140000000,
       "round_type": "Series D",
@@ -8641,6 +8896,9 @@
       "amount_original": "140000000",
       "amount_currency": "USD",
       "evidence_notes": "Generative media infrastructure platform; TechCrunch reports Series D led by Sequoia.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 140000000
     },
     {
@@ -8648,6 +8906,7 @@
       "label": "FieldAI 2025 Series A-1",
       "kind": "round",
       "startup_id": "startup_fieldai",
+      "event_id": "evt_fieldai_2025_series_a1",
       "startup_name": "FieldAI",
       "amount_usd": 314000000,
       "round_type": "Series A-1",
@@ -8663,6 +8922,9 @@
       "amount_original": "314000000",
       "amount_currency": "USD",
       "evidence_notes": "Field foundation models for robotics; amount uses Axios split of USD405M across USD91M initial and USD314M later funding.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 314000000
     },
     {
@@ -8670,6 +8932,7 @@
       "label": "Figure AI 2024 Series B",
       "kind": "round",
       "startup_id": "startup_figure_ai",
+      "event_id": "evt_figure_ai_2024_series_b",
       "startup_name": "Figure AI",
       "amount_usd": 675000000,
       "round_type": "Series B",
@@ -8685,6 +8948,9 @@
       "amount_original": "675000000",
       "amount_currency": "USD",
       "evidence_notes": "Humanoid robotics startup; lead not consistently reported in accessible summary.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 675000000
     },
     {
@@ -8692,6 +8958,7 @@
       "label": "Fireworks AI 2025 Series C",
       "kind": "round",
       "startup_id": "startup_fireworks_ai",
+      "event_id": "evt_fireworks_ai_2025_series_c",
       "startup_name": "Fireworks AI",
       "amount_usd": 250000000,
       "round_type": "Series C",
@@ -8707,6 +8974,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Enterprise AI inference platform founded by former PyTorch engineers.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -8714,6 +8984,7 @@
       "label": "Fireworks AI 2026 Series D",
       "kind": "round",
       "startup_id": "startup_fireworks_ai",
+      "event_id": "evt_fireworks_ai_2026_series_d",
       "startup_name": "Fireworks AI",
       "amount_usd": 1505000000,
       "round_type": "Series D",
@@ -8729,6 +9000,9 @@
       "amount_original": "1505000000",
       "amount_currency": "USD",
       "evidence_notes": "Reviewed 2026-10-03; exact announced amount USD1.505B; disclosed investors only; valuation USD17.5B is not funding.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1505000000
     },
     {
@@ -8736,6 +9010,7 @@
       "label": "Flapping Airplanes 2026 Seed",
       "kind": "round",
       "startup_id": "startup_flapping_airplanes",
+      "event_id": "evt_flapping_airplanes_2026_seed",
       "startup_name": "Flapping Airplanes",
       "amount_usd": 180000000,
       "round_type": "Seed",
@@ -8751,6 +9026,9 @@
       "amount_original": "180000000",
       "amount_currency": "USD",
       "evidence_notes": "AI research lab with limited public product detail; included because amount and investors are publicly reported.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 180000000
     },
     {
@@ -8758,6 +9036,7 @@
       "label": "Fractile 2026 Series B",
       "kind": "round",
       "startup_id": "startup_fractile",
+      "event_id": "evt_fractile_2026_series_b",
       "startup_name": "Fractile",
       "amount_usd": 220000000,
       "round_type": "Series B",
@@ -8773,6 +9052,9 @@
       "amount_original": "220000000",
       "amount_currency": "USD",
       "evidence_notes": "UK AI inference hardware startup; added to capture 2026 inference-chip funding shift.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 220000000
     },
     {
@@ -8780,6 +9062,7 @@
       "label": "FundGuard 2024 Series C",
       "kind": "round",
       "startup_id": "startup_fundguard",
+      "event_id": "evt_fundguard_2024_series_c",
       "startup_name": "FundGuard",
       "amount_usd": 100000000,
       "round_type": "Series C",
@@ -8795,6 +9078,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI-powered investment accounting operating system; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -8802,6 +9088,7 @@
       "label": "Fundamental 2026 Series A",
       "kind": "round",
       "startup_id": "startup_fundamental",
+      "event_id": "evt_fundamental_2026_series_a",
       "startup_name": "Fundamental",
       "amount_usd": 225000000,
       "round_type": "Series A",
@@ -8817,6 +9104,9 @@
       "amount_original": "225000000",
       "amount_currency": "USD",
       "evidence_notes": "AI lab for structured enterprise data analysis; TechCrunch reports USD255M total funding, with USD225M Series A counted here.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 225000000
     },
     {
@@ -8824,6 +9114,7 @@
       "label": "G42 2024 Strategic investment",
       "kind": "round",
       "startup_id": "startup_g42",
+      "event_id": "evt_g42_2024_microsoft_strategic",
       "startup_name": "G42",
       "amount_usd": 1500000000,
       "round_type": "Strategic investment",
@@ -8839,6 +9130,9 @@
       "amount_original": "1500000000",
       "amount_currency": "USD",
       "evidence_notes": "UAE AI company; Microsoft minority investment. Strategic corporate/state-linked AI infrastructure deal, not a standard venture round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1500000000
     },
     {
@@ -8846,6 +9140,7 @@
       "label": "Genspark 2025 Series B",
       "kind": "round",
       "startup_id": "startup_genspark",
+      "event_id": "evt_genspark_2025_series_b",
       "startup_name": "Genspark",
       "amount_usd": 275000000,
       "round_type": "Series B",
@@ -8861,6 +9156,9 @@
       "amount_original": "275000000",
       "amount_currency": "USD",
       "evidence_notes": "All-in-one AI workspace and search-agent platform; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 275000000
     },
     {
@@ -8868,6 +9166,7 @@
       "label": "Glean 2024 Series E",
       "kind": "round",
       "startup_id": "startup_glean",
+      "event_id": "evt_glean_2024_series_e",
       "startup_name": "Glean",
       "amount_usd": 260000000,
       "round_type": "Series E",
@@ -8883,6 +9182,9 @@
       "amount_original": "260000000",
       "amount_currency": "USD",
       "evidence_notes": "Enterprise AI search/work AI platform; CNBC reports Series E co-led by Altimeter and DST Global.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 260000000
     },
     {
@@ -8890,6 +9192,7 @@
       "label": "Glean 2025 Series F",
       "kind": "round",
       "startup_id": "startup_glean",
+      "event_id": "evt_glean_2025_series_f",
       "startup_name": "Glean",
       "amount_usd": 150000000,
       "round_type": "Series F",
@@ -8905,6 +9208,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "Work AI / enterprise AI agent platform.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -8912,6 +9218,7 @@
       "label": "Goodfire 2026 Series B",
       "kind": "round",
       "startup_id": "startup_goodfire",
+      "event_id": "evt_goodfire_2026_series_b",
       "startup_name": "Goodfire",
       "amount_usd": 150000000,
       "round_type": "Series B",
@@ -8927,6 +9234,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "AI interpretability research lab; added from TechCrunch 2026 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -8934,6 +9244,7 @@
       "label": "Groq 2024 Series D",
       "kind": "round",
       "startup_id": "startup_groq",
+      "event_id": "evt_groq_2024_series_d",
       "startup_name": "Groq",
       "amount_usd": 640000000,
       "round_type": "Series D",
@@ -8949,6 +9260,9 @@
       "amount_original": "640000000",
       "amount_currency": "USD",
       "evidence_notes": "AI inference chip startup; source list records lead and valuation.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 640000000
     },
     {
@@ -8956,6 +9270,7 @@
       "label": "Groq 2025 Funding round",
       "kind": "round",
       "startup_id": "startup_groq",
+      "event_id": "evt_groq_2025_funding_round",
       "startup_name": "Groq",
       "amount_usd": 750000000,
       "round_type": "Funding round",
@@ -8971,6 +9286,9 @@
       "amount_original": "750000000",
       "amount_currency": "USD",
       "evidence_notes": "Follow-on inference-chip/cloud mega-round after Groq's 2024 Series D.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 750000000
     },
     {
@@ -8978,6 +9296,7 @@
       "label": "H Company 2024 Seed",
       "kind": "round",
       "startup_id": "startup_h_company",
+      "event_id": "evt_h_company_2024_seed",
       "startup_name": "H Company",
       "amount_usd": 220000000,
       "round_type": "Seed",
@@ -8993,6 +9312,9 @@
       "amount_original": "220000000",
       "amount_currency": "USD",
       "evidence_notes": "Paris AI agent/model company formerly known as Holistic AI; no single lead investor consistently stated.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 220000000
     },
     {
@@ -9000,6 +9322,7 @@
       "label": "Hailo 2024 Series C extension",
       "kind": "round",
       "startup_id": "startup_hailo",
+      "event_id": "evt_hailo_2024_series_c_extension",
       "startup_name": "Hailo",
       "amount_usd": 120000000,
       "round_type": "Series C extension",
@@ -9015,6 +9338,9 @@
       "amount_original": "120000000",
       "amount_currency": "USD",
       "evidence_notes": "Israeli edge AI chip company; source describes USD120M extension to Series C.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 120000000
     },
     {
@@ -9022,6 +9348,7 @@
       "label": "Hark 2026 Series A",
       "kind": "round",
       "startup_id": "startup_hark",
+      "event_id": "evt_hark_2026_series_a",
       "startup_name": "Hark",
       "amount_usd": 700000000,
       "round_type": "Series A",
@@ -9037,6 +9364,9 @@
       "amount_original": "700000000",
       "amount_currency": "USD",
       "evidence_notes": "Company announcement states over USD700M Series A at USD6B post-money valuation; amount_usd uses conservative USD700M floor.",
+      "amount_basis": "lower_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 700000000
     },
     {
@@ -9044,6 +9374,7 @@
       "label": "Harmattan AI 2026 Series B",
       "kind": "round",
       "startup_id": "startup_harmattan_ai",
+      "event_id": "evt_harmattan_ai_2026_series_b",
       "startup_name": "Harmattan AI",
       "amount_usd": 200000000,
       "round_type": "Series B",
@@ -9059,6 +9390,9 @@
       "amount_original": "200000000",
       "amount_currency": "USD",
       "evidence_notes": "French defense AI/autonomous drone startup; strategic aerospace-backed round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 200000000
     },
     {
@@ -9066,6 +9400,7 @@
       "label": "Harmonic 2025 Series B",
       "kind": "round",
       "startup_id": "startup_harmonic",
+      "event_id": "evt_harmonic_2025_series_b",
       "startup_name": "Harmonic",
       "amount_usd": 100000000,
       "round_type": "Series B",
@@ -9081,6 +9416,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Mathematical reasoning AI company; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9088,6 +9426,7 @@
       "label": "Harvey 2024 Series C",
       "kind": "round",
       "startup_id": "startup_harvey",
+      "event_id": "evt_harvey_2024_series_c",
       "startup_name": "Harvey",
       "amount_usd": 100000000,
       "round_type": "Series C",
@@ -9103,6 +9442,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Legal AI company; domain set to Enterprise AI because controlled vocabulary lacks legal-specific category.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9110,6 +9452,7 @@
       "label": "Harvey 2025 Series D",
       "kind": "round",
       "startup_id": "startup_harvey",
+      "event_id": "evt_harvey_2025_series_d",
       "startup_name": "Harvey",
       "amount_usd": 300000000,
       "round_type": "Series D",
@@ -9125,6 +9468,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "Legal AI; one of two 2025 Harvey mega-rounds.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -9132,6 +9478,7 @@
       "label": "Harvey 2025 Series E",
       "kind": "round",
       "startup_id": "startup_harvey",
+      "event_id": "evt_harvey_2025_series_e",
       "startup_name": "Harvey",
       "amount_usd": 300000000,
       "round_type": "Series E",
@@ -9147,6 +9494,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "Second 2025 Harvey mega-round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -9154,6 +9504,7 @@
       "label": "Harvey 2026 Funding round",
       "kind": "round",
       "startup_id": "startup_harvey",
+      "event_id": "evt_harvey_2026_funding_march",
       "startup_name": "Harvey",
       "amount_usd": 200000000,
       "round_type": "Funding round",
@@ -9169,6 +9520,9 @@
       "amount_original": "200000000",
       "amount_currency": "USD",
       "evidence_notes": "Backfill reviewed 2026-10-03; company reports new funding at USD11B valuation; valuation is separate from round amount.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 200000000
     },
     {
@@ -9176,6 +9530,7 @@
       "label": "Harvey 2026 Funding round",
       "kind": "round",
       "startup_id": "startup_harvey",
+      "event_id": "evt_harvey_2026_funding_september",
       "startup_name": "Harvey",
       "amount_usd": 550000000,
       "round_type": "Funding round",
@@ -9191,6 +9546,9 @@
       "amount_original": "550000000",
       "amount_currency": "USD",
       "evidence_notes": "Reviewed 2026-10-03; no series label asserted; company reports USD15.5B valuation separately.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 550000000
     },
     {
@@ -9198,6 +9556,7 @@
       "label": "Havoc 2026 Series A",
       "kind": "round",
       "startup_id": "startup_havoc",
+      "event_id": "evt_havoc_2026_series_a",
       "startup_name": "Havoc",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -9213,6 +9572,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Company press release reports USD100M Series A for all-domain collaborative autonomy; no lead investor named.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9220,6 +9582,7 @@
       "label": "Hebbia 2024 Series B",
       "kind": "round",
       "startup_id": "startup_hebbia",
+      "event_id": "evt_hebbia_2024_series_b",
       "startup_name": "Hebbia",
       "amount_usd": 130000000,
       "round_type": "Series B",
@@ -9235,6 +9598,9 @@
       "amount_original": "130000000",
       "amount_currency": "USD",
       "evidence_notes": "Knowledge work and document-search AI platform.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 130000000
     },
     {
@@ -9242,6 +9608,7 @@
       "label": "Helsing 2024 Series C",
       "kind": "round",
       "startup_id": "startup_helsing",
+      "event_id": "evt_helsing_2024_series_c",
       "startup_name": "Helsing",
       "amount_usd": 487000000,
       "round_type": "Series C",
@@ -9257,6 +9624,9 @@
       "amount_original": "450000000",
       "amount_currency": "EUR",
       "evidence_notes": "USD amount uses reported approximate conversion from TechCrunch/Axios around USD487M.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 487000000
     },
     {
@@ -9264,6 +9634,7 @@
       "label": "Helsing 2025 Series D",
       "kind": "round",
       "startup_id": "startup_helsing",
+      "event_id": "evt_helsing_2025_series_d",
       "startup_name": "Helsing",
       "amount_usd": 690000000,
       "round_type": "Series D",
@@ -9279,6 +9650,9 @@
       "amount_original": "600000000",
       "amount_currency": "EUR",
       "evidence_notes": "Approximate USD conversion documented manually; add participating investors after follow-up source if needed.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 690000000
     },
     {
@@ -9286,6 +9660,7 @@
       "label": "HiddenLayer 2026 Series B",
       "kind": "round",
       "startup_id": "startup_hiddenlayer",
+      "event_id": "evt_hiddenlayer_2026_series_b",
       "startup_name": "HiddenLayer",
       "amount_usd": 100000000,
       "round_type": "Series B",
@@ -9301,6 +9676,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Reviewed 2026-10-03; dedicated AI-model and agent security platform; country assigned from company release; Austin is announcement location.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9308,6 +9686,7 @@
       "label": "Higgsfield 2026 Series B",
       "kind": "round",
       "startup_id": "startup_higgsfield",
+      "event_id": "evt_higgsfield_2026_series_b",
       "startup_name": "Higgsfield",
       "amount_usd": 400000000,
       "round_type": "Series B",
@@ -9323,6 +9702,9 @@
       "amount_original": "400000000",
       "amount_currency": "USD",
       "evidence_notes": "Reviewed 2026-10-03; company announcement; January USD80M extension remains excluded as separately below threshold; USD130M cumulative Series A is not a single event.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 400000000
     },
     {
@@ -9330,6 +9712,7 @@
       "label": "Hippocratic AI 2025 Series B",
       "kind": "round",
       "startup_id": "startup_hippocratic_ai",
+      "event_id": "evt_hippocratic_ai_2025_series_b",
       "startup_name": "Hippocratic AI",
       "amount_usd": 141000000,
       "round_type": "Series B",
@@ -9345,6 +9728,9 @@
       "amount_original": "141000000",
       "amount_currency": "USD",
       "evidence_notes": "Patient-facing healthcare AI agents; company announcement confirms Kleiner Perkins-led Series B.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 141000000
     },
     {
@@ -9352,6 +9738,7 @@
       "label": "Hippocratic AI 2025 Series C",
       "kind": "round",
       "startup_id": "startup_hippocratic_ai",
+      "event_id": "evt_hippocratic_ai_2025_series_c",
       "startup_name": "Hippocratic AI",
       "amount_usd": 126000000,
       "round_type": "Series C",
@@ -9367,6 +9754,9 @@
       "amount_original": "126000000",
       "amount_currency": "USD",
       "evidence_notes": "Second 2025 healthcare AI agent mega-round; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 126000000
     },
     {
@@ -9374,6 +9764,7 @@
       "label": "Ineffable Intelligence 2026 Seed",
       "kind": "round",
       "startup_id": "startup_ineffable_intelligence",
+      "event_id": "evt_ineffable_intelligence_2026_seed",
       "startup_name": "Ineffable Intelligence",
       "amount_usd": 1100000000,
       "round_type": "Seed",
@@ -9389,6 +9780,9 @@
       "amount_original": "1100000000",
       "amount_currency": "USD",
       "evidence_notes": "London AI superintelligence company founded by David Silver; lead investors from Reuters mirror, government/co-investors from official UK source.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1100000000
     },
     {
@@ -9396,6 +9790,7 @@
       "label": "Inferact 2026 Seed",
       "kind": "round",
       "startup_id": "startup_inferact",
+      "event_id": "evt_inferact_2026_seed",
       "startup_name": "Inferact",
       "amount_usd": 150000000,
       "round_type": "Seed",
@@ -9411,6 +9806,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "AI inference startup founded by vLLM creators; investor list supplemented from contemporaneous public summaries.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -9418,6 +9816,7 @@
       "label": "Insilico Medicine 2025 Series E",
       "kind": "round",
       "startup_id": "startup_insilico_medicine",
+      "event_id": "evt_insilico_medicine_2025_series_e",
       "startup_name": "Insilico Medicine",
       "amount_usd": 110000000,
       "round_type": "Series E",
@@ -9433,6 +9832,9 @@
       "amount_original": "110000000",
       "amount_currency": "USD",
       "evidence_notes": "Generative AI drug-discovery platform; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 110000000
     },
     {
@@ -9440,6 +9842,7 @@
       "label": "Invisible Technologies 2025 Funding round",
       "kind": "round",
       "startup_id": "startup_invisible_technologies",
+      "event_id": "evt_invisible_technologies_2025_funding_round",
       "startup_name": "Invisible Technologies",
       "amount_usd": 100000000,
       "round_type": "Funding round",
@@ -9455,6 +9858,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI training and operations platform; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9462,6 +9868,7 @@
       "label": "Isomorphic Labs 2025 External funding round",
       "kind": "round",
       "startup_id": "startup_isomorphic_labs",
+      "event_id": "evt_isomorphic_labs_2025_external_round",
       "startup_name": "Isomorphic Labs",
       "amount_usd": 600000000,
       "round_type": "External funding round",
@@ -9477,6 +9884,9 @@
       "amount_original": "600000000",
       "amount_currency": "USD",
       "evidence_notes": "AI-first drug design company spun out of Google DeepMind; first external funding round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 600000000
     },
     {
@@ -9484,6 +9894,7 @@
       "label": "KoBold Metals 2024 Funding round",
       "kind": "round",
       "startup_id": "startup_kobold_metals",
+      "event_id": "evt_kobold_metals_2024_funding_round",
       "startup_name": "KoBold Metals",
       "amount_usd": 491500000,
       "round_type": "Funding round",
@@ -9499,6 +9910,9 @@
       "amount_original": "491500000",
       "amount_currency": "USD",
       "evidence_notes": "AI-powered mineral exploration company; applied AI inclusion should be labelled in final analysis.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 491500000
     },
     {
@@ -9506,6 +9920,7 @@
       "label": "Kore.ai 2024 Series D",
       "kind": "round",
       "startup_id": "startup_kore_ai",
+      "event_id": "evt_kore_ai_2024_series_d",
       "startup_name": "Kore.ai",
       "amount_usd": 150000000,
       "round_type": "Series D",
@@ -9521,6 +9936,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "Conversational enterprise AI platform; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -9528,6 +9946,7 @@
       "label": "Krutrim 2025 Strategic investment",
       "kind": "round",
       "startup_id": "startup_krutrim",
+      "event_id": "evt_krutrim_2025_strategic_investment",
       "startup_name": "Krutrim",
       "amount_usd": 230000000,
       "round_type": "Strategic investment",
@@ -9543,6 +9962,9 @@
       "amount_original": "230000000",
       "amount_currency": "USD",
       "evidence_notes": "Indian LLM and AI-cloud startup; included to reduce India gap but mark as strategic/founder-backed investment rather than conventional VC round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 230000000
     },
     {
@@ -9550,6 +9972,7 @@
       "label": "LMArena 2025 Seed",
       "kind": "round",
       "startup_id": "startup_lmarena",
+      "event_id": "evt_lmarena_2025_seed",
       "startup_name": "LMArena",
       "amount_usd": 100000000,
       "round_type": "Seed",
@@ -9565,6 +9988,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI model benchmarking and evaluation platform; source confirms USD100M seed.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9572,6 +9998,7 @@
       "label": "LMArena 2026 Series A",
       "kind": "round",
       "startup_id": "startup_lmarena",
+      "event_id": "evt_lmarena_2026_series_a",
       "startup_name": "LMArena",
       "amount_usd": 150000000,
       "round_type": "Series A",
@@ -9587,6 +10014,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "Second LMArena round in scope; model evaluation and benchmarking platform.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -9594,6 +10024,7 @@
       "label": "Lambda 2024 Series C",
       "kind": "round",
       "startup_id": "startup_lambda",
+      "event_id": "evt_lambda_2024_series_c",
       "startup_name": "Lambda",
       "amount_usd": 320000000,
       "round_type": "Series C",
@@ -9609,6 +10040,9 @@
       "amount_original": "320000000",
       "amount_currency": "USD",
       "evidence_notes": "Deep learning infrastructure provider.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 320000000
     },
     {
@@ -9616,6 +10050,7 @@
       "label": "Lambda 2025 Series D",
       "kind": "round",
       "startup_id": "startup_lambda",
+      "event_id": "evt_lambda_2025_series_d",
       "startup_name": "Lambda",
       "amount_usd": 480000000,
       "round_type": "Series D",
@@ -9631,6 +10066,9 @@
       "amount_original": "480000000",
       "amount_currency": "USD",
       "evidence_notes": "AI infrastructure / GPU cloud.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 480000000
     },
     {
@@ -9638,6 +10076,7 @@
       "label": "Legora 2026 Series D",
       "kind": "round",
       "startup_id": "startup_legora",
+      "event_id": "evt_legora_2026_series_d",
       "startup_name": "Legora",
       "amount_usd": 550000000,
       "round_type": "Series D",
@@ -9653,6 +10092,9 @@
       "amount_original": "550000000",
       "amount_currency": "USD",
       "evidence_notes": "Reuters mirror; legal AI startup formerly known as Leya.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 550000000
     },
     {
@@ -9660,6 +10102,7 @@
       "label": "Lightmatter 2024 Series D",
       "kind": "round",
       "startup_id": "startup_lightmatter",
+      "event_id": "evt_lightmatter_2024_series_d",
       "startup_name": "Lightmatter",
       "amount_usd": 400000000,
       "round_type": "Series D",
@@ -9675,6 +10118,9 @@
       "amount_original": "400000000",
       "amount_currency": "USD",
       "evidence_notes": "Photonic computing company for AI data centers; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 400000000
     },
     {
@@ -9682,6 +10128,7 @@
       "label": "Lila Sciences 2025 Seed",
       "kind": "round",
       "startup_id": "startup_lila_sciences",
+      "event_id": "evt_lila_sciences_2025_seed",
       "startup_name": "Lila Sciences",
       "amount_usd": 200000000,
       "round_type": "Seed",
@@ -9697,6 +10144,9 @@
       "amount_original": "200000000",
       "amount_currency": "USD",
       "evidence_notes": "Scientific superintelligence / autonomous-lab startup for life, chemical, and materials sciences.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 200000000
     },
     {
@@ -9704,6 +10154,7 @@
       "label": "Lila Sciences 2025 Series A",
       "kind": "round",
       "startup_id": "startup_lila_sciences",
+      "event_id": "evt_lila_sciences_2025_series_a",
       "startup_name": "Lila Sciences",
       "amount_usd": 350000000,
       "round_type": "Series A",
@@ -9719,6 +10170,9 @@
       "amount_original": "350000000",
       "amount_currency": "USD",
       "evidence_notes": "Second 2025 Lila Sciences mega-round; source says total capital reached USD550M.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 350000000
     },
     {
@@ -9726,6 +10180,7 @@
       "label": "Liquid AI 2024 Series A",
       "kind": "round",
       "startup_id": "startup_liquid_ai",
+      "event_id": "evt_liquid_ai_2024_series_a",
       "startup_name": "Liquid AI",
       "amount_usd": 250000000,
       "round_type": "Series A",
@@ -9741,6 +10196,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "MIT spinout developing liquid foundation models; included as alternate model architecture company.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -9748,6 +10206,7 @@
       "label": "LiveKit 2026 Series C",
       "kind": "round",
       "startup_id": "startup_livekit",
+      "event_id": "evt_livekit_2026_series_c",
       "startup_name": "LiveKit",
       "amount_usd": 100000000,
       "round_type": "Series C",
@@ -9763,6 +10222,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Real-time voice and video AI infrastructure used by AI voice applications.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9770,6 +10232,7 @@
       "label": "Lovable 2025 Series A",
       "kind": "round",
       "startup_id": "startup_lovable",
+      "event_id": "evt_lovable_2025_series_a",
       "startup_name": "Lovable",
       "amount_usd": 200000000,
       "round_type": "Series A",
@@ -9785,6 +10248,9 @@
       "amount_original": "200000000",
       "amount_currency": "USD",
       "evidence_notes": "Vibe-coding / app-generation startup.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 200000000
     },
     {
@@ -9792,6 +10258,7 @@
       "label": "Lovable 2025 Series B",
       "kind": "round",
       "startup_id": "startup_lovable",
+      "event_id": "evt_lovable_2025_series_b",
       "startup_name": "Lovable",
       "amount_usd": 330000000,
       "round_type": "Series B",
@@ -9807,6 +10274,9 @@
       "amount_original": "330000000",
       "amount_currency": "USD",
       "evidence_notes": "Backfill reviewed 2026-10-03; Menlo investment through Anthology fund; disclosed investors only.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 330000000
     },
     {
@@ -9814,6 +10284,7 @@
       "label": "Lovable 2026 Series C",
       "kind": "round",
       "startup_id": "startup_lovable",
+      "event_id": "evt_lovable_2026_series_c",
       "startup_name": "Lovable",
       "amount_usd": 400000000,
       "round_type": "Series C",
@@ -9829,6 +10300,9 @@
       "amount_original": "400000000",
       "amount_currency": "USD",
       "evidence_notes": "Reviewed 2026-10-03; Scaleup Europe Fund managed by EQT; kept as distinct fund entity; announced valuation USD13.3B.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 400000000
     },
     {
@@ -9836,6 +10310,7 @@
       "label": "Luma AI 2025 Series C",
       "kind": "round",
       "startup_id": "startup_luma_ai",
+      "event_id": "evt_luma_ai_2025_series_c",
       "startup_name": "Luma AI",
       "amount_usd": 900000000,
       "round_type": "Series C",
@@ -9851,6 +10326,9 @@
       "amount_original": "900000000",
       "amount_currency": "USD",
       "evidence_notes": "Frontier video/world-model company; round tied to Saudi HUMAIN supercluster partnership.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 900000000
     },
     {
@@ -9858,6 +10336,7 @@
       "label": "Magic 2024 Funding round",
       "kind": "round",
       "startup_id": "startup_magic",
+      "event_id": "evt_magic_2024_funding_round",
       "startup_name": "Magic",
       "amount_usd": 320000000,
       "round_type": "Funding round",
@@ -9873,6 +10352,9 @@
       "amount_original": "320000000",
       "amount_currency": "USD",
       "evidence_notes": "Generative AI coding startup; public report names investors but not a single lead.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 320000000
     },
     {
@@ -9880,6 +10362,7 @@
       "label": "Majestic Labs 2025 Series A",
       "kind": "round",
       "startup_id": "startup_majestic_labs",
+      "event_id": "evt_majestic_labs_2025_series_a",
       "startup_name": "Majestic Labs",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -9895,6 +10378,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI server infrastructure startup; source states USD100M Series A after seed.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9902,6 +10388,7 @@
       "label": "Maven Robotics 2026 Series A",
       "kind": "round",
       "startup_id": "startup_maven_robotics",
+      "event_id": "evt_maven_robotics_2026_series_a",
       "startup_name": "Maven Robotics",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -9917,6 +10404,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Reviewed 2026-10-03; company release explicitly confirms Santa Clara headquarters and AI robotics system; RoboStrategy identified as lead in investor quotation.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9924,6 +10414,7 @@
       "label": "Mercor 2025 Series B",
       "kind": "round",
       "startup_id": "startup_mercor",
+      "event_id": "evt_mercor_2025_series_b",
       "startup_name": "Mercor",
       "amount_usd": 100000000,
       "round_type": "Series B",
@@ -9939,6 +10430,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI recruiting and expert data platform for AI labs.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -9946,6 +10440,7 @@
       "label": "Mercor 2025 Series C",
       "kind": "round",
       "startup_id": "startup_mercor",
+      "event_id": "evt_mercor_2025_series_c",
       "startup_name": "Mercor",
       "amount_usd": 350000000,
       "round_type": "Series C",
@@ -9961,6 +10456,9 @@
       "amount_original": "350000000",
       "amount_currency": "USD",
       "evidence_notes": "AI recruiting / expert data platform; source confirms Felicis also led Series C.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 350000000
     },
     {
@@ -9968,6 +10466,7 @@
       "label": "Merge Labs 2026 Seed",
       "kind": "round",
       "startup_id": "startup_merge_labs",
+      "event_id": "evt_merge_labs_2026_seed",
       "startup_name": "Merge Labs",
       "amount_usd": 250000000,
       "round_type": "Seed",
@@ -9983,6 +10482,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Brain-computer interface startup with AI operating system framing; included as health/neurotechnology AI and flagged as early research-stage.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -9990,6 +10492,7 @@
       "label": "Mind Robotics 2026 Series A",
       "kind": "round",
       "startup_id": "startup_mind_robotics",
+      "event_id": "evt_mind_robotics_2026_series_a",
       "startup_name": "Mind Robotics",
       "amount_usd": 500000000,
       "round_type": "Series A",
@@ -10005,6 +10508,9 @@
       "amount_original": "500000000",
       "amount_currency": "USD",
       "evidence_notes": "Rivian spinout developing AI-powered industrial robotics.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 500000000
     },
     {
@@ -10012,6 +10518,7 @@
       "label": "Mind Robotics 2026 Series B",
       "kind": "round",
       "startup_id": "startup_mind_robotics",
+      "event_id": "evt_mind_robotics_2026_series_b",
       "startup_name": "Mind Robotics",
       "amount_usd": 400000000,
       "round_type": "Series B",
@@ -10027,6 +10534,9 @@
       "amount_original": "400000000",
       "amount_currency": "USD",
       "evidence_notes": "Second 2026 Mind Robotics mega-round; included to show rapid physical-AI capital acceleration.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 400000000
     },
     {
@@ -10034,6 +10544,7 @@
       "label": "MiniMax 2024 Funding round",
       "kind": "round",
       "startup_id": "startup_minimax",
+      "event_id": "evt_minimax_2024_funding_round",
       "startup_name": "MiniMax",
       "amount_usd": 600000000,
       "round_type": "Funding round",
@@ -10049,6 +10560,9 @@
       "amount_original": "600000000",
       "amount_currency": "USD",
       "evidence_notes": "Chinese foundation-model startup; included as one of China's major AI model labs.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 600000000
     },
     {
@@ -10056,6 +10570,7 @@
       "label": "Mistral AI 2024 Series B",
       "kind": "round",
       "startup_id": "startup_mistral_ai",
+      "event_id": "evt_mistral_ai_2024_series_b",
       "startup_name": "Mistral AI",
       "amount_usd": 645000000,
       "round_type": "Series B",
@@ -10071,6 +10586,9 @@
       "amount_original": "600000000",
       "amount_currency": "EUR",
       "evidence_notes": "Approximate USD conversion from reported EUR600M / about USD640-645M.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 645000000
     },
     {
@@ -10078,6 +10596,7 @@
       "label": "Mistral AI 2025 Series C",
       "kind": "round",
       "startup_id": "startup_mistral_ai",
+      "event_id": "evt_mistral_ai_2025_series_c",
       "startup_name": "Mistral AI",
       "amount_usd": 1990000000,
       "round_type": "Series C",
@@ -10093,6 +10612,9 @@
       "amount_original": "1700000000",
       "amount_currency": "EUR",
       "evidence_notes": "EUR1.7B / approx USD1.99B; Sifted confirmation with ASML lead.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1990000000
     },
     {
@@ -10100,6 +10622,7 @@
       "label": "Mistral AI 2026 Debt financing",
       "kind": "round",
       "startup_id": "startup_mistral_ai",
+      "event_id": "evt_mistral_ai_2026_debt_financing",
       "startup_name": "Mistral AI",
       "amount_usd": 830000000,
       "round_type": "Debt financing",
@@ -10115,6 +10638,9 @@
       "amount_original": "830000000",
       "amount_currency": "USD",
       "evidence_notes": "Debt financing for AI data center buildout near Paris; include only in analyses that allow non-equity AI infrastructure capital.",
+      "amount_basis": "debt",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 830000000
     },
     {
@@ -10122,6 +10648,7 @@
       "label": "Mistral AI 2026 Series D",
       "kind": "round",
       "startup_id": "startup_mistral_ai",
+      "event_id": "evt_mistral_ai_2026_series_d",
       "startup_name": "Mistral AI",
       "amount_usd": 3484200000,
       "round_type": "Series D",
@@ -10136,7 +10663,10 @@
       "source_url": "https://mistral.ai/news/mistral-makes-sovereign-open-weight-ai-to-frontier/",
       "amount_original": "3000000000",
       "amount_currency": "EUR",
-      "evidence_notes": "Reviewed 2026-10-03; date cross-checked against company news index; USD estimate uses illustrative EURUSD 1.17 rather than verified daily FX; retain EUR3B as authoritative; do not treat USD estimate as exact. Correction reviewed 2026-10-03: EUR3B multiplied by ECB reference EURUSD 1.1614 for 2026-09-08; replaces illustrative rate without modifying original evidence. Source: https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX%3AC%2F2026%2F04602",
+      "evidence_notes": "Reviewed 2026-10-03; date cross-checked against company news index; USD estimate uses illustrative EURUSD 1.17 rather than verified daily FX; retain EUR3B as authoritative; do not treat USD estimate as exact. Correction checked 2026-10-03: EUR3B multiplied by ECB reference EURUSD 1.1614 for 2026-09-08; replaces illustrative rate without modifying original evidence. Source: https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX%3AC%2F2026%2F04602",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 3484200000
     },
     {
@@ -10144,6 +10674,7 @@
       "label": "Modal 2026 Series C",
       "kind": "round",
       "startup_id": "startup_modal",
+      "event_id": "evt_modal_2026_series_c",
       "startup_name": "Modal",
       "amount_usd": 355000000,
       "round_type": "Series C",
@@ -10159,6 +10690,9 @@
       "amount_original": "355000000",
       "amount_currency": "USD",
       "evidence_notes": "Company announcement states Series C raised USD355M at USD4.65B post-money valuation for AI infrastructure cloud.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 355000000
     },
     {
@@ -10166,6 +10700,7 @@
       "label": "Modular 2025 Funding round",
       "kind": "round",
       "startup_id": "startup_modular",
+      "event_id": "evt_modular_2025_funding_round",
       "startup_name": "Modular",
       "amount_usd": 250000000,
       "round_type": "Funding round",
@@ -10181,6 +10716,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "AI infrastructure and compiler/runtime platform; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -10188,6 +10726,7 @@
       "label": "Moonshot AI 2024 Series B",
       "kind": "round",
       "startup_id": "startup_moonshot_ai",
+      "event_id": "evt_moonshot_ai_2024_series_b",
       "startup_name": "Moonshot AI",
       "amount_usd": 1000000000,
       "round_type": "Series B",
@@ -10203,6 +10742,9 @@
       "amount_original": "1000000000",
       "amount_currency": "USD",
       "evidence_notes": "Chinese Kimi / long-context LLM company; Reuters reports over USD1B round.",
+      "amount_basis": "lower_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1000000000
     },
     {
@@ -10210,6 +10752,7 @@
       "label": "Moonshot AI 2026 Funding round",
       "kind": "round",
       "startup_id": "startup_moonshot_ai",
+      "event_id": "evt_moonshot_ai_2026_funding_round",
       "startup_name": "Moonshot AI",
       "amount_usd": 2000000000,
       "round_type": "Funding round",
@@ -10225,6 +10768,9 @@
       "amount_original": "2000000000",
       "amount_currency": "USD",
       "evidence_notes": "Second major Moonshot round in scope; source attributes details to Huafeng Capital post and TechCrunch spokesperson confirmation.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 2000000000
     },
     {
@@ -10232,6 +10778,7 @@
       "label": "Multiverse Computing 2025 Series B",
       "kind": "round",
       "startup_id": "startup_multiverse_computing",
+      "event_id": "evt_multiverse_computing_2025_series_b",
       "startup_name": "Multiverse Computing",
       "amount_usd": 215000000,
       "round_type": "Series B",
@@ -10247,6 +10794,9 @@
       "amount_original": "189000000",
       "amount_currency": "EUR",
       "evidence_notes": "Quantum-inspired AI model compression company; EUR189M reported as about USD215M.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 215000000
     },
     {
@@ -10254,6 +10804,7 @@
       "label": "Mythic 2025 Venture round",
       "kind": "round",
       "startup_id": "startup_mythic",
+      "event_id": "evt_mythic_2025_venture_round",
       "startup_name": "Mythic",
       "amount_usd": 125000000,
       "round_type": "Venture round",
@@ -10269,6 +10820,9 @@
       "amount_original": "125000000",
       "amount_currency": "USD",
       "evidence_notes": "Power-efficient AI compute company; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 125000000
     },
     {
@@ -10276,6 +10830,7 @@
       "label": "Nebius 2024 Private placement",
       "kind": "round",
       "startup_id": "startup_nebius",
+      "event_id": "evt_nebius_2024_private_placement",
       "startup_name": "Nebius",
       "amount_usd": 700000000,
       "round_type": "Private placement",
@@ -10291,6 +10846,9 @@
       "amount_original": "700000000",
       "amount_currency": "USD",
       "evidence_notes": "European AI infrastructure company formerly known as Yandex N.V.; included as private strategic equity financing comparable to other AI infrastructure mega-rounds.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 700000000
     },
     {
@@ -10298,6 +10856,7 @@
       "label": "Neural Concept 2025 Series C",
       "kind": "round",
       "startup_id": "startup_neural_concept",
+      "event_id": "evt_neural_concept_2025_series_c",
       "startup_name": "Neural Concept",
       "amount_usd": 100000000,
       "round_type": "Series C",
@@ -10313,6 +10872,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI-native engineering intelligence platform; threshold-inclusive USD100M round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -10320,6 +10882,7 @@
       "label": "Nexthop AI 2025 Series A",
       "kind": "round",
       "startup_id": "startup_nexthop_ai",
+      "event_id": "evt_nexthop_ai_2025_series_a",
       "startup_name": "Nexthop AI",
       "amount_usd": 110000000,
       "round_type": "Series A",
@@ -10335,6 +10898,9 @@
       "amount_original": "110000000",
       "amount_currency": "USD",
       "evidence_notes": "AI networking infrastructure company; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 110000000
     },
     {
@@ -10342,6 +10908,7 @@
       "label": "Nimble Robotics 2024 Series C",
       "kind": "round",
       "startup_id": "startup_nimble_robotics",
+      "event_id": "evt_nimble_robotics_2024_series_c",
       "startup_name": "Nimble Robotics",
       "amount_usd": 106000000,
       "round_type": "Series C",
@@ -10357,6 +10924,9 @@
       "amount_original": "106000000",
       "amount_currency": "USD",
       "evidence_notes": "Autonomous warehouse robotics startup; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 106000000
     },
     {
@@ -10364,6 +10934,7 @@
       "label": "Nscale 2025 Series B",
       "kind": "round",
       "startup_id": "startup_nscale",
+      "event_id": "evt_nscale_2025_series_b",
       "startup_name": "Nscale",
       "amount_usd": 1100000000,
       "round_type": "Series B",
@@ -10379,6 +10950,9 @@
       "amount_original": "1100000000",
       "amount_currency": "USD",
       "evidence_notes": "Press release syndicated through Yahoo Finance; AI infrastructure and GPU deployment.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1100000000
     },
     {
@@ -10386,6 +10960,7 @@
       "label": "Nscale 2026 Series C",
       "kind": "round",
       "startup_id": "startup_nscale",
+      "event_id": "evt_nscale_2026_series_c",
       "startup_name": "Nscale",
       "amount_usd": 2000000000,
       "round_type": "Series C",
@@ -10401,6 +10976,9 @@
       "amount_original": "2000000000",
       "amount_currency": "USD",
       "evidence_notes": "Company press release describes Series C as USD2B and focused on vertically integrated AI infrastructure.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 2000000000
     },
     {
@@ -10408,6 +10986,7 @@
       "label": "ORO Labs 2026 Series C",
       "kind": "round",
       "startup_id": "startup_oro_labs",
+      "event_id": "evt_oro_labs_2026_series_c",
       "startup_name": "ORO Labs",
       "amount_usd": 100000000,
       "round_type": "Series C",
@@ -10423,6 +11002,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Company press release reports USD100M Series C for AI orchestration platform; dual HQ wording includes San Francisco and London, assigned USA based on company profile.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -10430,6 +11012,7 @@
       "label": "OpenAI 2024 Venture round",
       "kind": "round",
       "startup_id": "startup_openai",
+      "event_id": "evt_openai_2024_venture_round",
       "startup_name": "OpenAI",
       "amount_usd": 6600000000,
       "round_type": "Venture round",
@@ -10445,6 +11028,9 @@
       "amount_original": "6600000000",
       "amount_currency": "USD",
       "evidence_notes": "Private venture round; include as AI-native mega-round despite mature company status.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 6600000000
     },
     {
@@ -10452,6 +11038,7 @@
       "label": "OpenAI 2025 Growth round",
       "kind": "round",
       "startup_id": "startup_openai",
+      "event_id": "evt_openai_2025_growth",
       "startup_name": "OpenAI",
       "amount_usd": 40000000000,
       "round_type": "Growth round",
@@ -10467,6 +11054,9 @@
       "amount_original": "40000000000",
       "amount_currency": "USD",
       "evidence_notes": "Record private AI funding round; include with note because OpenAI is late-stage private company.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 40000000000
     },
     {
@@ -10474,28 +11064,33 @@
       "label": "OpenAI 2026 Growth round",
       "kind": "round",
       "startup_id": "startup_openai",
+      "event_id": "evt_openai_2026_growth",
       "startup_name": "OpenAI",
-      "amount_usd": 110000000000,
+      "amount_usd": 122000000000,
       "round_type": "Growth round",
-      "round_date": "2026-02-27",
+      "round_date": "2026-03-31",
       "year": "2026",
-      "month": "2",
+      "month": "3",
       "region": "US",
       "country": "USA",
       "domain": "Foundation Models / LLMs",
       "confidence": "high",
       "source_type": "press_release",
-      "source_url": "https://openai.com/index/scaling-ai-for-everyone/",
-      "amount_original": "110000000000",
+      "source_url": "https://openai.com/index/accelerating-the-next-phase-ai/",
+      "amount_original": "122000000000",
       "amount_currency": "USD",
-      "evidence_notes": "Historic strategic/private funding round; include for consistency because prior OpenAI rounds are in the dataset. April reports of USD122B are not used here because OpenAI official source states USD110B on Feb 27.",
-      "importance_score": 110000000000
+      "evidence_notes": "Historic strategic/private funding round; include for consistency because prior OpenAI rounds are in the dataset. April reports of USD122B are not used here because OpenAI official source states USD110B on Feb 27. Correction checked 2026-10-04: Final March update replaces February announcement for the same financing; not an additional round. Source: https://openai.com/index/accelerating-the-next-phase-ai/ Correction checked 2026-10-04: USD committed capital reported at final close. Source: https://openai.com/index/accelerating-the-next-phase-ai/ Correction checked 2026-10-04: Use the explicitly reported closing announcement date. Source: https://openai.com/index/accelerating-the-next-phase-ai/ Correction checked 2026-10-04: Month matches closing announcement date. Source: https://openai.com/index/accelerating-the-next-phase-ai/ Correction checked 2026-10-04: Use final company funding update while preserving original evidence. Source: https://openai.com/index/accelerating-the-next-phase-ai/ Evidence assessment: Company confirms close amount and named investors; committed capital is not proof of cash disbursement; investor roster remains partial",
+      "amount_basis": "committed_capital",
+      "verification_status": "core_fields_checked",
+      "source_checked_at": "2026-10-04",
+      "importance_score": 122000000000
     },
     {
       "id": "round_openevidence_2025_series_b_07",
       "label": "OpenEvidence 2025 Series B",
       "kind": "round",
       "startup_id": "startup_openevidence",
+      "event_id": "evt_openevidence_2025_series_b",
       "startup_name": "OpenEvidence",
       "amount_usd": 210000000,
       "round_type": "Series B",
@@ -10511,6 +11106,9 @@
       "amount_original": "210000000",
       "amount_currency": "USD",
       "evidence_notes": "Medical search and clinical AI application; Series B crossed USD100M threshold.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 210000000
     },
     {
@@ -10518,6 +11116,7 @@
       "label": "OpenEvidence 2025 Series C",
       "kind": "round",
       "startup_id": "startup_openevidence",
+      "event_id": "evt_openevidence_2025_series_c",
       "startup_name": "OpenEvidence",
       "amount_usd": 200000000,
       "round_type": "Series C",
@@ -10533,6 +11132,9 @@
       "amount_original": "200000000",
       "amount_currency": "USD",
       "evidence_notes": "Second 2025 medical AI chatbot mega-round; investor details from contemporaneous public reporting.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 200000000
     },
     {
@@ -10540,6 +11142,7 @@
       "label": "OpenEvidence 2026 Series D",
       "kind": "round",
       "startup_id": "startup_openevidence",
+      "event_id": "evt_openevidence_2026_series_d",
       "startup_name": "OpenEvidence",
       "amount_usd": 250000000,
       "round_type": "Series D",
@@ -10555,6 +11158,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Medical AI chatbot company; added from TechCrunch 2026 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -10562,6 +11168,7 @@
       "label": "Ori 2025 Funding round",
       "kind": "round",
       "startup_id": "startup_ori",
+      "event_id": "evt_ori_2025_funding_round",
       "startup_name": "Ori",
       "amount_usd": 175000000,
       "round_type": "Funding round",
@@ -10577,6 +11184,9 @@
       "amount_original": "140000000",
       "amount_currency": "GBP",
       "evidence_notes": "UK AI cloud / compute-as-a-service infrastructure startup; amount converted approximately from GBP140M.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 175000000
     },
     {
@@ -10584,6 +11194,7 @@
       "label": "PaleBlueDot AI 2026 Series B",
       "kind": "round",
       "startup_id": "startup_palebluedot_ai",
+      "event_id": "evt_palebluedot_ai_2026_series_b",
       "startup_name": "PaleBlueDot AI",
       "amount_usd": 150000000,
       "round_type": "Series B",
@@ -10599,6 +11210,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "AI compute platform; source reports B Capital lead.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -10606,6 +11220,7 @@
       "label": "Parallel 2025 Series A",
       "kind": "round",
       "startup_id": "startup_parallel",
+      "event_id": "evt_parallel_2025_series_a",
       "startup_name": "Parallel",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -10621,6 +11236,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Web infrastructure for AI agents; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -10628,6 +11246,7 @@
       "label": "Parloa 2025 Series C",
       "kind": "round",
       "startup_id": "startup_parloa",
+      "event_id": "evt_parloa_2025_series_c",
       "startup_name": "Parloa",
       "amount_usd": 120000000,
       "round_type": "Series C",
@@ -10643,6 +11262,9 @@
       "amount_original": "120000000",
       "amount_currency": "USD",
       "evidence_notes": "Agentic AI for enterprise customer experience.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 120000000
     },
     {
@@ -10650,6 +11272,7 @@
       "label": "Path Robotics 2024 Series D",
       "kind": "round",
       "startup_id": "startup_path_robotics",
+      "event_id": "evt_path_robotics_2024_series_d",
       "startup_name": "Path Robotics",
       "amount_usd": 100000000,
       "round_type": "Series D",
@@ -10665,6 +11288,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Autonomous welding robotics startup; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -10672,6 +11298,7 @@
       "label": "Periodic Labs 2025 Seed",
       "kind": "round",
       "startup_id": "startup_periodic_labs",
+      "event_id": "evt_periodic_labs_2025_seed",
       "startup_name": "Periodic Labs",
       "amount_usd": 300000000,
       "round_type": "Seed",
@@ -10687,6 +11314,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "AI scientist startup for materials discovery; assigned climate/energy AI because public coverage emphasizes scientific materials discovery.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -10694,6 +11324,7 @@
       "label": "Perplexity 2024 Funding round",
       "kind": "round",
       "startup_id": "startup_perplexity",
+      "event_id": "evt_perplexity_2024_funding_round",
       "startup_name": "Perplexity",
       "amount_usd": 500000000,
       "round_type": "Funding round",
@@ -10709,6 +11340,9 @@
       "amount_original": "500000000",
       "amount_currency": "USD",
       "evidence_notes": "AI answer/search engine; Reuters mirror reports USD500M round led by IVP.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 500000000
     },
     {
@@ -10716,6 +11350,7 @@
       "label": "Physical Intelligence 2024 Series A",
       "kind": "round",
       "startup_id": "startup_physical_intelligence",
+      "event_id": "evt_physical_intelligence_2024_series_a",
       "startup_name": "Physical Intelligence",
       "amount_usd": 400000000,
       "round_type": "Series A",
@@ -10731,6 +11366,9 @@
       "amount_original": "400000000",
       "amount_currency": "USD",
       "evidence_notes": "Robotics foundation model startup; TechCrunch cites Reuters-sourced round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 400000000
     },
     {
@@ -10738,6 +11376,7 @@
       "label": "Physical Intelligence 2025 Series B",
       "kind": "round",
       "startup_id": "startup_physical_intelligence",
+      "event_id": "evt_physical_intelligence_2025_series_b",
       "startup_name": "Physical Intelligence",
       "amount_usd": 600000000,
       "round_type": "Series B",
@@ -10753,6 +11392,9 @@
       "amount_original": "600000000",
       "amount_currency": "USD",
       "evidence_notes": "Follow-on robot foundation model funding; captures 2025 shift into physical AI.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 600000000
     },
     {
@@ -10760,6 +11402,7 @@
       "label": "PhysicsX 2025 Series B",
       "kind": "round",
       "startup_id": "startup_physicsx",
+      "event_id": "evt_physicsx_2025_series_b",
       "startup_name": "PhysicsX",
       "amount_usd": 135000000,
       "round_type": "Series B",
@@ -10775,6 +11418,9 @@
       "amount_original": "135000000",
       "amount_currency": "USD",
       "evidence_notes": "Company press release syndicated through GlobeNewswire/Yahoo; AI-native engineering and manufacturing.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 135000000
     },
     {
@@ -10782,6 +11428,7 @@
       "label": "Poolside 2024 Series B",
       "kind": "round",
       "startup_id": "startup_poolside",
+      "event_id": "evt_poolside_2024_series_b",
       "startup_name": "Poolside",
       "amount_usd": 500000000,
       "round_type": "Series B",
@@ -10797,6 +11444,9 @@
       "amount_original": "500000000",
       "amount_currency": "USD",
       "evidence_notes": "Paris/San Francisco company; assigned Europe because project compares HQ/operational center and Poolside publicly presents Paris as headquarters.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 500000000
     },
     {
@@ -10804,6 +11454,7 @@
       "label": "Quantexa 2025 Series F",
       "kind": "round",
       "startup_id": "startup_quantexa",
+      "event_id": "evt_quantexa_2025_series_f",
       "startup_name": "Quantexa",
       "amount_usd": 175000000,
       "round_type": "Series F",
@@ -10819,6 +11470,9 @@
       "amount_original": "175000000",
       "amount_currency": "USD",
       "evidence_notes": "Decision intelligence platform using AI and graph/data analytics; included as applied enterprise AI/data infrastructure.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 175000000
     },
     {
@@ -10826,6 +11480,7 @@
       "label": "Recogni 2024 Series C",
       "kind": "round",
       "startup_id": "startup_recogni",
+      "event_id": "evt_recogni_2024_series_c",
       "startup_name": "Recogni",
       "amount_usd": 102000000,
       "round_type": "Series C",
@@ -10841,6 +11496,9 @@
       "amount_original": "102000000",
       "amount_currency": "USD",
       "evidence_notes": "Low-power AI interface and compute company; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 102000000
     },
     {
@@ -10848,6 +11506,7 @@
       "label": "Recursive Superintelligence 2026 Seed",
       "kind": "round",
       "startup_id": "startup_recursive_superintelligence",
+      "event_id": "evt_recursive_superintelligence_2026_seed",
       "startup_name": "Recursive Superintelligence",
       "amount_usd": 650000000,
       "round_type": "Seed",
@@ -10863,6 +11522,9 @@
       "amount_original": "650000000",
       "amount_currency": "USD",
       "evidence_notes": "Self-improving AI startup; source describes San Francisco base with UK/DeepMind/OpenAI founder links.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 650000000
     },
     {
@@ -10870,6 +11532,7 @@
       "label": "Reflection AI 2025 Series B",
       "kind": "round",
       "startup_id": "startup_reflection_ai",
+      "event_id": "evt_reflection_ai_2025_series_b",
       "startup_name": "Reflection AI",
       "amount_usd": 2000000000,
       "round_type": "Series B",
@@ -10885,6 +11548,9 @@
       "amount_original": "2000000000",
       "amount_currency": "USD",
       "evidence_notes": "Reuters mirror; source reports Nvidia-backed round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 2000000000
     },
     {
@@ -10892,6 +11558,7 @@
       "label": "Reka AI 2025 Series B",
       "kind": "round",
       "startup_id": "startup_reka_ai",
+      "event_id": "evt_reka_ai_2025_series_b",
       "startup_name": "Reka AI",
       "amount_usd": 110000000,
       "round_type": "Series B",
@@ -10907,6 +11574,9 @@
       "amount_original": "110000000",
       "amount_currency": "USD",
       "evidence_notes": "AI research lab developing multimodal models; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 110000000
     },
     {
@@ -10914,6 +11584,7 @@
       "label": "Render 2026 Series C extension",
       "kind": "round",
       "startup_id": "startup_render",
+      "event_id": "evt_render_2026_series_c_extension",
       "startup_name": "Render",
       "amount_usd": 100000000,
       "round_type": "Series C extension",
@@ -10929,6 +11600,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Cloud runtime for AI applications and agents; included as AI-native software infrastructure.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -10936,6 +11610,7 @@
       "label": "Runway 2026 Series E",
       "kind": "round",
       "startup_id": "startup_runway",
+      "event_id": "evt_runway_2026_series_e",
       "startup_name": "Runway",
       "amount_usd": 315000000,
       "round_type": "Series E",
@@ -10951,6 +11626,9 @@
       "amount_original": "315000000",
       "amount_currency": "USD",
       "evidence_notes": "AI video and world-model startup.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 315000000
     },
     {
@@ -10958,6 +11636,7 @@
       "label": "Safe Superintelligence 2024 Seed",
       "kind": "round",
       "startup_id": "startup_safe_superintelligence",
+      "event_id": "evt_safe_superintelligence_2024_seed",
       "startup_name": "Safe Superintelligence",
       "amount_usd": 1000000000,
       "round_type": "Seed",
@@ -10973,6 +11652,9 @@
       "amount_original": "1000000000",
       "amount_currency": "USD",
       "evidence_notes": "Reuters mirror; headquarters represented as Palo Alto/Silicon Valley office for US region.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1000000000
     },
     {
@@ -10980,6 +11662,7 @@
       "label": "Sakana AI 2024 Series A",
       "kind": "round",
       "startup_id": "startup_sakana_ai",
+      "event_id": "evt_sakana_ai_2024_series_a",
       "startup_name": "Sakana AI",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -10995,6 +11678,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Tokyo foundation-model startup; amount reported as more than USD100M and rounded to threshold for analysis.",
+      "amount_basis": "lower_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11002,6 +11688,7 @@
       "label": "SandboxAQ 2024 Funding round",
       "kind": "round",
       "startup_id": "startup_sandboxaq",
+      "event_id": "evt_sandboxaq_2024_funding_round",
       "startup_name": "SandboxAQ",
       "amount_usd": 300000000,
       "round_type": "Funding round",
@@ -11017,6 +11704,9 @@
       "amount_original": "300000000",
       "amount_currency": "USD",
       "evidence_notes": "Alphabet spinout applying large quantitative models to cyber, life sciences, chemistry, navigation, and materials.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 300000000
     },
     {
@@ -11024,6 +11714,7 @@
       "label": "Sarvam AI 2026 Series B first close",
       "kind": "round",
       "startup_id": "startup_sarvam_ai",
+      "event_id": "evt_sarvam_ai_2026_series_b_first_close",
       "startup_name": "Sarvam AI",
       "amount_usd": 234000000,
       "round_type": "Series B first close",
@@ -11039,6 +11730,9 @@
       "amount_original": "234000000",
       "amount_currency": "USD",
       "evidence_notes": "Reviewed 2026-10-03; USD234M actually raised in first close; USD300M is target and must not be counted as closed proceeds.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 234000000
     },
     {
@@ -11046,6 +11740,7 @@
       "label": "Scale AI 2024 Series F",
       "kind": "round",
       "startup_id": "startup_scale_ai",
+      "event_id": "evt_scale_ai_2024_series_f",
       "startup_name": "Scale AI",
       "amount_usd": 1000000000,
       "round_type": "Series F",
@@ -11061,6 +11756,9 @@
       "amount_original": "1000000000",
       "amount_currency": "USD",
       "evidence_notes": "Data-labeling and AI data platform; TechCrunch reports May 2024 Series F.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1000000000
     },
     {
@@ -11068,6 +11766,7 @@
       "label": "Scout AI 2026 Series A",
       "kind": "round",
       "startup_id": "startup_scout_ai",
+      "event_id": "evt_scout_ai_2026_series_a",
       "startup_name": "Scout AI",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -11083,6 +11782,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Company press release reports oversubscribed USD100M Series A co-led by Align Ventures and Draper Associates.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11090,6 +11792,7 @@
       "label": "Sesame 2025 Series B",
       "kind": "round",
       "startup_id": "startup_sesame",
+      "event_id": "evt_sesame_2025_series_b",
       "startup_name": "Sesame",
       "amount_usd": 250000000,
       "round_type": "Series B",
@@ -11105,6 +11808,9 @@
       "amount_original": "250000000",
       "amount_currency": "USD",
       "evidence_notes": "Voice AI company; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 250000000
     },
     {
@@ -11112,6 +11818,7 @@
       "label": "Shield AI 2026 Series G",
       "kind": "round",
       "startup_id": "startup_shield_ai",
+      "event_id": "evt_shield_ai_2026_series_g",
       "startup_name": "Shield AI",
       "amount_usd": 1500000000,
       "round_type": "Series G",
@@ -11127,6 +11834,9 @@
       "amount_original": "1500000000",
       "amount_currency": "USD",
       "evidence_notes": "Autonomous defense aircraft company; only USD1.5B Series G counted, excluding the separate USD500M fixed-return preferred equity financing.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1500000000
     },
     {
@@ -11134,6 +11844,7 @@
       "label": "Sierra 2024 Funding round",
       "kind": "round",
       "startup_id": "startup_sierra",
+      "event_id": "evt_sierra_2024_funding_round",
       "startup_name": "Sierra",
       "amount_usd": 175000000,
       "round_type": "Funding round",
@@ -11149,6 +11860,9 @@
       "amount_original": "175000000",
       "amount_currency": "USD",
       "evidence_notes": "Enterprise customer-service AI agent startup; source reports round led by Greenoaks.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 175000000
     },
     {
@@ -11156,6 +11870,7 @@
       "label": "Sierra 2025 Funding round",
       "kind": "round",
       "startup_id": "startup_sierra",
+      "event_id": "evt_sierra_2025_funding_round",
       "startup_name": "Sierra",
       "amount_usd": 350000000,
       "round_type": "Funding round",
@@ -11171,6 +11886,9 @@
       "amount_original": "350000000",
       "amount_currency": "USD",
       "evidence_notes": "Enterprise AI agent company; TechCrunch reports company blog confirmed Greenoaks-led round.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 350000000
     },
     {
@@ -11178,6 +11896,7 @@
       "label": "Sierra 2026 Funding round",
       "kind": "round",
       "startup_id": "startup_sierra",
+      "event_id": "evt_sierra_2026_funding_round",
       "startup_name": "Sierra",
       "amount_usd": 950000000,
       "round_type": "Funding round",
@@ -11193,6 +11912,9 @@
       "amount_original": "950000000",
       "amount_currency": "USD",
       "evidence_notes": "Current 2026 enterprise AI agent mega-round led by Tiger Global and GV.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 950000000
     },
     {
@@ -11200,6 +11922,7 @@
       "label": "Simile 2026 Series A",
       "kind": "round",
       "startup_id": "startup_simile",
+      "event_id": "evt_simile_2026_series_a",
       "startup_name": "Simile",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -11215,6 +11938,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Stanford-originated AI startup building digital twins / human behavior prediction models.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11222,6 +11948,7 @@
       "label": "Skild AI 2026 Series C",
       "kind": "round",
       "startup_id": "startup_skild_ai",
+      "event_id": "evt_skild_ai_2026_series_c",
       "startup_name": "Skild AI",
       "amount_usd": 1400000000,
       "round_type": "Series C",
@@ -11237,6 +11964,9 @@
       "amount_original": "1400000000",
       "amount_currency": "USD",
       "evidence_notes": "Robotics foundation model company; company announcement says it raised USD1.4B.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1400000000
     },
     {
@@ -11244,6 +11974,7 @@
       "label": "Snorkel AI 2025 Series D",
       "kind": "round",
       "startup_id": "startup_snorkel_ai",
+      "event_id": "evt_snorkel_ai_2025_series_d",
       "startup_name": "Snorkel AI",
       "amount_usd": 100000000,
       "round_type": "Series D",
@@ -11259,6 +11990,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI data-labeling and data-development platform; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11266,6 +12000,7 @@
       "label": "Suno 2024 Series B",
       "kind": "round",
       "startup_id": "startup_suno",
+      "event_id": "evt_suno_2024_series_b",
       "startup_name": "Suno",
       "amount_usd": 125000000,
       "round_type": "Series B",
@@ -11281,6 +12016,9 @@
       "amount_original": "125000000",
       "amount_currency": "USD",
       "evidence_notes": "Generative AI music platform; included to represent creative AI funding.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 125000000
     },
     {
@@ -11288,6 +12026,7 @@
       "label": "Synthesia 2025 Series D",
       "kind": "round",
       "startup_id": "startup_synthesia",
+      "event_id": "evt_synthesia_2025_series_d",
       "startup_name": "Synthesia",
       "amount_usd": 180000000,
       "round_type": "Series D",
@@ -11303,6 +12042,9 @@
       "amount_original": "180000000",
       "amount_currency": "USD",
       "evidence_notes": "AI video platform; CNBC source.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 180000000
     },
     {
@@ -11310,6 +12052,7 @@
       "label": "Synthesia 2025 Series E",
       "kind": "round",
       "startup_id": "startup_synthesia",
+      "event_id": "evt_synthesia_2025_series_e",
       "startup_name": "Synthesia",
       "amount_usd": 200000000,
       "round_type": "Series E",
@@ -11325,6 +12068,9 @@
       "amount_original": "200000000",
       "amount_currency": "USD",
       "evidence_notes": "Follow-on AI video/avatar platform round; captures shift toward enterprise video agents.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 200000000
     },
     {
@@ -11332,6 +12078,7 @@
       "label": "Tennr 2025 Series C",
       "kind": "round",
       "startup_id": "startup_tennr",
+      "event_id": "evt_tennr_2025_series_c",
       "startup_name": "Tennr",
       "amount_usd": 101000000,
       "round_type": "Series C",
@@ -11347,6 +12094,9 @@
       "amount_original": "101000000",
       "amount_currency": "USD",
       "evidence_notes": "Healthcare AI workflow startup; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 101000000
     },
     {
@@ -11354,6 +12104,7 @@
       "label": "TensorWave 2025 Series A",
       "kind": "round",
       "startup_id": "startup_tensorwave",
+      "event_id": "evt_tensorwave_2025_series_a",
       "startup_name": "TensorWave",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -11369,6 +12120,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI infrastructure company; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11376,6 +12130,7 @@
       "label": "Tenstorrent 2024 Series D",
       "kind": "round",
       "startup_id": "startup_tenstorrent",
+      "event_id": "evt_tenstorrent_2024_series_d",
       "startup_name": "Tenstorrent",
       "amount_usd": 693000000,
       "round_type": "Series D",
@@ -11391,6 +12146,9 @@
       "amount_original": "693000000",
       "amount_currency": "USD",
       "evidence_notes": "AI chip and IP startup with Toronto/Santa Clara footprint; assigned Canada for regional analysis pending stricter HQ review.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 693000000
     },
     {
@@ -11398,6 +12156,7 @@
       "label": "Tessl 2024 Series A",
       "kind": "round",
       "startup_id": "startup_tessl",
+      "event_id": "evt_tessl_2024_series_a",
       "startup_name": "Tessl",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -11413,6 +12172,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Company announced USD125M total funding, including a USD25M seed and USD100M Series A; only the Series A is included because it meets the threshold.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11420,6 +12182,7 @@
       "label": "Thinking Machines Lab 2025 Seed",
       "kind": "round",
       "startup_id": "startup_thinking_machines_lab",
+      "event_id": "evt_thinking_machines_2025_seed",
       "startup_name": "Thinking Machines Lab",
       "amount_usd": 2000000000,
       "round_type": "Seed",
@@ -11435,6 +12198,9 @@
       "amount_original": "2000000000",
       "amount_currency": "USD",
       "evidence_notes": "AI research lab seed round led by Andreessen Horowitz.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 2000000000
     },
     {
@@ -11442,6 +12208,7 @@
       "label": "Together AI 2024 Series A",
       "kind": "round",
       "startup_id": "startup_together_ai",
+      "event_id": "evt_together_ai_2024_series_a",
       "startup_name": "Together AI",
       "amount_usd": 106000000,
       "round_type": "Series A",
@@ -11457,6 +12224,9 @@
       "amount_original": "106000000",
       "amount_currency": "USD",
       "evidence_notes": "Open-source generative AI and model infrastructure platform.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 106000000
     },
     {
@@ -11464,6 +12234,7 @@
       "label": "Together AI 2025 Series B",
       "kind": "round",
       "startup_id": "startup_together_ai",
+      "event_id": "evt_together_ai_2025_series_b",
       "startup_name": "Together AI",
       "amount_usd": 305000000,
       "round_type": "Series B",
@@ -11479,6 +12250,9 @@
       "amount_original": "305000000",
       "amount_currency": "USD",
       "evidence_notes": "Model development infrastructure.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 305000000
     },
     {
@@ -11486,6 +12260,7 @@
       "label": "Tractian 2024 Series C",
       "kind": "round",
       "startup_id": "startup_tractian",
+      "event_id": "evt_tractian_2024_series_c",
       "startup_name": "Tractian",
       "amount_usd": 120000000,
       "round_type": "Series C",
@@ -11501,6 +12276,9 @@
       "amount_original": "120000000",
       "amount_currency": "USD",
       "evidence_notes": "Machine-intelligence industrial maintenance platform; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 120000000
     },
     {
@@ -11508,6 +12286,7 @@
       "label": "Turing 2025 Series E",
       "kind": "round",
       "startup_id": "startup_turing",
+      "event_id": "evt_turing_2025_series_e",
       "startup_name": "Turing",
       "amount_usd": 111000000,
       "round_type": "Series E",
@@ -11523,6 +12302,9 @@
       "amount_original": "111000000",
       "amount_currency": "USD",
       "evidence_notes": "AI coding/training partner for LLM companies; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 111000000
     },
     {
@@ -11530,6 +12312,7 @@
       "label": "Unconventional AI 2025 Seed",
       "kind": "round",
       "startup_id": "startup_unconventional_ai",
+      "event_id": "evt_unconventional_ai_2025_seed",
       "startup_name": "Unconventional AI",
       "amount_usd": 475000000,
       "round_type": "Seed",
@@ -11545,6 +12328,9 @@
       "amount_original": "475000000",
       "amount_currency": "USD",
       "evidence_notes": "Startup rethinking computing foundations for AI; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 475000000
     },
     {
@@ -11552,6 +12338,7 @@
       "label": "Uniphore 2025 Series F",
       "kind": "round",
       "startup_id": "startup_uniphore",
+      "event_id": "evt_uniphore_2025_series_f",
       "startup_name": "Uniphore",
       "amount_usd": 260000000,
       "round_type": "Series F",
@@ -11567,6 +12354,9 @@
       "amount_original": "260000000",
       "amount_currency": "USD",
       "evidence_notes": "Business AI cloud platform with US/India roots; assigned US by Palo Alto headquarters.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 260000000
     },
     {
@@ -11574,6 +12364,7 @@
       "label": "Upscale AI 2025 Seed",
       "kind": "round",
       "startup_id": "startup_upscale_ai",
+      "event_id": "evt_upscale_ai_2025_seed",
       "startup_name": "Upscale AI",
       "amount_usd": 100000000,
       "round_type": "Seed",
@@ -11589,6 +12380,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "AI infrastructure startup; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11596,6 +12390,7 @@
       "label": "Wayve 2024 Series C",
       "kind": "round",
       "startup_id": "startup_wayve",
+      "event_id": "evt_wayve_2024_series_c",
       "startup_name": "Wayve",
       "amount_usd": 1050000000,
       "round_type": "Series C",
@@ -11611,6 +12406,9 @@
       "amount_original": "1050000000",
       "amount_currency": "USD",
       "evidence_notes": "Largest European AI round in 2024 per Sifted; autonomous driving AI.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1050000000
     },
     {
@@ -11618,6 +12416,7 @@
       "label": "Weka 2024 Series E",
       "kind": "round",
       "startup_id": "startup_weka",
+      "event_id": "evt_weka_2024_series_e",
       "startup_name": "Weka",
       "amount_usd": 140000000,
       "round_type": "Series E",
@@ -11633,6 +12432,9 @@
       "amount_original": "140000000",
       "amount_currency": "USD",
       "evidence_notes": "AI-native data platform company; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 140000000
     },
     {
@@ -11640,6 +12442,7 @@
       "label": "Wonderful 2025 Series A",
       "kind": "round",
       "startup_id": "startup_wonderful",
+      "event_id": "evt_wonderful_2025_series_a",
       "startup_name": "Wonderful",
       "amount_usd": 100000000,
       "round_type": "Series A",
@@ -11655,6 +12458,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Israeli AI agent startup with Netherlands/international footprint; assigned Israel consistently with the existing 2026 row.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11662,6 +12468,7 @@
       "label": "Wonderful 2026 Series B",
       "kind": "round",
       "startup_id": "startup_wonderful",
+      "event_id": "evt_wonderful_2026_series_b",
       "startup_name": "Wonderful",
       "amount_usd": 150000000,
       "round_type": "Series B",
@@ -11677,6 +12484,9 @@
       "amount_original": "150000000",
       "amount_currency": "USD",
       "evidence_notes": "Israeli AI agents company; include with note that it has international/Netherlands footprint.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 150000000
     },
     {
@@ -11684,6 +12494,7 @@
       "label": "World Labs 2026 Funding round",
       "kind": "round",
       "startup_id": "startup_world_labs",
+      "event_id": "evt_world_labs_2026_growth",
       "startup_name": "World Labs",
       "amount_usd": 1000000000,
       "round_type": "Funding round",
@@ -11699,6 +12510,9 @@
       "amount_original": "1000000000",
       "amount_currency": "USD",
       "evidence_notes": "Spatial intelligence startup; lead not specified in accessible Reuters mirror.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1000000000
     },
     {
@@ -11706,6 +12520,7 @@
       "label": "Writer 2024 Series C",
       "kind": "round",
       "startup_id": "startup_writer",
+      "event_id": "evt_writer_2024_series_c",
       "startup_name": "Writer",
       "amount_usd": 200000000,
       "round_type": "Series C",
@@ -11721,6 +12536,9 @@
       "amount_original": "200000000",
       "amount_currency": "USD",
       "evidence_notes": "Full-stack enterprise generative AI platform; company announcement says round was co-led by Premji Invest, Radical Ventures, and ICONIQ Growth.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 200000000
     },
     {
@@ -11728,6 +12546,7 @@
       "label": "Xaira Therapeutics 2024 Launch round",
       "kind": "round",
       "startup_id": "startup_xaira_therapeutics",
+      "event_id": "evt_xaira_2024_launch_round",
       "startup_name": "Xaira Therapeutics",
       "amount_usd": 1000000000,
       "round_type": "Launch round",
@@ -11743,6 +12562,9 @@
       "amount_original": "1000000000",
       "amount_currency": "USD",
       "evidence_notes": "AI drug discovery startup launched with more than USD1B in funding; included to represent healthcare AI mega-rounds.",
+      "amount_basis": "lower_bound",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 1000000000
     },
     {
@@ -11750,6 +12572,7 @@
       "label": "You.com 2025 Series C",
       "kind": "round",
       "startup_id": "startup_you_com",
+      "event_id": "evt_you_com_2025_series_c",
       "startup_name": "You.com",
       "amount_usd": 100000000,
       "round_type": "Series C",
@@ -11765,6 +12588,9 @@
       "amount_original": "100000000",
       "amount_currency": "USD",
       "evidence_notes": "Personalized AI search engine; added from TechCrunch 2025 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 100000000
     },
     {
@@ -11772,6 +12598,7 @@
       "label": "Zephyr AI 2024 Series A",
       "kind": "round",
       "startup_id": "startup_zephyr_ai",
+      "event_id": "evt_zephyr_ai_2024_series_a",
       "startup_name": "Zephyr AI",
       "amount_usd": 111000000,
       "round_type": "Series A",
@@ -11787,6 +12614,9 @@
       "amount_original": "111000000",
       "amount_currency": "USD",
       "evidence_notes": "Precision medicine and drug-discovery AI startup; added from TechCrunch 2024 US AI mega-round tracker.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 111000000
     },
     {
@@ -11794,6 +12624,7 @@
       "label": "Zhipu AI 2024 Funding round",
       "kind": "round",
       "startup_id": "startup_zhipu_ai",
+      "event_id": "evt_zhipu_ai_2024_funding_round",
       "startup_name": "Zhipu AI",
       "amount_usd": 420000000,
       "round_type": "Funding round",
@@ -11809,6 +12640,9 @@
       "amount_original": "3000000000",
       "amount_currency": "CNY",
       "evidence_notes": "Chinese large-model startup; investor list needs event-specific expansion before final network claims.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 420000000
     },
     {
@@ -11816,6 +12650,7 @@
       "label": "humans& 2026 Seed",
       "kind": "round",
       "startup_id": "startup_humans",
+      "event_id": "evt_humans_and_2026_seed",
       "startup_name": "humans&",
       "amount_usd": 480000000,
       "round_type": "Seed",
@@ -11831,6 +12666,9 @@
       "amount_original": "480000000",
       "amount_currency": "USD",
       "evidence_notes": "Human-centric AI tools; very early-stage company.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 480000000
     },
     {
@@ -11838,6 +12676,7 @@
       "label": "xAI 2024 Series B",
       "kind": "round",
       "startup_id": "startup_xai",
+      "event_id": "evt_xai_2024_series_b_may",
       "startup_name": "xAI",
       "amount_usd": 6000000000,
       "round_type": "Series B",
@@ -11853,6 +12692,9 @@
       "amount_original": "6000000000",
       "amount_currency": "USD",
       "evidence_notes": "Company announced Series B; exact close date reported by TechCrunch as May 26/31 depending list/article timing.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 6000000000
     },
     {
@@ -11860,6 +12702,7 @@
       "label": "xAI 2024 Strategic round",
       "kind": "round",
       "startup_id": "startup_xai",
+      "event_id": "evt_xai_2024_strategic_nov",
       "startup_name": "xAI",
       "amount_usd": 6000000000,
       "round_type": "Strategic round",
@@ -11875,6 +12718,9 @@
       "amount_original": "6000000000",
       "amount_currency": "USD",
       "evidence_notes": "Second 2024 xAI mega-round; treated as separate funding event.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 6000000000
     },
     {
@@ -11882,6 +12728,7 @@
       "label": "xAI 2026 Series E",
       "kind": "round",
       "startup_id": "startup_xai",
+      "event_id": "evt_xai_2026_series_e",
       "startup_name": "xAI",
       "amount_usd": 20000000000,
       "round_type": "Series E",
@@ -11897,6 +12744,9 @@
       "amount_original": "20000000000",
       "amount_currency": "USD",
       "evidence_notes": "2026 is partial/incomplete; source says SpaceX acquired xAI weeks later.",
+      "amount_basis": "reported_round",
+      "verification_status": "not_rechecked",
+      "source_checked_at": "",
       "importance_score": 20000000000
     },
     {
@@ -14204,9 +15054,9 @@
       "profile_source_url": "https://openai.com/about/",
       "profile_enriched": true,
       "mega_round_count": 3,
-      "visible_mega_round_funding_usd": 156600000000,
-      "largest_round_usd": 110000000000,
-      "importance_score": 158400000000,
+      "visible_mega_round_funding_usd": 168600000000,
+      "largest_round_usd": 122000000000,
+      "importance_score": 170400000000,
       "trajectory_label": "accelerating"
     },
     {
@@ -15361,8 +16211,8 @@
       "id": "year::2026",
       "label": "2026",
       "kind": "year",
-      "funding_usd": 255438200000,
-      "importance_score": 255438200000
+      "funding_usd": 267438200000,
+      "importance_score": 267438200000
     }
   ],
   "edges": [
@@ -16775,14 +17625,6 @@
       "year": "2026"
     },
     {
-      "id": "startup_openai__raised__round_openai_2026_growth_round_02",
-      "source": "startup_openai",
-      "target": "round_openai_2026_growth_round_02",
-      "kind": "raised",
-      "amount_usd": 110000000000,
-      "year": "2026"
-    },
-    {
       "id": "startup_render__raised__round_render_2026_series_c_extension_02",
       "source": "startup_render",
       "target": "round_render_2026_series_c_extension_02",
@@ -16860,6 +17702,14 @@
       "target": "round_nscale_2026_series_c_03",
       "kind": "raised",
       "amount_usd": 2000000000,
+      "year": "2026"
+    },
+    {
+      "id": "startup_openai__raised__round_openai_2026_growth_round_02",
+      "source": "startup_openai",
+      "target": "round_openai_2026_growth_round_02",
+      "kind": "raised",
+      "amount_usd": 122000000000,
       "year": "2026"
     },
     {
@@ -29600,10 +30450,10 @@
       "target": "round_openai_2026_growth_round_02",
       "kind": "participated",
       "role": "lead",
-      "amount_usd": 110000000000,
-      "linked_round_usd": 110000000000,
+      "amount_usd": 122000000000,
+      "linked_round_usd": 122000000000,
       "participation_role": "lead",
-      "participation_weight": 159500000000,
+      "participation_weight": 176900000000,
       "allocation_basis": "role_proxy",
       "year": "2026"
     },
@@ -29613,10 +30463,10 @@
       "target": "round_openai_2026_growth_round_02",
       "kind": "participated",
       "role": "lead",
-      "amount_usd": 110000000000,
-      "linked_round_usd": 110000000000,
+      "amount_usd": 122000000000,
+      "linked_round_usd": 122000000000,
       "participation_role": "lead",
-      "participation_weight": 159500000000,
+      "participation_weight": 176900000000,
       "allocation_basis": "role_proxy",
       "year": "2026"
     },
@@ -29626,10 +30476,10 @@
       "target": "round_openai_2026_growth_round_02",
       "kind": "participated",
       "role": "lead",
-      "amount_usd": 110000000000,
-      "linked_round_usd": 110000000000,
+      "amount_usd": 122000000000,
+      "linked_round_usd": 122000000000,
       "participation_role": "lead",
-      "participation_weight": 159500000000,
+      "participation_weight": 176900000000,
       "allocation_basis": "role_proxy",
       "year": "2026"
     },
@@ -38036,12 +38886,6 @@
       "kind": "occurred_in"
     },
     {
-      "id": "round_openai_2026_growth_round_02__year__year::2026",
-      "source": "round_openai_2026_growth_round_02",
-      "target": "year::2026",
-      "kind": "occurred_in"
-    },
-    {
       "id": "round_render_2026_series_c_extension_02__year__year::2026",
       "source": "round_render_2026_series_c_extension_02",
       "target": "year::2026",
@@ -38098,6 +38942,12 @@
     {
       "id": "round_nscale_2026_series_c_03__year__year::2026",
       "source": "round_nscale_2026_series_c_03",
+      "target": "year::2026",
+      "kind": "occurred_in"
+    },
+    {
+      "id": "round_openai_2026_growth_round_02__year__year::2026",
+      "source": "round_openai_2026_growth_round_02",
       "target": "year::2026",
       "kind": "occurred_in"
     },
@@ -42033,7 +42883,7 @@
       "target": "investor_softbank_group",
       "kind": "co_invested",
       "shared_rounds": 3,
-      "linked_funding_usd": 117650000000
+      "linked_funding_usd": 129650000000
     },
     {
       "id": "coinvest::4163",

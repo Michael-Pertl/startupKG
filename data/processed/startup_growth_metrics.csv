@@ -1,5 +1,5 @@
 startup_id,name,region,country,primary_domain,first_mega_round_date,last_mega_round_date,first_mega_round_year,last_mega_round_year,mega_round_count,active_mega_round_years,total_mega_round_amount_usd,largest_round_usd,trajectory_label
-startup_openai,OpenAI,US,USA,Foundation Models / LLMs,2024-10-02,2026-02-27,2024,2026,3,3,156600000000,110000000000,accelerating
+startup_openai,OpenAI,US,USA,Foundation Models / LLMs,2024-10-02,2026-03-31,2024,2026,3,3,168600000000,122000000000,accelerating
 startup_anthropic,Anthropic,US,USA,Foundation Models / LLMs,2025-03-03,2026-05-28,2025,2026,4,2,111500000000,65000000000,accelerating
 startup_xai,xAI,US,USA,Foundation Models / LLMs,2024-05-26,2026-01-06,2024,2026,3,2,32000000000,20000000000,accelerating
 startup_databricks,Databricks,US,USA,AI Infrastructure,2024-12-17,2024-12-17,2024,2024,1,1,10000000000,10000000000,single_year
