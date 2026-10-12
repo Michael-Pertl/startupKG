@@ -34,3 +34,13 @@ next release priority, followed by investor watchlists and weekly change digests
 The graph represents curated publicly reported AI mega-rounds of USD100M or more,
 not the full AI startup ecosystem. Automatic acceptance does not make coverage
 complete or independently verify all historical evidence.
+
+## Write reliability and diagnostics
+
+Both funding ingestion entry points serialize writes with a shared lock, recheck event IDs under that lock, write to a temporary file, flush it, and atomically replace the destination. A malformed record, duplicate ID, or failed write leaves the previous evidence file intact. Existing evidence values are preserved; corrections continue to use the separate evidence reconciliation workflow.
+
+Malformed CSV rows produce a line-numbered validation error rather than crashing on a missing field. Automatic selection quarantines incomplete records and records reasons. Equivalent USD number formatting is accepted, while foreign-currency conversions and uncertain financing bases still need sourced reconciliation. The ingestion report records candidate, ingested, already-ingested, and quarantined counts.
+
+Run `python3 scripts/refresh_platform.py --discover` to poll public feeds and rebuild the app. RSS discoveries remain separate from structured funding ingestion and quantitative funding totals until their evidence is completed and validated.
+
+The graph represents curated publicly reported AI mega-rounds above the selected funding threshold, not the full AI startup ecosystem.
