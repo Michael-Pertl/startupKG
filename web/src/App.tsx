@@ -3,7 +3,7 @@ import cytoscape, { Core, ElementDefinition, NodeSingular } from "cytoscape";
 import { MarketEdge, MarketEvent, MarketEventFeed, MarketGraph, MarketNode, NodeKind } from "./types";
 import { formatCount, formatUsd } from "./format";
 import { DataHealth } from "./DataHealth";
-import { periodMetrics, selectResearchRounds } from "./investorAnalytics";
+import { evidenceCsv, periodMetrics, selectResearchRounds } from "./investorAnalytics";
 import { supabase, SupabaseSession } from "./supabaseClient";
 import "./styles.css";
 
@@ -103,7 +103,7 @@ type ContextLens = {
 };
 
 type LayoutMode = "flow" | "network";
-type LegalView = "impressum" | "privacy" | "terms" | "methodology";
+type LegalView = "privacy" | "terms" | "methodology";
 type AppView = "graph" | "analytics" | "news" | "login" | "account" | "admin" | LegalView;
 
 const viewPaths: Record<AppView, string> = {
@@ -113,7 +113,6 @@ const viewPaths: Record<AppView, string> = {
   login: "/login",
   account: "/account",
   admin: "/admin",
-  impressum: "/impressum",
   privacy: "/privacy",
   terms: "/terms",
   methodology: "/methodology",
@@ -159,51 +158,11 @@ type LegalPageContent = {
 };
 
 const legalPages: Record<LegalView, LegalPageContent> = {
-  impressum: {
-    eyebrow: "Legal notice",
-    title: "Impressum",
-    intro: "Operator information for AI Market Graph, a public-source AI market intelligence and knowledge-graph service.",
-    sections: [
-      {
-        title: "Operator",
-        items: [
-          "Michael Pertl",
-          "Zillingberg 12",
-          "5300 Hallwang, Austria",
-          "Email: aimarketgraph@gmail.com",
-        ],
-      },
-      {
-        title: "Business information",
-        items: [
-          "Business purpose: AI market intelligence and knowledge-graph software for publicly sourced startup funding and market-event analysis.",
-          "Business form: private person.",
-          "Company register: not applicable.",
-          "VAT ID / UID: not applicable.",
-          "Responsible for content: Michael Pertl.",
-        ],
-      },
-      {
-        title: "Sources and liability",
-        body:
-          "The platform aggregates and structures publicly available information. We aim to keep data accurate and source-backed, but we do not guarantee completeness, availability, timeliness, or investment suitability of any information.",
-      },
-      {
-        title: "No investment advice",
-        body:
-          "The platform provides research and market-monitoring information only. It does not provide financial, investment, legal, tax, or accounting advice.",
-      },
-    ],
-  },
   privacy: {
     eyebrow: "Data protection",
     title: "Privacy Policy",
     intro: "This Privacy Policy explains how AI Market Graph processes personal data when users create an account, use the service, or interact with support workflows.",
     sections: [
-      {
-        title: "Controller",
-        body: "Michael Pertl, Zillingberg 12, 5300 Hallwang, Austria, aimarketgraph@gmail.com, is the controller for personal data processed through this service.",
-      },
       {
         title: "Data we process",
         items: [
@@ -218,21 +177,22 @@ const legalPages: Record<LegalView, LegalPageContent> = {
           "Provide accounts, access control, optional administrator access.",
           "Operate the knowledge graph, News monitor, admin review queue, and Ask features.",
           "Prevent abuse, debug errors, secure the service, and improve product reliability.",
-          "Comply with legal, tax, accounting, and payment obligations.",
+          "Maintain service security and operational reliability.",
         ],
       },
       {
         title: "Processors and infrastructure",
         items: [
-          "Supabase for authentication, database, and user/account data.",
+          "Optional Supabase authentication and database storage for administrator review.",
           "Render for application hosting and scheduled jobs.",
+          "Nebius processes Ask questions, conversation history, and the selected public graph context to generate responses.",
           "Tavily and public RSS sources for market-event discovery; these are used for public web/news data, not account payment data.",
         ],
       },
       {
         title: "Legal bases and rights",
         body:
-          "Depending on the processing activity, data is processed to perform a contract, comply with legal obligations, protect legitimate interests, or based on consent. Users may request access, correction, deletion, restriction, portability, or objection where applicable under GDPR by contacting aimarketgraph@gmail.com.",
+          "Depending on the processing activity, data is processed to perform a contract, comply with legal obligations, protect legitimate interests, or based on consent. Access, correction, deletion, restriction, portability, and objection rights may apply to personal data processed by the service.",
       },
       {
         title: "Retention",
@@ -2294,6 +2254,18 @@ function AnalyticsPage({
   const [comparable, setComparable] = useState(true);
   const [equityOnly, setEquityOnly] = useState(true);
   const [excludeLargest, setExcludeLargest] = useState(false);
+  const [evidenceQuery, setEvidenceQuery] = useState("");
+  const [evidenceSort, setEvidenceSort] = useState<"amount" | "latest">("amount");
+  const [evidencePage, setEvidencePage] = useState(1);
+  const [showAllRankings, setShowAllRankings] = useState(false);
+  const resetFilters = () => {
+    setFilters({ ...graph.facets, confidence: graph.facets.confidence.filter((value) => value !== "low") });
+    setComparable(true);
+    setEquityOnly(true);
+    setExcludeLargest(false);
+    setActiveSlice(null);
+    setEvidenceQuery("");
+  };
   const cutoff = graph.metadata.latest_funding_date || graph.nodes.filter((node) => node.kind === "round").map((node) => String(node.round_date || "")).sort().pop() || "2026-12-31";
 
   const roundToStartup = useMemo(() => {
@@ -2333,7 +2305,9 @@ function AnalyticsPage({
       });
     return selectResearchRounds(scoped, { comparable, equityOnly, excludeLargest, cutoff });
   }, [filters, graph.nodes, roundToStartup, comparable, equityOnly, excludeLargest, cutoff]);
-  const periods = periodMetrics(filteredRounds, filters.years);
+  const periods = periodMetrics(filteredRounds, filters.years, roundToStartup);
+  const includedFunding = filteredRounds.reduce((sum, round) => sum + Number(round.amount_usd || 0), 0);
+  const largestShare = includedFunding ? Math.max(0, ...filteredRounds.map((round) => Number(round.amount_usd || 0))) / includedFunding : 0;
 
   const filteredStartups = useMemo(() => {
     const ids = new Set(filteredRounds.map((round) => roundToStartup.get(round.id)?.id).filter(Boolean));
@@ -2349,7 +2323,7 @@ function AnalyticsPage({
 
   useEffect(() => {
     setActiveSlice(null);
-  }, [filters]);
+  }, [filters, comparable, equityOnly, excludeLargest]);
 
   const segmentLabel = (round: MarketNode, key: AnalyticsBreakdown) => {
     const startup = roundToStartup.get(round.id);
@@ -2385,9 +2359,7 @@ function AnalyticsPage({
     activeRounds.flatMap((round) => (investorByRound.get(round.id) || []).map((node) => node.id)),
   ).size;
 
-  const breakdownRows = aggregateFunding(breakdown).slice(0, breakdown === "country"
-    ? graph.facets.countries.length
-    : 10);
+  const breakdownRows = aggregateFunding(breakdown);
 
   const companyFunding = new Map<string, { node: MarketNode; value: number }>();
   filteredRounds.forEach((round) => {
@@ -2407,7 +2379,7 @@ function AnalyticsPage({
 
   const topCompanies = [...companyFunding.values()]
     .sort((left, right) => right.value - left.value)
-    .slice(0, 8)
+    .slice(0, showAllRankings ? undefined : 8)
     .map(({ node, value }) => ({
       id: node.id,
       label: node.label,
@@ -2417,7 +2389,7 @@ function AnalyticsPage({
 
   const topInvestors = [...investorFunding.values()]
     .sort((left, right) => right.value - left.value)
-    .slice(0, 8)
+    .slice(0, showAllRankings ? undefined : 8)
     .map(({ node, value }) => ({
       id: node.id,
       label: node.label,
@@ -2425,10 +2397,28 @@ function AnalyticsPage({
       node,
     }));
 
-  const evidenceRows = [...activeRounds]
-    .sort((left, right) => Number(right.amount_usd || 0) - Number(left.amount_usd || 0))
-    .slice(0, 14);
+  const matchingEvidence = activeRounds.filter((round) => {
+    const startup = roundToStartup.get(round.id);
+    const investors = investorByRound.get(round.id) || [];
+    return [startup?.label, startup?.country, startup?.domain, round.label, round.round_type,
+      round.round_date, ...investors.map((node) => node.label)].join(" ").toLowerCase().includes(evidenceQuery.trim().toLowerCase());
+  }).sort((left, right) => evidenceSort === "latest"
+    ? String(right.round_date || "").localeCompare(String(left.round_date || "")) || left.id.localeCompare(right.id)
+    : Number(right.amount_usd || 0) - Number(left.amount_usd || 0) || left.id.localeCompare(right.id));
+  const pageCount = Math.max(1, Math.ceil(matchingEvidence.length / 14));
+  const currentPage = Math.min(evidencePage, pageCount);
+  const evidenceRows = matchingEvidence.slice((currentPage - 1) * 14, currentPage * 14);
   const evidenceLimit = evidenceRows.length;
+  useEffect(() => setEvidencePage(1), [filters, activeSlice, evidenceQuery, evidenceSort, comparable, equityOnly, excludeLargest]);
+  const exportEvidence = () => {
+    const csv = evidenceCsv(matchingEvidence, roundToStartup, investorByRound);
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "ai-market-graph-evidence.csv";
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
 
   return (
     <main className="analytics-page">
@@ -2436,6 +2426,7 @@ function AnalyticsPage({
         <div>
           <div className="eyebrow">Market dashboard</div>
           <h1>AI investment landscape</h1>
+          <p className="analytics-intro">Explore where major AI funding goes, who participates, and how the network changes over time.</p>
         </div>
         <div className="analytics-filters">
           <AnalyticsSelect
@@ -2466,11 +2457,20 @@ function AnalyticsPage({
             label="Evidence"
             onChange={(values) => setFilters({ ...filters, confidence: values })}
             selected={filters.confidence}
-            values={graph.facets.confidence}
+            values={graph.facets.confidence.filter((value) => value !== "low")}
           />
         </div>
       </header>
 
+      <div className="analytics-toolbar">
+        <p>{formatCount(filteredRounds.length)} rounds in this view · Evidence through {cutoff}</p>
+        <button onClick={resetFilters} type="button">Reset view</button>
+        <button onClick={() => setShowAllRankings((value) => !value)} type="button" aria-pressed={showAllRankings}>
+          {showAllRankings ? "Show top rankings" : "Show all rankings"}
+        </button>
+      </div>
+      <p className="analytics-scope">Curated publicly reported AI mega-rounds above USD 100M or equivalent, not the full AI startup ecosystem. Low-confidence events are excluded from totals. Investor volumes describe linked rounds, not individual cheque sizes.</p>
+      {!filteredRounds.length ? <div className="analytics-empty" role="status"><h2>No rounds match this view</h2><p>Try another region, year, or evidence filter, or reset the view to start again.</p><button onClick={resetFilters} type="button">Reset filters</button></div> : null}
       <DataHealth />
       <section className="research-periods" aria-label="Funding over time">
         <div className="research-controls">
@@ -2483,9 +2483,11 @@ function AnalyticsPage({
           <thead><tr><th>Period</th><th>Reported funding</th><th>Rounds</th><th>Companies</th><th>Median round</th><th>Top 5 round share</th></tr></thead>
           <tbody>{periods.map((period) => <tr key={period.year}><td>{period.year}{comparable ? ` through ${cutoff.slice(5)}` : " (available evidence)"}</td><td>{formatUsd(period.funding)}</td><td>{period.events}</td><td>{period.companies}</td><td>{period.events ? formatUsd(period.median) : "-"}</td><td>{period.events ? `${(period.topFiveShare * 100).toFixed(1)}%` : "-"}</td></tr>)}</tbody>
         </table></div>
+        <p className="analytics-scope">Top 5 round share measures concentration in the five largest events in each year. Comparable periods use the same month and day across years; missing dates are excluded.</p>
       </section>
 
       <section className="analytics-kpis">
+        <div><span>Largest round share</span><strong>{filteredRounds.length ? `${(largestShare * 100).toFixed(1)}%` : "—"}</strong></div>
         <div>
           <span>Reported funding</span>
           <strong>{formatUsd(totalFunding)}</strong>
@@ -2551,6 +2553,7 @@ function AnalyticsPage({
             <div>
               <span>Selected slice</span>
               <strong>{activeTitle}</strong>
+              {activeSlice ? <button onClick={() => setActiveSlice(null)} type="button">Clear selection</button> : null}
             </div>
             <div>
               <span>Funding</span>
@@ -2569,10 +2572,15 @@ function AnalyticsPage({
               <strong>{formatCount(activeInvestors)}</strong>
             </div>
           </div>
+          <div className="evidence-controls">
+            <label>Search evidence<input type="search" placeholder="Company, investor, country…" value={evidenceQuery} onChange={(event) => setEvidenceQuery(event.target.value)} /></label>
+            <label>Sort by<select value={evidenceSort} onChange={(event) => setEvidenceSort(event.target.value as "amount" | "latest")}><option value="amount">Largest funding</option><option value="latest">Most recent</option></select></label>
+            <button onClick={exportEvidence} disabled={!matchingEvidence.length} type="button">Export CSV</button>
+          </div>
           <div className="evidence-table">
             <div className="evidence-table-caption">
-              <span>Largest events in selected slice</span>
-              <strong>Showing {formatCount(evidenceLimit)} of {formatCount(activeRounds.length)}</strong>
+              <span>Source-backed funding events</span>
+              <strong>Showing {formatCount(evidenceLimit)} of {formatCount(matchingEvidence.length)} matching events</strong>
             </div>
             <div className="evidence-table-head">
               <span>Company</span>
@@ -2580,6 +2588,7 @@ function AnalyticsPage({
               <span>Domain</span>
               <span>Amount</span>
             </div>
+            {!matchingEvidence.length ? <p className="analytics-no-results" role="status">No funding events match your search.</p> : null}
             {evidenceRows.map((round) => {
               const startup = roundToStartup.get(round.id);
               const investors = investorByRound.get(round.id) || [];
@@ -2590,7 +2599,7 @@ function AnalyticsPage({
                     <span>{startup?.country || "Unknown"}</span>
                     <span>{startup?.domain || "Unknown"}</span>
                     <strong>{formatUsd(Number(round.amount_usd || 0))}</strong>
-                    <small>{round.year} · {round.confidence} · {investors.slice(0, 3).map((node) => node.label).join(", ")}</small>
+                    <small>{round.round_date || round.year} · {round.confidence} · {investors.slice(0, 3).map((node) => node.label).join(", ")}</small>
                   </button>
                   <div className="evidence-source-action">
                     {round.source_url ? (
@@ -2612,6 +2621,11 @@ function AnalyticsPage({
             })}
 
           </div>
+          <nav className="evidence-pagination" aria-label="Evidence pages">
+            <button disabled={currentPage <= 1} onClick={() => setEvidencePage(currentPage - 1)} type="button">Previous</button>
+            <span aria-live="polite">Page {currentPage} of {pageCount}</span>
+            <button disabled={currentPage >= pageCount} onClick={() => setEvidencePage(currentPage + 1)} type="button">Next</button>
+          </nav>
         </article>
       </section>
     </main>
@@ -2935,7 +2949,6 @@ function LegalPage({ page, onOpenLegal }: { page: LegalView; onOpenLegal: (view:
           ))}
         </div>
         <div className="legal-inline-links">
-          <button onClick={() => onOpenLegal("impressum")} type="button">Impressum</button>
           <button onClick={() => onOpenLegal("privacy")} type="button">Privacy</button>
           <button onClick={() => onOpenLegal("terms")} type="button">Terms</button>
           <button onClick={() => onOpenLegal("methodology")} type="button">Methodology</button>
@@ -2949,7 +2962,6 @@ function LegalFooter({ onOpenLegal }: { onOpenLegal: (view: LegalView) => void }
   return (
     <footer className="legal-footer">
       <button onClick={() => onOpenLegal("methodology")} type="button">Methodology</button>
-      <button onClick={() => onOpenLegal("impressum")} type="button">Impressum</button>
       <button onClick={() => onOpenLegal("privacy")} type="button">Privacy</button>
       <button onClick={() => onOpenLegal("terms")} type="button">Terms</button>
     </footer>
@@ -3375,6 +3387,8 @@ function toggle(list: string[], value: string): string[] {
 
 export default function App() {
   const [graph, setGraph] = useState<MarketGraph | null>(null);
+  const [graphError, setGraphError] = useState("");
+  const [graphAttempt, setGraphAttempt] = useState(0);
   const [eventFeed, setEventFeed] = useState<MarketEventFeed | null>(null);
   const [view, setView] = useState<AppView>(() => appViewFromPath(window.location.pathname));
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
@@ -3408,8 +3422,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    fetch("/data/market_graph.json")
-      .then((response) => response.json())
+    const controller = new AbortController();
+    setGraphError("");
+    fetch("/data/market_graph.json", { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error("The graph snapshot could not be loaded.");
+        return response.json();
+      })
       .then((payload: MarketGraph) => {
         setGraph(payload);
         setYears(payload.facets.years);
@@ -3419,7 +3438,7 @@ export default function App() {
           regions: payload.facets.regions,
           countries: payload.facets.countries,
           domains: payload.facets.domains,
-          confidence: payload.facets.confidence,
+          confidence: payload.facets.confidence.filter((value) => value !== "low"),
         });
         const initial =
           payload.nodes.find((node) => node.id === "startup_anthropic") ||
@@ -3427,8 +3446,11 @@ export default function App() {
             .filter((node) => node.kind === "startup")
             .sort((left, right) => signal(right) - signal(left))[0];
         setSelectedId(initial?.id || "");
+      }).catch((error) => {
+        if (error.name !== "AbortError") setGraphError("The graph data is temporarily unavailable. Please try again.");
       });
-  }, []);
+    return () => controller.abort();
+  }, [graphAttempt]);
 
   useEffect(() => {
     const initialView = appViewFromPath(window.location.pathname);
@@ -3563,7 +3585,9 @@ export default function App() {
   }, [drawerWidth]);
 
   if (!graph || !index || !selected) {
-    return <div className="loading">Loading graph workspace...</div>;
+    return graphError ? (
+      <main className="loading" role="alert"><p>{graphError}</p><button onClick={() => setGraphAttempt((value) => value + 1)} type="button">Try again</button></main>
+    ) : <div className="loading" role="status">Loading graph workspace...</div>;
   }
 
   const selectNodeAndOpenGraph = (node: MarketNode) => {
@@ -3585,7 +3609,7 @@ export default function App() {
     setLayoutMode("flow");
     selectNodeAndOpenGraph(target);
   };
-  const legalViews: LegalView[] = ["impressum", "privacy", "terms", "methodology"];
+  const legalViews: LegalView[] = ["privacy", "terms", "methodology"];
   const isLegalView = legalViews.includes(view as LegalView);
 
   return (
