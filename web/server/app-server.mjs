@@ -645,7 +645,7 @@ const server = createServer(async (request, response) => {
         model: MODEL,
         temperature: 0.35,
         max_tokens: 1600,
-        reasoning_effort: "low",
+        ...(process.env.NEBIUS_REASONING_EFFORT ? { reasoning_effort: process.env.NEBIUS_REASONING_EFFORT } : {}),
         messages,
       }),
     });

@@ -279,3 +279,9 @@ not called by the default refresh.
 See [customer readiness and sourced corrections](docs/CUSTOMER_READINESS.md).
 Run `python3 scripts/check_customer_readiness.py --require-ready` before a public
 release. A successful rebuild is not proof of source accuracy or market coverage.
+
+## Hackathon deployment
+
+For NVIDIA Nemotron on Nebius Token Factory, set the server-side `NEBIUS_API_KEY`, the exact catalog ID in `NEBIUS_MODEL`, and its matching `NEBIUS_BASE_URL` on Render. The runtime integration is `web/server/app-server.mjs`; Ask uses canonical graph evidence and public source metadata. Restart after environment changes and verify a real Ask answer. See [submission checklist](docs/HACKATHON_SUBMISSION.md) and [latest evidence review](docs/EVIDENCE_REVIEW_2026_10_12.md).
+
+The graph represents curated publicly reported AI mega-rounds above the selected funding threshold, not the full AI startup ecosystem.

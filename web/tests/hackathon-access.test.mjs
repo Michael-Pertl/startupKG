@@ -19,7 +19,10 @@ test('hackathon Ask is anonymous and unmetered; billing routes are removed', asy
   const model = createServer(async (request, response) => {
     let body = '';
     for await (const chunk of request) body += chunk;
-    assert.match(JSON.parse(body).messages[1].content, /100000000/);
+    const payload = JSON.parse(body);
+    assert.match(payload.messages[1].content, /100000000/);
+    assert.equal(payload.model, "nvidia/test-nemotron");
+    assert.equal(payload.reasoning_effort, undefined);
     calls++;
     response.writeHead(providerStatus, { 'content-type': 'application/json' });
     if (providerStatus !== 200) {
@@ -32,7 +35,7 @@ test('hackathon Ask is anonymous and unmetered; billing routes are removed', asy
   await once(model, 'listening');
   const child = spawn(process.execPath, ['server/app-server.mjs'], {
     cwd: new URL('..', import.meta.url),
-    env: { ...process.env, PORT: '0', STATIC_DIR: directory, NEBIUS_API_KEY: 'test-only',
+    env: { ...process.env, PORT: '0', STATIC_DIR: directory, NEBIUS_API_KEY: 'test-only', NEBIUS_MODEL: 'nvidia/test-nemotron', NEBIUS_REASONING_EFFORT: '',
       NEBIUS_BASE_URL: `http://127.0.0.1:${model.address().port}/v1`,
       SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', ADMIN_EMAILS: '',
       // Old deployment settings cannot reinstate a paywall.
