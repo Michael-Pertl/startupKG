@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "AI Market Event Monitor",
-    "event_count": 251,
+    "event_count": 253,
     "scope_note": "Curated public monitoring events for AI market intelligence. These are research alerts and not investment recommendations."
   },
   "facets": {
@@ -1545,6 +1545,28 @@
       "linked_startup_label": "Anthropic",
       "summary": "Anthropic - Series G",
       "notes": "Company announcement states Series G was led by GIC and Coatue; participant list shortened to named significant investors from the announcement. Amount basis: reported_round"
+    },
+    {
+      "event_id": "curated_round_apptronik_2026_series_a_x_02",
+      "company_name": "Apptronik",
+      "event_type": "funding_round",
+      "ipo_stage": "",
+      "event_date": "2026-02-11",
+      "year": "2026",
+      "country": "USA",
+      "region": "US",
+      "amount_usd": 520000000,
+      "valuation_usd": null,
+      "source_url": "https://apptronik.com/news-collection/apptronik-closes-over-935-million-series-a",
+      "source_type": "press_release",
+      "confidence": "high",
+      "status": "approved",
+      "signal_tier": "core_signal",
+      "signal_label": "Curated funding evidence",
+      "linked_startup_id": "startup_apptronik",
+      "linked_startup_label": "Apptronik",
+      "summary": "Apptronik - Series A-X",
+      "notes": "Incremental USD520M extension only; excludes prior USD415M Series A and does not record cumulative USD935M as new funding. Investor roster is publicly named participants, not full syndicate. Austin operating identity documented in company release. Evidence assessment: Company release checked for amount date investors AI robotics scope and Austin operating identity; incremental financing only; subsequent smaller closes excluded. Amount basis: reported_round"
     },
     {
       "event_id": "curated_round_runway_2026_series_e_02",
@@ -3921,6 +3943,28 @@
       "linked_startup_label": "Eudia",
       "summary": "Eudia - Series A",
       "notes": "Legal AI / augmented intelligence platform for Fortune 500 legal teams; amount reported as up to USD105M. Amount basis: upper_bound"
+    },
+    {
+      "event_id": "curated_round_apptronik_2025_series_a_02",
+      "company_name": "Apptronik",
+      "event_type": "funding_round",
+      "ipo_stage": "",
+      "event_date": "2025-02-13",
+      "year": "2025",
+      "country": "USA",
+      "region": "US",
+      "amount_usd": 350000000,
+      "valuation_usd": null,
+      "source_url": "https://apptronik.com/news-collection/apptronik-raises-350-million-in-series-a-funding",
+      "source_type": "press_release",
+      "confidence": "high",
+      "status": "approved",
+      "signal_tier": "core_signal",
+      "signal_label": "Curated funding evidence",
+      "linked_startup_id": "startup_apptronik",
+      "linked_startup_label": "Apptronik",
+      "summary": "Apptronik - Series A",
+      "notes": "Initial publicly announced close; later additional closes are not counted as separate mega-rounds. Austin operating identity documented in company release. Evidence assessment: Company release checked for amount date investors AI robotics scope and Austin operating identity; incremental financing only; subsequent smaller closes excluded. Amount basis: reported_round"
     },
     {
       "event_id": "curated_round_harvey_2025_series_d_02",

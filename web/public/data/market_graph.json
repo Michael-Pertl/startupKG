@@ -2,15 +2,15 @@
   "metadata": {
     "title": "Global AI Mega-Round Market Graph",
     "generated_from": "data/processed/*.csv",
-    "generated_at": "2026-10-12T14:57:52.580987+00:00",
-    "evidence_digest": "70bbe3238d33a74e0a1396e33194791ddac7f8e585343819313939f757fdd00b",
+    "generated_at": "2026-10-12T15:31:27.866728+00:00",
+    "evidence_digest": "8f2ab59d29f83d53ab30512928e320a869e33d3993dbabfcda6b963ab1e92b32",
     "latest_funding_date": "2026-09-10",
-    "round_count": 212,
-    "startup_count": 164,
-    "investor_count": 574,
-    "edge_count": 2724,
+    "round_count": 214,
+    "startup_count": 165,
+    "investor_count": 578,
+    "edge_count": 2742,
     "scope_note": "Curated publicly reported AI mega-rounds of USD100M or more in 2024-2026. Coverage is incomplete and regionally uneven; this is not the full AI startup ecosystem. Graph totals are reported financing amounts, including mixed transactions and commitments, not cash disbursed.",
-    "snapshot_id": "031e4e2172bb085b9bccae79097dad405c0660dc36124636c31ecc98975bbc8a"
+    "snapshot_id": "c610c33d1ef5692b1494a24f0871b502e6d1f3ed0b600cf09994707a27fe165d"
   },
   "facets": {
     "years": [
@@ -169,8 +169,8 @@
       "label": "USA",
       "kind": "country",
       "region": "US",
-      "funding_usd": 375746500000,
-      "importance_score": 375746500000
+      "funding_usd": 376616500000,
+      "importance_score": 376616500000
     },
     {
       "id": "country::United Arab Emirates",
@@ -276,8 +276,8 @@
       "id": "domain::Robotics / Physical AI",
       "label": "Robotics / Physical AI",
       "kind": "domain",
-      "funding_usd": 5936000000,
-      "importance_score": 5936000000
+      "funding_usd": 6806000000,
+      "importance_score": 6806000000
     },
     {
       "id": "domain::Search / Knowledge Agents",
@@ -509,10 +509,10 @@
       "investor_type": "Corporate VC",
       "country": "USA",
       "website": "",
-      "participated_rounds": 1,
+      "participated_rounds": 2,
       "lead_rounds": 0,
-      "linked_funding_usd": 300000000,
-      "importance_score": 9837981
+      "linked_funding_usd": 820000000,
+      "importance_score": 22185781
     },
     {
       "id": "investor_avp",
@@ -1157,10 +1157,10 @@
       "investor_type": "VC",
       "country": "USA",
       "website": "https://www.bcapitalgroup.com",
-      "participated_rounds": 5,
-      "lead_rounds": 2,
-      "linked_funding_usd": 700000000,
-      "importance_score": 25405250
+      "participated_rounds": 7,
+      "lead_rounds": 3,
+      "linked_funding_usd": 1570000000,
+      "importance_score": 45524637
     },
     {
       "id": "investor_b3_capital",
@@ -1821,6 +1821,18 @@
       "lead_rounds": 0,
       "linked_funding_usd": 300000000,
       "importance_score": 9837981
+    },
+    {
+      "id": "investor_capital_factory",
+      "label": "Capital Factory",
+      "kind": "investor",
+      "investor_type": "unknown",
+      "country": "",
+      "website": "",
+      "participated_rounds": 1,
+      "lead_rounds": 1,
+      "linked_funding_usd": 350000000,
+      "importance_score": 12542284
     },
     {
       "id": "investor_capital_group",
@@ -3269,10 +3281,10 @@
       "investor_type": "Corporate",
       "country": "USA",
       "website": "https://www.google.com",
-      "participated_rounds": 2,
+      "participated_rounds": 4,
       "lead_rounds": 0,
-      "linked_funding_usd": 2600000000,
-      "importance_score": 54314368
+      "linked_funding_usd": 3470000000,
+      "importance_score": 70138065
     },
     {
       "id": "investor_google_ai_futures_fund",
@@ -3923,6 +3935,18 @@
       "importance_score": 4855167
     },
     {
+      "id": "investor_john_deere",
+      "label": "John Deere",
+      "kind": "investor",
+      "investor_type": "unknown",
+      "country": "",
+      "website": "",
+      "participated_rounds": 1,
+      "lead_rounds": 0,
+      "linked_funding_usd": 520000000,
+      "importance_score": 14932102
+    },
+    {
       "id": "investor_journey",
       "label": "Journey",
       "kind": "investor",
@@ -4571,6 +4595,18 @@
       "importance_score": 10323733
     },
     {
+      "id": "investor_mercedes_benz",
+      "label": "Mercedes-Benz",
+      "kind": "investor",
+      "investor_type": "unknown",
+      "country": "",
+      "website": "",
+      "participated_rounds": 1,
+      "lead_rounds": 0,
+      "linked_funding_usd": 520000000,
+      "importance_score": 14932102
+    },
+    {
       "id": "investor_meritech",
       "label": "Meritech",
       "kind": "investor",
@@ -5123,6 +5159,18 @@
       "importance_score": 4530780
     },
     {
+      "id": "investor_peak6",
+      "label": "PEAK6",
+      "kind": "investor",
+      "investor_type": "unknown",
+      "country": "",
+      "website": "",
+      "participated_rounds": 1,
+      "lead_rounds": 0,
+      "linked_funding_usd": 520000000,
+      "importance_score": 14932102
+    },
+    {
       "id": "investor_psg_equity",
       "label": "PSG Equity",
       "kind": "investor",
@@ -5465,10 +5513,10 @@
       "investor_type": "Sovereign Wealth Fund",
       "country": "Qatar",
       "website": "https://www.qia.qa",
-      "participated_rounds": 4,
+      "participated_rounds": 5,
       "lead_rounds": 0,
-      "linked_funding_usd": 56600000000,
-      "importance_score": 660212994
+      "linked_funding_usd": 57120000000,
+      "importance_score": 666055558
     },
     {
       "id": "investor_qualcomm_ventures",
@@ -7234,8 +7282,8 @@
       "id": "region::US",
       "label": "US",
       "kind": "region",
-      "funding_usd": 375746500000,
-      "importance_score": 375746500000
+      "funding_usd": 376616500000,
+      "importance_score": 376616500000
     },
     {
       "id": "round_7ai_2025_series_a_12",
@@ -7600,6 +7648,58 @@
       "verification_status": "not_rechecked",
       "source_checked_at": "",
       "importance_score": 600000000
+    },
+    {
+      "id": "round_apptronik_2025_series_a_02",
+      "label": "Apptronik 2025 Series A",
+      "kind": "round",
+      "startup_id": "startup_apptronik",
+      "event_id": "evt_apptronik_2025_series_a",
+      "startup_name": "Apptronik",
+      "amount_usd": 350000000,
+      "round_type": "Series A",
+      "round_date": "2025-02-13",
+      "year": "2025",
+      "month": "2",
+      "region": "US",
+      "country": "USA",
+      "domain": "Robotics / Physical AI",
+      "confidence": "high",
+      "source_type": "press_release",
+      "source_url": "https://apptronik.com/news-collection/apptronik-raises-350-million-in-series-a-funding",
+      "amount_original": "350000000",
+      "amount_currency": "USD",
+      "evidence_notes": "Initial publicly announced close; later additional closes are not counted as separate mega-rounds. Austin operating identity documented in company release. Evidence assessment: Company release checked for amount date investors AI robotics scope and Austin operating identity; incremental financing only; subsequent smaller closes excluded.",
+      "amount_basis": "reported_round",
+      "verification_status": "core_fields_checked",
+      "source_checked_at": "2026-10-12",
+      "importance_score": 350000000
+    },
+    {
+      "id": "round_apptronik_2026_series_a_x_02",
+      "label": "Apptronik 2026 Series A-X",
+      "kind": "round",
+      "startup_id": "startup_apptronik",
+      "event_id": "evt_apptronik_2026_series_a_extension",
+      "startup_name": "Apptronik",
+      "amount_usd": 520000000,
+      "round_type": "Series A-X",
+      "round_date": "2026-02-11",
+      "year": "2026",
+      "month": "2",
+      "region": "US",
+      "country": "USA",
+      "domain": "Robotics / Physical AI",
+      "confidence": "high",
+      "source_type": "press_release",
+      "source_url": "https://apptronik.com/news-collection/apptronik-closes-over-935-million-series-a",
+      "amount_original": "520000000",
+      "amount_currency": "USD",
+      "evidence_notes": "Incremental USD520M extension only; excludes prior USD415M Series A and does not record cumulative USD935M as new funding. Investor roster is publicly named participants, not full syndicate. Austin operating identity documented in company release. Evidence assessment: Company release checked for amount date investors AI robotics scope and Austin operating identity; incremental financing only; subsequent smaller closes excluded.",
+      "amount_basis": "reported_round",
+      "verification_status": "core_fields_checked",
+      "source_checked_at": "2026-10-12",
+      "importance_score": 520000000
     },
     {
       "id": "round_atlan_2024_series_c_05",
@@ -12960,6 +13060,27 @@
       "trajectory_label": "single_year"
     },
     {
+      "id": "startup_apptronik",
+      "label": "Apptronik",
+      "kind": "startup",
+      "region": "US",
+      "country": "USA",
+      "city": "Austin",
+      "domain": "Robotics / Physical AI",
+      "website": "",
+      "founded_year": "",
+      "founders": "",
+      "notable_products": "",
+      "profile_confidence": "",
+      "profile_source_url": "",
+      "profile_enriched": false,
+      "mega_round_count": 2,
+      "visible_mega_round_funding_usd": 870000000,
+      "largest_round_usd": 520000000,
+      "importance_score": 2070000000,
+      "trajectory_label": "accelerating"
+    },
+    {
       "id": "startup_atlan",
       "label": "Atlan",
       "kind": "startup",
@@ -16204,15 +16325,15 @@
       "id": "year::2025",
       "label": "2025",
       "kind": "year",
-      "funding_usd": 86321000000,
-      "importance_score": 86321000000
+      "funding_usd": 86671000000,
+      "importance_score": 86671000000
     },
     {
       "id": "year::2026",
       "label": "2026",
       "kind": "year",
-      "funding_usd": 267438200000,
-      "importance_score": 267438200000
+      "funding_usd": 267958200000,
+      "importance_score": 267958200000
     }
   ],
   "edges": [
@@ -17001,6 +17122,14 @@
       "year": "2025"
     },
     {
+      "id": "startup_apptronik__raised__round_apptronik_2025_series_a_02",
+      "source": "startup_apptronik",
+      "target": "round_apptronik_2025_series_a_02",
+      "kind": "raised",
+      "amount_usd": 350000000,
+      "year": "2025"
+    },
+    {
       "id": "startup_dream_security__raised__round_dream_security_2025_early_stage_round_02",
       "source": "startup_dream_security",
       "target": "round_dream_security_2025_early_stage_round_02",
@@ -17574,6 +17703,14 @@
       "target": "round_anthropic_2026_series_g_02",
       "kind": "raised",
       "amount_usd": 30000000000,
+      "year": "2026"
+    },
+    {
+      "id": "startup_apptronik__raised__round_apptronik_2026_series_a_x_02",
+      "source": "startup_apptronik",
+      "target": "round_apptronik_2026_series_a_x_02",
+      "kind": "raised",
+      "amount_usd": 520000000,
       "year": "2026"
     },
     {
@@ -19484,6 +19621,136 @@
       "participation_weight": 510000000,
       "allocation_basis": "role_proxy",
       "year": "2025"
+    },
+    {
+      "id": "investor_b_capital__lead__round_apptronik_2025_series_a_02",
+      "source": "investor_b_capital",
+      "target": "round_apptronik_2025_series_a_02",
+      "kind": "participated",
+      "role": "lead",
+      "amount_usd": 350000000,
+      "linked_round_usd": 350000000,
+      "participation_role": "lead",
+      "participation_weight": 507500000,
+      "allocation_basis": "role_proxy",
+      "year": "2025"
+    },
+    {
+      "id": "investor_capital_factory__lead__round_apptronik_2025_series_a_02",
+      "source": "investor_capital_factory",
+      "target": "round_apptronik_2025_series_a_02",
+      "kind": "participated",
+      "role": "lead",
+      "amount_usd": 350000000,
+      "linked_round_usd": 350000000,
+      "participation_role": "lead",
+      "participation_weight": 507500000,
+      "allocation_basis": "role_proxy",
+      "year": "2025"
+    },
+    {
+      "id": "investor_google__participant__round_apptronik_2025_series_a_02",
+      "source": "investor_google",
+      "target": "round_apptronik_2025_series_a_02",
+      "kind": "participated",
+      "role": "participant",
+      "amount_usd": 350000000,
+      "linked_round_usd": 350000000,
+      "participation_role": "participant",
+      "participation_weight": 297500000,
+      "allocation_basis": "role_proxy",
+      "year": "2025"
+    },
+    {
+      "id": "investor_at_t_ventures__participant__round_apptronik_2026_series_a_x_02",
+      "source": "investor_at_t_ventures",
+      "target": "round_apptronik_2026_series_a_x_02",
+      "kind": "participated",
+      "role": "participant",
+      "amount_usd": 520000000,
+      "linked_round_usd": 520000000,
+      "participation_role": "participant",
+      "participation_weight": 442000000,
+      "allocation_basis": "role_proxy",
+      "year": "2026"
+    },
+    {
+      "id": "investor_b_capital__participant__round_apptronik_2026_series_a_x_02",
+      "source": "investor_b_capital",
+      "target": "round_apptronik_2026_series_a_x_02",
+      "kind": "participated",
+      "role": "participant",
+      "amount_usd": 520000000,
+      "linked_round_usd": 520000000,
+      "participation_role": "participant",
+      "participation_weight": 442000000,
+      "allocation_basis": "role_proxy",
+      "year": "2026"
+    },
+    {
+      "id": "investor_google__participant__round_apptronik_2026_series_a_x_02",
+      "source": "investor_google",
+      "target": "round_apptronik_2026_series_a_x_02",
+      "kind": "participated",
+      "role": "participant",
+      "amount_usd": 520000000,
+      "linked_round_usd": 520000000,
+      "participation_role": "participant",
+      "participation_weight": 442000000,
+      "allocation_basis": "role_proxy",
+      "year": "2026"
+    },
+    {
+      "id": "investor_john_deere__participant__round_apptronik_2026_series_a_x_02",
+      "source": "investor_john_deere",
+      "target": "round_apptronik_2026_series_a_x_02",
+      "kind": "participated",
+      "role": "participant",
+      "amount_usd": 520000000,
+      "linked_round_usd": 520000000,
+      "participation_role": "participant",
+      "participation_weight": 442000000,
+      "allocation_basis": "role_proxy",
+      "year": "2026"
+    },
+    {
+      "id": "investor_mercedes_benz__participant__round_apptronik_2026_series_a_x_02",
+      "source": "investor_mercedes_benz",
+      "target": "round_apptronik_2026_series_a_x_02",
+      "kind": "participated",
+      "role": "participant",
+      "amount_usd": 520000000,
+      "linked_round_usd": 520000000,
+      "participation_role": "participant",
+      "participation_weight": 442000000,
+      "allocation_basis": "role_proxy",
+      "year": "2026"
+    },
+    {
+      "id": "investor_peak6__participant__round_apptronik_2026_series_a_x_02",
+      "source": "investor_peak6",
+      "target": "round_apptronik_2026_series_a_x_02",
+      "kind": "participated",
+      "role": "participant",
+      "amount_usd": 520000000,
+      "linked_round_usd": 520000000,
+      "participation_role": "participant",
+      "participation_weight": 442000000,
+      "allocation_basis": "role_proxy",
+      "year": "2026"
+    },
+    {
+      "id": "investor_qatar_investment_authority__participant__round_apptronik_2026_series_a_x_02",
+      "source": "investor_qatar_investment_authority",
+      "target": "round_apptronik_2026_series_a_x_02",
+      "kind": "participated",
+      "role": "participant",
+      "amount_usd": 520000000,
+      "linked_round_usd": 520000000,
+      "participation_role": "participant",
+      "participation_weight": 442000000,
+      "allocation_basis": "role_proxy",
+      "year": "2026"
     },
     {
       "id": "investor_gic__lead__round_atlan_2024_series_c_05",
@@ -35058,6 +35325,24 @@
       "kind": "operates_in"
     },
     {
+      "id": "startup_apptronik__hq__country::USA",
+      "source": "startup_apptronik",
+      "target": "country::USA",
+      "kind": "headquartered_in"
+    },
+    {
+      "id": "country::USA__part_of__region::US",
+      "source": "country::USA",
+      "target": "region::US",
+      "kind": "part_of"
+    },
+    {
+      "id": "startup_apptronik__domain__domain::Robotics / Physical AI",
+      "source": "startup_apptronik",
+      "target": "domain::Robotics / Physical AI",
+      "kind": "operates_in"
+    },
+    {
       "id": "startup_atlan__hq__country::USA",
       "source": "startup_atlan",
       "target": "country::USA",
@@ -38418,6 +38703,12 @@
       "kind": "occurred_in"
     },
     {
+      "id": "round_apptronik_2025_series_a_02__year__year::2025",
+      "source": "round_apptronik_2025_series_a_02",
+      "target": "year::2025",
+      "kind": "occurred_in"
+    },
+    {
       "id": "round_dream_security_2025_early_stage_round_02__year__year::2025",
       "source": "round_dream_security_2025_early_stage_round_02",
       "target": "year::2025",
@@ -38846,6 +39137,12 @@
     {
       "id": "round_anthropic_2026_series_g_02__year__year::2026",
       "source": "round_anthropic_2026_series_g_02",
+      "target": "year::2026",
+      "kind": "occurred_in"
+    },
+    {
+      "id": "round_apptronik_2026_series_a_x_02__year__year::2026",
+      "source": "round_apptronik_2026_series_a_x_02",
       "target": "year::2026",
       "kind": "occurred_in"
     },
@@ -40638,7 +40935,15 @@
       "linked_funding_usd": 2600000000
     },
     {
-      "id": "coinvest::883",
+      "id": "coinvest::877",
+      "source": "investor_b_capital",
+      "target": "investor_google",
+      "kind": "co_invested",
+      "shared_rounds": 2,
+      "linked_funding_usd": 870000000
+    },
+    {
+      "id": "coinvest::906",
       "source": "investor_meritech_capital_partners",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -40646,7 +40951,7 @@
       "linked_funding_usd": 230000000
     },
     {
-      "id": "coinvest::888",
+      "id": "coinvest::911",
       "source": "investor_databricks_ventures",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -40654,7 +40959,7 @@
       "linked_funding_usd": 377000000
     },
     {
-      "id": "coinvest::897",
+      "id": "coinvest::920",
       "source": "investor_index_ventures",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -40662,7 +40967,7 @@
       "linked_funding_usd": 8206200000
     },
     {
-      "id": "coinvest::911",
+      "id": "coinvest::934",
       "source": "investor_alibaba",
       "target": "investor_tencent",
       "kind": "co_invested",
@@ -40670,7 +40975,7 @@
       "linked_funding_usd": 1288000000
     },
     {
-      "id": "coinvest::928",
+      "id": "coinvest::951",
       "source": "investor_bond",
       "target": "investor_capitalg",
       "kind": "co_invested",
@@ -40678,7 +40983,7 @@
       "linked_funding_usd": 450000000
     },
     {
-      "id": "coinvest::929",
+      "id": "coinvest::952",
       "source": "investor_bond",
       "target": "investor_ivp",
       "kind": "co_invested",
@@ -40686,7 +40991,7 @@
       "linked_funding_usd": 800000000
     },
     {
-      "id": "coinvest::943",
+      "id": "coinvest::966",
       "source": "investor_altimeter_capital",
       "target": "investor_battery_ventures",
       "kind": "co_invested",
@@ -40694,7 +40999,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::945",
+      "id": "coinvest::968",
       "source": "investor_altimeter_capital",
       "target": "investor_bond",
       "kind": "co_invested",
@@ -40702,7 +41007,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::946",
+      "id": "coinvest::969",
       "source": "investor_altimeter_capital",
       "target": "investor_boxgroup",
       "kind": "co_invested",
@@ -40710,7 +41015,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::949",
+      "id": "coinvest::972",
       "source": "investor_altimeter_capital",
       "target": "investor_greylock",
       "kind": "co_invested",
@@ -40718,7 +41023,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::950",
+      "id": "coinvest::973",
       "source": "investor_altimeter_capital",
       "target": "investor_ivp",
       "kind": "co_invested",
@@ -40726,7 +41031,7 @@
       "linked_funding_usd": 450000000
     },
     {
-      "id": "coinvest::952",
+      "id": "coinvest::975",
       "source": "investor_battery_ventures",
       "target": "investor_bond",
       "kind": "co_invested",
@@ -40734,7 +41039,7 @@
       "linked_funding_usd": 2650000000
     },
     {
-      "id": "coinvest::953",
+      "id": "coinvest::976",
       "source": "investor_battery_ventures",
       "target": "investor_boxgroup",
       "kind": "co_invested",
@@ -40742,7 +41047,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::956",
+      "id": "coinvest::979",
       "source": "investor_battery_ventures",
       "target": "investor_greylock",
       "kind": "co_invested",
@@ -40750,7 +41055,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::957",
+      "id": "coinvest::980",
       "source": "investor_battery_ventures",
       "target": "investor_ivp",
       "kind": "co_invested",
@@ -40758,7 +41063,7 @@
       "linked_funding_usd": 650000000
     },
     {
-      "id": "coinvest::966",
+      "id": "coinvest::989",
       "source": "investor_bond",
       "target": "investor_boxgroup",
       "kind": "co_invested",
@@ -40766,7 +41071,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::968",
+      "id": "coinvest::991",
       "source": "investor_bond",
       "target": "investor_greylock",
       "kind": "co_invested",
@@ -40774,7 +41079,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::972",
+      "id": "coinvest::995",
       "source": "investor_boxgroup",
       "target": "investor_greylock",
       "kind": "co_invested",
@@ -40782,7 +41087,7 @@
       "linked_funding_usd": 2300000000
     },
     {
-      "id": "coinvest::985",
+      "id": "coinvest::1008",
       "source": "investor_accel",
       "target": "investor_gv",
       "kind": "co_invested",
@@ -40790,7 +41095,7 @@
       "linked_funding_usd": 300000000
     },
     {
-      "id": "coinvest::986",
+      "id": "coinvest::1009",
       "source": "investor_accel",
       "target": "investor_khosla_ventures",
       "kind": "co_invested",
@@ -40798,7 +41103,7 @@
       "linked_funding_usd": 930000000
     },
     {
-      "id": "coinvest::987",
+      "id": "coinvest::1010",
       "source": "investor_accel",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -40806,7 +41111,7 @@
       "linked_funding_usd": 2100000000
     },
     {
-      "id": "coinvest::989",
+      "id": "coinvest::1012",
       "source": "investor_accel",
       "target": "investor_spark_capital",
       "kind": "co_invested",
@@ -40814,7 +41119,7 @@
       "linked_funding_usd": 1400000000
     },
     {
-      "id": "coinvest::996",
+      "id": "coinvest::1019",
       "source": "investor_gv",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -40822,7 +41127,7 @@
       "linked_funding_usd": 610000000
     },
     {
-      "id": "coinvest::999",
+      "id": "coinvest::1022",
       "source": "investor_khosla_ventures",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -40830,7 +41135,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::1000",
+      "id": "coinvest::1023",
       "source": "investor_khosla_ventures",
       "target": "investor_nfdg",
       "kind": "co_invested",
@@ -40838,7 +41143,7 @@
       "linked_funding_usd": 420000000
     },
     {
-      "id": "coinvest::1020",
+      "id": "coinvest::1043",
       "source": "investor_andreessen_horowitz",
       "target": "investor_bain_capital_ventures",
       "kind": "co_invested",
@@ -40846,7 +41151,7 @@
       "linked_funding_usd": 2800000000
     },
     {
-      "id": "coinvest::1026",
+      "id": "coinvest::1049",
       "source": "investor_andreessen_horowitz",
       "target": "investor_general_catalyst",
       "kind": "co_invested",
@@ -40854,7 +41159,7 @@
       "linked_funding_usd": 8560200000
     },
     {
-      "id": "coinvest::1028",
+      "id": "coinvest::1051",
       "source": "investor_andreessen_horowitz",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -40862,7 +41167,7 @@
       "linked_funding_usd": 17519200000
     },
     {
-      "id": "coinvest::1029",
+      "id": "coinvest::1052",
       "source": "investor_andreessen_horowitz",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -40870,7 +41175,7 @@
       "linked_funding_usd": 4734200000
     },
     {
-      "id": "coinvest::1049",
+      "id": "coinvest::1072",
       "source": "investor_bain_capital_ventures",
       "target": "investor_general_catalyst",
       "kind": "co_invested",
@@ -40878,7 +41183,7 @@
       "linked_funding_usd": 2655000000
     },
     {
-      "id": "coinvest::1051",
+      "id": "coinvest::1074",
       "source": "investor_bain_capital_ventures",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -40886,7 +41191,7 @@
       "linked_funding_usd": 1300000000
     },
     {
-      "id": "coinvest::1079",
+      "id": "coinvest::1102",
       "source": "investor_creandum",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -40894,7 +41199,7 @@
       "linked_funding_usd": 630000000
     },
     {
-      "id": "coinvest::1081",
+      "id": "coinvest::1104",
       "source": "investor_creandum",
       "target": "investor_visionaries_club",
       "kind": "co_invested",
@@ -40902,7 +41207,7 @@
       "linked_funding_usd": 720000000
     },
     {
-      "id": "coinvest::1101",
+      "id": "coinvest::1124",
       "source": "investor_nvidia",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -40910,7 +41215,7 @@
       "linked_funding_usd": 5934200000
     },
     {
-      "id": "coinvest::1111",
+      "id": "coinvest::1134",
       "source": "investor_eclipse_ventures",
       "target": "investor_microsoft",
       "kind": "co_invested",
@@ -40918,7 +41223,7 @@
       "linked_funding_usd": 1156000000
     },
     {
-      "id": "coinvest::1112",
+      "id": "coinvest::1135",
       "source": "investor_eclipse_ventures",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -40926,7 +41231,7 @@
       "linked_funding_usd": 1156000000
     },
     {
-      "id": "coinvest::1113",
+      "id": "coinvest::1136",
       "source": "investor_microsoft",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -40934,7 +41239,7 @@
       "linked_funding_usd": 8431000000
     },
     {
-      "id": "coinvest::1127",
+      "id": "coinvest::1150",
       "source": "investor_battery_ventures",
       "target": "investor_benchmark",
       "kind": "co_invested",
@@ -40942,7 +41247,7 @@
       "linked_funding_usd": 2350000000
     },
     {
-      "id": "coinvest::1128",
+      "id": "coinvest::1151",
       "source": "investor_battery_ventures",
       "target": "investor_bessemer_venture_partners",
       "kind": "co_invested",
@@ -40950,7 +41255,7 @@
       "linked_funding_usd": 2350000000
     },
     {
-      "id": "coinvest::1134",
+      "id": "coinvest::1157",
       "source": "investor_battery_ventures",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -40958,7 +41263,7 @@
       "linked_funding_usd": 2460000000
     },
     {
-      "id": "coinvest::1136",
+      "id": "coinvest::1159",
       "source": "investor_benchmark",
       "target": "investor_bessemer_venture_partners",
       "kind": "co_invested",
@@ -40966,7 +41271,7 @@
       "linked_funding_usd": 2900000000
     },
     {
-      "id": "coinvest::1137",
+      "id": "coinvest::1160",
       "source": "investor_benchmark",
       "target": "investor_bond",
       "kind": "co_invested",
@@ -40974,7 +41279,7 @@
       "linked_funding_usd": 2350000000
     },
     {
-      "id": "coinvest::1144",
+      "id": "coinvest::1167",
       "source": "investor_benchmark",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -40982,7 +41287,7 @@
       "linked_funding_usd": 2350000000
     },
     {
-      "id": "coinvest::1146",
+      "id": "coinvest::1169",
       "source": "investor_bessemer_venture_partners",
       "target": "investor_bond",
       "kind": "co_invested",
@@ -40990,7 +41295,7 @@
       "linked_funding_usd": 2350000000
     },
     {
-      "id": "coinvest::1148",
+      "id": "coinvest::1171",
       "source": "investor_bessemer_venture_partners",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -40998,7 +41303,7 @@
       "linked_funding_usd": 2505000000
     },
     {
-      "id": "coinvest::1149",
+      "id": "coinvest::1172",
       "source": "investor_bessemer_venture_partners",
       "target": "investor_khosla_ventures",
       "kind": "co_invested",
@@ -41006,7 +41311,7 @@
       "linked_funding_usd": 984000000
     },
     {
-      "id": "coinvest::1151",
+      "id": "coinvest::1174",
       "source": "investor_bond",
       "target": "investor_coatue",
       "kind": "co_invested",
@@ -41014,7 +41319,7 @@
       "linked_funding_usd": 550000000
     },
     {
-      "id": "coinvest::1156",
+      "id": "coinvest::1179",
       "source": "investor_bond",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41022,7 +41327,7 @@
       "linked_funding_usd": 3950000000
     },
     {
-      "id": "coinvest::1159",
+      "id": "coinvest::1182",
       "source": "investor_coatue",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -41030,7 +41335,7 @@
       "linked_funding_usd": 600000000
     },
     {
-      "id": "coinvest::1160",
+      "id": "coinvest::1183",
       "source": "investor_coatue",
       "target": "investor_ivp",
       "kind": "co_invested",
@@ -41038,7 +41343,7 @@
       "linked_funding_usd": 500000000
     },
     {
-      "id": "coinvest::1161",
+      "id": "coinvest::1184",
       "source": "investor_coatue",
       "target": "investor_khosla_ventures",
       "kind": "co_invested",
@@ -41046,7 +41351,7 @@
       "linked_funding_usd": 500000000
     },
     {
-      "id": "coinvest::1169",
+      "id": "coinvest::1192",
       "source": "investor_gic",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -41054,7 +41359,7 @@
       "linked_funding_usd": 750000000
     },
     {
-      "id": "coinvest::1171",
+      "id": "coinvest::1194",
       "source": "investor_gic",
       "target": "investor_khosla_ventures",
       "kind": "co_invested",
@@ -41062,7 +41367,7 @@
       "linked_funding_usd": 750000000
     },
     {
-      "id": "coinvest::1173",
+      "id": "coinvest::1196",
       "source": "investor_index_ventures",
       "target": "investor_ivp",
       "kind": "co_invested",
@@ -41070,7 +41375,7 @@
       "linked_funding_usd": 900000000
     },
     {
-      "id": "coinvest::1174",
+      "id": "coinvest::1197",
       "source": "investor_index_ventures",
       "target": "investor_khosla_ventures",
       "kind": "co_invested",
@@ -41078,7 +41383,7 @@
       "linked_funding_usd": 750000000
     },
     {
-      "id": "coinvest::1176",
+      "id": "coinvest::1199",
       "source": "investor_ivp",
       "target": "investor_khosla_ventures",
       "kind": "co_invested",
@@ -41086,7 +41391,7 @@
       "linked_funding_usd": 500000000
     },
     {
-      "id": "coinvest::1177",
+      "id": "coinvest::1200",
       "source": "investor_ivp",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41094,7 +41399,7 @@
       "linked_funding_usd": 601000000
     },
     {
-      "id": "coinvest::1179",
+      "id": "coinvest::1202",
       "source": "investor_khosla_ventures",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41102,7 +41407,7 @@
       "linked_funding_usd": 1375000000
     },
     {
-      "id": "coinvest::1183",
+      "id": "coinvest::1206",
       "source": "investor_bessemer_venture_partners",
       "target": "investor_t_rowe_price",
       "kind": "co_invested",
@@ -41110,7 +41415,7 @@
       "linked_funding_usd": 2400000000
     },
     {
-      "id": "coinvest::1188",
+      "id": "coinvest::1211",
       "source": "investor_gic",
       "target": "investor_wcm_investment_management",
       "kind": "co_invested",
@@ -41118,7 +41423,7 @@
       "linked_funding_usd": 10400000000
     },
     {
-      "id": "coinvest::1189",
+      "id": "coinvest::1212",
       "source": "investor_index_ventures",
       "target": "investor_t_rowe_price",
       "kind": "co_invested",
@@ -41126,7 +41431,7 @@
       "linked_funding_usd": 1000000000
     },
     {
-      "id": "coinvest::1197",
+      "id": "coinvest::1220",
       "source": "investor_8vc",
       "target": "investor_elad_gil",
       "kind": "co_invested",
@@ -41134,7 +41439,7 @@
       "linked_funding_usd": 1400000000
     },
     {
-      "id": "coinvest::1198",
+      "id": "coinvest::1221",
       "source": "investor_8vc",
       "target": "investor_founders_fund",
       "kind": "co_invested",
@@ -41142,7 +41447,7 @@
       "linked_funding_usd": 3620000000
     },
     {
-      "id": "coinvest::1199",
+      "id": "coinvest::1222",
       "source": "investor_8vc",
       "target": "investor_lux_capital",
       "kind": "co_invested",
@@ -41150,7 +41455,7 @@
       "linked_funding_usd": 3400000000
     },
     {
-      "id": "coinvest::1205",
+      "id": "coinvest::1228",
       "source": "investor_elad_gil",
       "target": "investor_founders_fund",
       "kind": "co_invested",
@@ -41158,7 +41463,7 @@
       "linked_funding_usd": 1400000000
     },
     {
-      "id": "coinvest::1207",
+      "id": "coinvest::1230",
       "source": "investor_founders_fund",
       "target": "investor_lux_capital",
       "kind": "co_invested",
@@ -41166,7 +41471,7 @@
       "linked_funding_usd": 3400000000
     },
     {
-      "id": "coinvest::1211",
+      "id": "coinvest::1234",
       "source": "investor_8vc",
       "target": "investor_general_catalyst",
       "kind": "co_invested",
@@ -41174,7 +41479,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1212",
+      "id": "coinvest::1235",
       "source": "investor_8vc",
       "target": "investor_layer_global",
       "kind": "co_invested",
@@ -41182,7 +41487,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1214",
+      "id": "coinvest::1237",
       "source": "investor_8vc",
       "target": "investor_ribbit_capital",
       "kind": "co_invested",
@@ -41190,7 +41495,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1215",
+      "id": "coinvest::1238",
       "source": "investor_8vc",
       "target": "investor_soma_capital",
       "kind": "co_invested",
@@ -41198,7 +41503,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1228",
+      "id": "coinvest::1251",
       "source": "investor_founders_fund",
       "target": "investor_layer_global",
       "kind": "co_invested",
@@ -41206,7 +41511,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1230",
+      "id": "coinvest::1253",
       "source": "investor_founders_fund",
       "target": "investor_ribbit_capital",
       "kind": "co_invested",
@@ -41214,7 +41519,7 @@
       "linked_funding_usd": 3600000000
     },
     {
-      "id": "coinvest::1231",
+      "id": "coinvest::1254",
       "source": "investor_founders_fund",
       "target": "investor_soma_capital",
       "kind": "co_invested",
@@ -41222,7 +41527,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1232",
+      "id": "coinvest::1255",
       "source": "investor_general_catalyst",
       "target": "investor_layer_global",
       "kind": "co_invested",
@@ -41230,7 +41535,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1234",
+      "id": "coinvest::1257",
       "source": "investor_general_catalyst",
       "target": "investor_ribbit_capital",
       "kind": "co_invested",
@@ -41238,7 +41543,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1235",
+      "id": "coinvest::1258",
       "source": "investor_general_catalyst",
       "target": "investor_soma_capital",
       "kind": "co_invested",
@@ -41246,7 +41551,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1236",
+      "id": "coinvest::1259",
       "source": "investor_layer_global",
       "target": "investor_lux_capital",
       "kind": "co_invested",
@@ -41254,7 +41559,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1238",
+      "id": "coinvest::1261",
       "source": "investor_layer_global",
       "target": "investor_ribbit_capital",
       "kind": "co_invested",
@@ -41262,7 +41567,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1239",
+      "id": "coinvest::1262",
       "source": "investor_layer_global",
       "target": "investor_soma_capital",
       "kind": "co_invested",
@@ -41270,7 +41575,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1241",
+      "id": "coinvest::1264",
       "source": "investor_lux_capital",
       "target": "investor_ribbit_capital",
       "kind": "co_invested",
@@ -41278,7 +41583,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1242",
+      "id": "coinvest::1265",
       "source": "investor_lux_capital",
       "target": "investor_soma_capital",
       "kind": "co_invested",
@@ -41286,7 +41591,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1245",
+      "id": "coinvest::1268",
       "source": "investor_ribbit_capital",
       "target": "investor_soma_capital",
       "kind": "co_invested",
@@ -41294,7 +41599,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1279",
+      "id": "coinvest::1302",
       "source": "investor_8vc",
       "target": "investor_accel",
       "kind": "co_invested",
@@ -41302,7 +41607,7 @@
       "linked_funding_usd": 2220000000
     },
     {
-      "id": "coinvest::1345",
+      "id": "coinvest::1368",
       "source": "investor_accel",
       "target": "investor_andreessen_horowitz",
       "kind": "co_invested",
@@ -41310,7 +41615,7 @@
       "linked_funding_usd": 7700000000
     },
     {
-      "id": "coinvest::1348",
+      "id": "coinvest::1371",
       "source": "investor_accel",
       "target": "investor_bain_capital_ventures",
       "kind": "co_invested",
@@ -41318,7 +41623,7 @@
       "linked_funding_usd": 2855000000
     },
     {
-      "id": "coinvest::1350",
+      "id": "coinvest::1373",
       "source": "investor_accel",
       "target": "investor_benchmark",
       "kind": "co_invested",
@@ -41326,7 +41631,7 @@
       "linked_funding_usd": 2550000000
     },
     {
-      "id": "coinvest::1356",
+      "id": "coinvest::1379",
       "source": "investor_accel",
       "target": "investor_dst_global",
       "kind": "co_invested",
@@ -41334,7 +41639,7 @@
       "linked_funding_usd": 6330000000
     },
     {
-      "id": "coinvest::1436",
+      "id": "coinvest::1459",
       "source": "investor_altimeter_capital",
       "target": "investor_andreessen_horowitz",
       "kind": "co_invested",
@@ -41342,7 +41647,7 @@
       "linked_funding_usd": 2150000000
     },
     {
-      "id": "coinvest::1446",
+      "id": "coinvest::1469",
       "source": "investor_altimeter_capital",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -41350,7 +41655,7 @@
       "linked_funding_usd": 2150000000
     },
     {
-      "id": "coinvest::1460",
+      "id": "coinvest::1483",
       "source": "investor_andreessen_horowitz",
       "target": "investor_bessemer_venture_partners",
       "kind": "co_invested",
@@ -41358,7 +41663,7 @@
       "linked_funding_usd": 2125000000
     },
     {
-      "id": "coinvest::1464",
+      "id": "coinvest::1487",
       "source": "investor_andreessen_horowitz",
       "target": "investor_diffusion",
       "kind": "co_invested",
@@ -41366,7 +41671,7 @@
       "linked_funding_usd": 2550000000
     },
     {
-      "id": "coinvest::1465",
+      "id": "coinvest::1488",
       "source": "investor_andreessen_horowitz",
       "target": "investor_dst_global",
       "kind": "co_invested",
@@ -41374,7 +41679,7 @@
       "linked_funding_usd": 21674200000
     },
     {
-      "id": "coinvest::1472",
+      "id": "coinvest::1495",
       "source": "investor_andreessen_horowitz",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41382,7 +41687,7 @@
       "linked_funding_usd": 15945200000
     },
     {
-      "id": "coinvest::1481",
+      "id": "coinvest::1504",
       "source": "investor_andreessen_horowitz",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41390,7 +41695,7 @@
       "linked_funding_usd": 14180000000
     },
     {
-      "id": "coinvest::1486",
+      "id": "coinvest::1509",
       "source": "investor_atreides_management",
       "target": "investor_bessemer_venture_partners",
       "kind": "co_invested",
@@ -41398,7 +41703,7 @@
       "linked_funding_usd": 3505000000
     },
     {
-      "id": "coinvest::1501",
+      "id": "coinvest::1524",
       "source": "investor_atreides_management",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41406,7 +41711,7 @@
       "linked_funding_usd": 3505000000
     },
     {
-      "id": "coinvest::1547",
+      "id": "coinvest::1570",
       "source": "investor_bain_capital_ventures",
       "target": "investor_dst_global",
       "kind": "co_invested",
@@ -41414,7 +41719,7 @@
       "linked_funding_usd": 2500000000
     },
     {
-      "id": "coinvest::1555",
+      "id": "coinvest::1578",
       "source": "investor_bain_capital_ventures",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41422,7 +41727,7 @@
       "linked_funding_usd": 2135000000
     },
     {
-      "id": "coinvest::1574",
+      "id": "coinvest::1597",
       "source": "investor_battery_ventures",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -41430,7 +41735,7 @@
       "linked_funding_usd": 2110000000
     },
     {
-      "id": "coinvest::1584",
+      "id": "coinvest::1607",
       "source": "investor_battery_ventures",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41438,7 +41743,7 @@
       "linked_funding_usd": 2225000000
     },
     {
-      "id": "coinvest::1589",
+      "id": "coinvest::1612",
       "source": "investor_benchmark",
       "target": "investor_dst_global",
       "kind": "co_invested",
@@ -41446,7 +41751,7 @@
       "linked_funding_usd": 2100000000
     },
     {
-      "id": "coinvest::1591",
+      "id": "coinvest::1614",
       "source": "investor_benchmark",
       "target": "investor_general_catalyst",
       "kind": "co_invested",
@@ -41454,7 +41759,7 @@
       "linked_funding_usd": 2650000000
     },
     {
-      "id": "coinvest::1641",
+      "id": "coinvest::1664",
       "source": "investor_bond",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41462,7 +41767,7 @@
       "linked_funding_usd": 2500000000
     },
     {
-      "id": "coinvest::1707",
+      "id": "coinvest::1730",
       "source": "investor_diffusion",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -41470,7 +41775,7 @@
       "linked_funding_usd": 2550000000
     },
     {
-      "id": "coinvest::1709",
+      "id": "coinvest::1732",
       "source": "investor_diffusion",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41478,7 +41783,7 @@
       "linked_funding_usd": 2550000000
     },
     {
-      "id": "coinvest::1724",
+      "id": "coinvest::1747",
       "source": "investor_dst_global",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -41486,7 +41791,7 @@
       "linked_funding_usd": 2150000000
     },
     {
-      "id": "coinvest::1744",
+      "id": "coinvest::1767",
       "source": "investor_founders_fund",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41494,7 +41799,7 @@
       "linked_funding_usd": 2600000000
     },
     {
-      "id": "coinvest::1745",
+      "id": "coinvest::1768",
       "source": "investor_general_catalyst",
       "target": "investor_greylock",
       "kind": "co_invested",
@@ -41502,7 +41807,7 @@
       "linked_funding_usd": 2250000000
     },
     {
-      "id": "coinvest::1758",
+      "id": "coinvest::1781",
       "source": "investor_greylock",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41510,7 +41815,7 @@
       "linked_funding_usd": 2100000000
     },
     {
-      "id": "coinvest::1808",
+      "id": "coinvest::1831",
       "source": "investor_kleiner_perkins",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41518,7 +41823,7 @@
       "linked_funding_usd": 3060000000
     },
     {
-      "id": "coinvest::1823",
+      "id": "coinvest::1846",
       "source": "investor_lightspeed_venture_partners",
       "target": "investor_lux_capital",
       "kind": "co_invested",
@@ -41526,7 +41831,7 @@
       "linked_funding_usd": 3000000000
     },
     {
-      "id": "coinvest::1830",
+      "id": "coinvest::1853",
       "source": "investor_lightspeed_venture_partners",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41534,7 +41839,7 @@
       "linked_funding_usd": 8500000000
     },
     {
-      "id": "coinvest::1834",
+      "id": "coinvest::1857",
       "source": "investor_lux_capital",
       "target": "investor_t_rowe_price",
       "kind": "co_invested",
@@ -41542,7 +41847,7 @@
       "linked_funding_usd": 2600000000
     },
     {
-      "id": "coinvest::1852",
+      "id": "coinvest::1875",
       "source": "investor_ribbit_capital",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41550,7 +41855,7 @@
       "linked_funding_usd": 2600000000
     },
     {
-      "id": "coinvest::1866",
+      "id": "coinvest::1889",
       "source": "investor_amd_ventures",
       "target": "investor_magnetar_capital",
       "kind": "co_invested",
@@ -41558,7 +41863,7 @@
       "linked_funding_usd": 600000000
     },
     {
-      "id": "coinvest::1867",
+      "id": "coinvest::1890",
       "source": "investor_amd_ventures",
       "target": "investor_psp_investments",
       "kind": "co_invested",
@@ -41566,7 +41871,7 @@
       "linked_funding_usd": 1000000000
     },
     {
-      "id": "coinvest::1880",
+      "id": "coinvest::1903",
       "source": "investor_amd_ventures",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -41574,7 +41879,7 @@
       "linked_funding_usd": 2165000000
     },
     {
-      "id": "coinvest::1882",
+      "id": "coinvest::1905",
       "source": "investor_amd_ventures",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -41582,7 +41887,7 @@
       "linked_funding_usd": 1200000000
     },
     {
-      "id": "coinvest::1896",
+      "id": "coinvest::1919",
       "source": "investor_radical_ventures",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -41590,7 +41895,7 @@
       "linked_funding_usd": 700000000
     },
     {
-      "id": "coinvest::1904",
+      "id": "coinvest::1927",
       "source": "investor_fidelity_management_research",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41598,7 +41903,7 @@
       "linked_funding_usd": 32600000000
     },
     {
-      "id": "coinvest::1915",
+      "id": "coinvest::1938",
       "source": "investor_nvidia",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41606,7 +41911,7 @@
       "linked_funding_usd": 6740000000
     },
     {
-      "id": "coinvest::1916",
+      "id": "coinvest::1939",
       "source": "investor_accel",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -41614,7 +41919,7 @@
       "linked_funding_usd": 3200000000
     },
     {
-      "id": "coinvest::1917",
+      "id": "coinvest::1940",
       "source": "investor_andreessen_horowitz",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -41622,7 +41927,7 @@
       "linked_funding_usd": 13200000000
     },
     {
-      "id": "coinvest::1918",
+      "id": "coinvest::1941",
       "source": "investor_dst_global",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -41630,7 +41935,7 @@
       "linked_funding_usd": 13200000000
     },
     {
-      "id": "coinvest::1920",
+      "id": "coinvest::1943",
       "source": "investor_andreessen_horowitz",
       "target": "investor_coatue",
       "kind": "co_invested",
@@ -41638,7 +41943,7 @@
       "linked_funding_usd": 2850000000
     },
     {
-      "id": "coinvest::1923",
+      "id": "coinvest::1946",
       "source": "investor_coatue",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -41646,7 +41951,7 @@
       "linked_funding_usd": 42710000000
     },
     {
-      "id": "coinvest::1925",
+      "id": "coinvest::1948",
       "source": "investor_dst_global",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -41654,7 +41959,7 @@
       "linked_funding_usd": 8274200000
     },
     {
-      "id": "coinvest::1927",
+      "id": "coinvest::1950",
       "source": "investor_nvidia",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -41662,7 +41967,7 @@
       "linked_funding_usd": 8900000000
     },
     {
-      "id": "coinvest::1929",
+      "id": "coinvest::1952",
       "source": "investor_accel",
       "target": "investor_cyberstarts",
       "kind": "co_invested",
@@ -41670,7 +41975,7 @@
       "linked_funding_usd": 600000000
     },
     {
-      "id": "coinvest::1931",
+      "id": "coinvest::1954",
       "source": "investor_accel",
       "target": "investor_redpoint_ventures",
       "kind": "co_invested",
@@ -41678,7 +41983,7 @@
       "linked_funding_usd": 1505000000
     },
     {
-      "id": "coinvest::1943",
+      "id": "coinvest::1966",
       "source": "investor_cyberstarts",
       "target": "investor_redpoint_ventures",
       "kind": "co_invested",
@@ -41686,7 +41991,7 @@
       "linked_funding_usd": 600000000
     },
     {
-      "id": "coinvest::1944",
+      "id": "coinvest::1967",
       "source": "investor_cyberstarts",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41694,7 +41999,7 @@
       "linked_funding_usd": 600000000
     },
     {
-      "id": "coinvest::1949",
+      "id": "coinvest::1972",
       "source": "investor_redpoint_ventures",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41702,7 +42007,7 @@
       "linked_funding_usd": 750000000
     },
     {
-      "id": "coinvest::1951",
+      "id": "coinvest::1974",
       "source": "investor_sequoia_capital",
       "target": "investor_spark_capital",
       "kind": "co_invested",
@@ -41710,7 +42015,7 @@
       "linked_funding_usd": 550000000
     },
     {
-      "id": "coinvest::1955",
+      "id": "coinvest::1978",
       "source": "investor_sapphire_ventures",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41718,7 +42023,7 @@
       "linked_funding_usd": 1000000000
     },
     {
-      "id": "coinvest::1956",
+      "id": "coinvest::1979",
       "source": "investor_andreessen_horowitz",
       "target": "investor_gic",
       "kind": "co_invested",
@@ -41726,7 +42031,7 @@
       "linked_funding_usd": 10550000000
     },
     {
-      "id": "coinvest::1957",
+      "id": "coinvest::1980",
       "source": "investor_andreessen_horowitz",
       "target": "investor_iconiq_capital",
       "kind": "co_invested",
@@ -41734,7 +42039,7 @@
       "linked_funding_usd": 10180000000
     },
     {
-      "id": "coinvest::1962",
+      "id": "coinvest::1985",
       "source": "investor_iconiq_capital",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -41742,7 +42047,7 @@
       "linked_funding_usd": 10175000000
     },
     {
-      "id": "coinvest::1970",
+      "id": "coinvest::1993",
       "source": "investor_benchmark",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41750,7 +42055,7 @@
       "linked_funding_usd": 1050000000
     },
     {
-      "id": "coinvest::2000",
+      "id": "coinvest::2023",
       "source": "investor_iconiq_capital",
       "target": "investor_ivp",
       "kind": "co_invested",
@@ -41758,7 +42063,7 @@
       "linked_funding_usd": 450000000
     },
     {
-      "id": "coinvest::2002",
+      "id": "coinvest::2025",
       "source": "investor_iconiq_capital",
       "target": "investor_world_innovation_lab",
       "kind": "co_invested",
@@ -41766,7 +42071,7 @@
       "linked_funding_usd": 480000000
     },
     {
-      "id": "coinvest::2024",
+      "id": "coinvest::2047",
       "source": "investor_andreessen_horowitz",
       "target": "investor_nfdg",
       "kind": "co_invested",
@@ -41774,7 +42079,7 @@
       "linked_funding_usd": 1180000000
     },
     {
-      "id": "coinvest::2025",
+      "id": "coinvest::2048",
       "source": "investor_andreessen_horowitz",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41782,7 +42087,7 @@
       "linked_funding_usd": 13880000000
     },
     {
-      "id": "coinvest::2026",
+      "id": "coinvest::2049",
       "source": "investor_andreessen_horowitz",
       "target": "investor_sv_angel",
       "kind": "co_invested",
@@ -41790,7 +42095,7 @@
       "linked_funding_usd": 1321000000
     },
     {
-      "id": "coinvest::2041",
+      "id": "coinvest::2064",
       "source": "investor_iconiq_capital",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -41798,7 +42103,7 @@
       "linked_funding_usd": 380000000
     },
     {
-      "id": "coinvest::2054",
+      "id": "coinvest::2077",
       "source": "investor_new_enterprise_associates",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -41806,7 +42111,7 @@
       "linked_funding_usd": 286000000
     },
     {
-      "id": "coinvest::2055",
+      "id": "coinvest::2078",
       "source": "investor_new_enterprise_associates",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41814,7 +42119,7 @@
       "linked_funding_usd": 1180000000
     },
     {
-      "id": "coinvest::2057",
+      "id": "coinvest::2080",
       "source": "investor_new_enterprise_associates",
       "target": "investor_sv_angel",
       "kind": "co_invested",
@@ -41822,7 +42127,7 @@
       "linked_funding_usd": 1180000000
     },
     {
-      "id": "coinvest::2059",
+      "id": "coinvest::2082",
       "source": "investor_new_enterprise_associates",
       "target": "investor_world_innovation_lab",
       "kind": "co_invested",
@@ -41830,7 +42135,7 @@
       "linked_funding_usd": 360000000
     },
     {
-      "id": "coinvest::2061",
+      "id": "coinvest::2084",
       "source": "investor_nfdg",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41838,7 +42143,7 @@
       "linked_funding_usd": 2000000000
     },
     {
-      "id": "coinvest::2062",
+      "id": "coinvest::2085",
       "source": "investor_nfdg",
       "target": "investor_smash_capital",
       "kind": "co_invested",
@@ -41846,7 +42151,7 @@
       "linked_funding_usd": 680000000
     },
     {
-      "id": "coinvest::2063",
+      "id": "coinvest::2086",
       "source": "investor_nfdg",
       "target": "investor_sv_angel",
       "kind": "co_invested",
@@ -41854,7 +42159,7 @@
       "linked_funding_usd": 1180000000
     },
     {
-      "id": "coinvest::2064",
+      "id": "coinvest::2087",
       "source": "investor_nfdg",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41862,7 +42167,7 @@
       "linked_funding_usd": 680000000
     },
     {
-      "id": "coinvest::2069",
+      "id": "coinvest::2092",
       "source": "investor_salesforce_ventures",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41870,7 +42175,7 @@
       "linked_funding_usd": 405000000
     },
     {
-      "id": "coinvest::2070",
+      "id": "coinvest::2093",
       "source": "investor_salesforce_ventures",
       "target": "investor_world_innovation_lab",
       "kind": "co_invested",
@@ -41878,7 +42183,7 @@
       "linked_funding_usd": 580000000
     },
     {
-      "id": "coinvest::2071",
+      "id": "coinvest::2094",
       "source": "investor_sequoia_capital",
       "target": "investor_smash_capital",
       "kind": "co_invested",
@@ -41886,7 +42191,7 @@
       "linked_funding_usd": 680000000
     },
     {
-      "id": "coinvest::2072",
+      "id": "coinvest::2095",
       "source": "investor_sequoia_capital",
       "target": "investor_sv_angel",
       "kind": "co_invested",
@@ -41894,7 +42199,7 @@
       "linked_funding_usd": 2180000000
     },
     {
-      "id": "coinvest::2073",
+      "id": "coinvest::2096",
       "source": "investor_sequoia_capital",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41902,7 +42207,7 @@
       "linked_funding_usd": 12680000000
     },
     {
-      "id": "coinvest::2076",
+      "id": "coinvest::2099",
       "source": "investor_smash_capital",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
@@ -41910,7 +42215,7 @@
       "linked_funding_usd": 680000000
     },
     {
-      "id": "coinvest::2090",
+      "id": "coinvest::2113",
       "source": "investor_bond",
       "target": "investor_evantic_capital",
       "kind": "co_invested",
@@ -41918,7 +42223,7 @@
       "linked_funding_usd": 1600000000
     },
     {
-      "id": "coinvest::2092",
+      "id": "coinvest::2115",
       "source": "investor_bond",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41926,7 +42231,7 @@
       "linked_funding_usd": 1800000000
     },
     {
-      "id": "coinvest::2098",
+      "id": "coinvest::2121",
       "source": "investor_broadlight_capital",
       "target": "investor_smash_capital",
       "kind": "co_invested",
@@ -41934,7 +42239,7 @@
       "linked_funding_usd": 900000000
     },
     {
-      "id": "coinvest::2100",
+      "id": "coinvest::2123",
       "source": "investor_evantic_capital",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -41942,7 +42247,7 @@
       "linked_funding_usd": 3905000000
     },
     {
-      "id": "coinvest::2102",
+      "id": "coinvest::2125",
       "source": "investor_evantic_capital",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41950,7 +42255,7 @@
       "linked_funding_usd": 2400000000
     },
     {
-      "id": "coinvest::2211",
+      "id": "coinvest::2234",
       "source": "investor_lightspeed_venture_partners",
       "target": "investor_signalfire",
       "kind": "co_invested",
@@ -41958,7 +42263,7 @@
       "linked_funding_usd": 285000000
     },
     {
-      "id": "coinvest::2221",
+      "id": "coinvest::2244",
       "source": "investor_daniel_gross",
       "target": "investor_nat_friedman",
       "kind": "co_invested",
@@ -41966,7 +42271,7 @@
       "linked_funding_usd": 587000000
     },
     {
-      "id": "coinvest::2279",
+      "id": "coinvest::2302",
       "source": "investor_kleiner_perkins",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -41974,7 +42279,7 @@
       "linked_funding_usd": 1650000000
     },
     {
-      "id": "coinvest::2280",
+      "id": "coinvest::2303",
       "source": "investor_bezos_expeditions",
       "target": "investor_bhp_ventures",
       "kind": "co_invested",
@@ -41982,7 +42287,7 @@
       "linked_funding_usd": 805500000
     },
     {
-      "id": "coinvest::2285",
+      "id": "coinvest::2308",
       "source": "investor_bezos_expeditions",
       "target": "investor_nventures",
       "kind": "co_invested",
@@ -41990,7 +42295,7 @@
       "linked_funding_usd": 1714000000
     },
     {
-      "id": "coinvest::2309",
+      "id": "coinvest::2332",
       "source": "investor_khosla_ventures",
       "target": "investor_nventures",
       "kind": "co_invested",
@@ -41998,7 +42303,7 @@
       "linked_funding_usd": 644000000
     },
     {
-      "id": "coinvest::2316",
+      "id": "coinvest::2339",
       "source": "investor_jeff_bezos",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42006,7 +42311,7 @@
       "linked_funding_usd": 1155000000
     },
     {
-      "id": "coinvest::2322",
+      "id": "coinvest::2345",
       "source": "investor_nvidia",
       "target": "investor_parkway_venture_capital",
       "kind": "co_invested",
@@ -42014,7 +42319,7 @@
       "linked_funding_usd": 1375000000
     },
     {
-      "id": "coinvest::2324",
+      "id": "coinvest::2347",
       "source": "investor_amd",
       "target": "investor_databricks",
       "kind": "co_invested",
@@ -42022,7 +42327,7 @@
       "linked_funding_usd": 510000000
     },
     {
-      "id": "coinvest::2327",
+      "id": "coinvest::2350",
       "source": "investor_amd",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -42030,7 +42335,7 @@
       "linked_funding_usd": 6250000000
     },
     {
-      "id": "coinvest::2329",
+      "id": "coinvest::2352",
       "source": "investor_amd",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42038,7 +42343,7 @@
       "linked_funding_usd": 9510000000
     },
     {
-      "id": "coinvest::2330",
+      "id": "coinvest::2353",
       "source": "investor_amd",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -42046,7 +42351,7 @@
       "linked_funding_usd": 6250000000
     },
     {
-      "id": "coinvest::2335",
+      "id": "coinvest::2358",
       "source": "investor_databricks",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42054,7 +42359,7 @@
       "linked_funding_usd": 510000000
     },
     {
-      "id": "coinvest::2337",
+      "id": "coinvest::2360",
       "source": "investor_evantic_capital",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -42062,7 +42367,7 @@
       "linked_funding_usd": 1755000000
     },
     {
-      "id": "coinvest::2339",
+      "id": "coinvest::2362",
       "source": "investor_evantic_capital",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42070,7 +42375,7 @@
       "linked_funding_usd": 1755000000
     },
     {
-      "id": "coinvest::2341",
+      "id": "coinvest::2364",
       "source": "investor_index_ventures",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42078,7 +42383,7 @@
       "linked_funding_usd": 7229200000
     },
     {
-      "id": "coinvest::2342",
+      "id": "coinvest::2365",
       "source": "investor_index_ventures",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -42086,7 +42391,7 @@
       "linked_funding_usd": 430000000
     },
     {
-      "id": "coinvest::2361",
+      "id": "coinvest::2384",
       "source": "investor_evantic_capital",
       "target": "investor_menlo_ventures",
       "kind": "co_invested",
@@ -42094,7 +42399,7 @@
       "linked_funding_usd": 2235000000
     },
     {
-      "id": "coinvest::2368",
+      "id": "coinvest::2391",
       "source": "investor_gv",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -42102,7 +42407,7 @@
       "linked_funding_usd": 310000000
     },
     {
-      "id": "coinvest::2369",
+      "id": "coinvest::2392",
       "source": "investor_gv",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -42110,7 +42415,7 @@
       "linked_funding_usd": 1640000000
     },
     {
-      "id": "coinvest::2439",
+      "id": "coinvest::2462",
       "source": "investor_altimeter_capital",
       "target": "investor_sapphire_ventures",
       "kind": "co_invested",
@@ -42118,7 +42423,7 @@
       "linked_funding_usd": 410000000
     },
     {
-      "id": "coinvest::2444",
+      "id": "coinvest::2467",
       "source": "investor_dst_global",
       "target": "investor_sapphire_ventures",
       "kind": "co_invested",
@@ -42126,7 +42431,7 @@
       "linked_funding_usd": 410000000
     },
     {
-      "id": "coinvest::2504",
+      "id": "coinvest::2527",
       "source": "investor_citi_ventures",
       "target": "investor_iconiq_capital",
       "kind": "co_invested",
@@ -42134,7 +42439,7 @@
       "linked_funding_usd": 350000000
     },
     {
-      "id": "coinvest::2514",
+      "id": "coinvest::2537",
       "source": "investor_coatue",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -42142,7 +42447,7 @@
       "linked_funding_usd": 1410000000
     },
     {
-      "id": "coinvest::2516",
+      "id": "coinvest::2539",
       "source": "investor_coatue",
       "target": "investor_sapphire_ventures",
       "kind": "co_invested",
@@ -42150,7 +42455,7 @@
       "linked_funding_usd": 700000000
     },
     {
-      "id": "coinvest::2520",
+      "id": "coinvest::2543",
       "source": "investor_dst_global",
       "target": "investor_khosla_ventures",
       "kind": "co_invested",
@@ -42158,7 +42463,7 @@
       "linked_funding_usd": 480000000
     },
     {
-      "id": "coinvest::2527",
+      "id": "coinvest::2550",
       "source": "investor_general_catalyst",
       "target": "investor_sapphire_ventures",
       "kind": "co_invested",
@@ -42166,7 +42471,7 @@
       "linked_funding_usd": 270000000
     },
     {
-      "id": "coinvest::2550",
+      "id": "coinvest::2573",
       "source": "investor_khosla_ventures",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -42174,7 +42479,7 @@
       "linked_funding_usd": 470000000
     },
     {
-      "id": "coinvest::2553",
+      "id": "coinvest::2576",
       "source": "investor_kleiner_perkins",
       "target": "investor_sapphire_ventures",
       "kind": "co_invested",
@@ -42182,7 +42487,7 @@
       "linked_funding_usd": 700000000
     },
     {
-      "id": "coinvest::2559",
+      "id": "coinvest::2582",
       "source": "investor_lightspeed_venture_partners",
       "target": "investor_sapphire_ventures",
       "kind": "co_invested",
@@ -42190,7 +42495,7 @@
       "linked_funding_usd": 700000000
     },
     {
-      "id": "coinvest::2568",
+      "id": "coinvest::2591",
       "source": "investor_blackrock",
       "target": "investor_neuberger_berman",
       "kind": "co_invested",
@@ -42198,7 +42503,7 @@
       "linked_funding_usd": 1390000000
     },
     {
-      "id": "coinvest::2599",
+      "id": "coinvest::2622",
       "source": "investor_accel",
       "target": "investor_amazon",
       "kind": "co_invested",
@@ -42206,7 +42511,7 @@
       "linked_funding_usd": 1220000000
     },
     {
-      "id": "coinvest::2601",
+      "id": "coinvest::2624",
       "source": "investor_accel",
       "target": "investor_creandum",
       "kind": "co_invested",
@@ -42214,7 +42519,7 @@
       "linked_funding_usd": 750000000
     },
     {
-      "id": "coinvest::2608",
+      "id": "coinvest::2631",
       "source": "investor_accel",
       "target": "investor_visionaries_club",
       "kind": "co_invested",
@@ -42222,7 +42527,7 @@
       "linked_funding_usd": 420000000
     },
     {
-      "id": "coinvest::2624",
+      "id": "coinvest::2647",
       "source": "investor_bpifrance",
       "target": "investor_eurazeo",
       "kind": "co_invested",
@@ -42230,7 +42535,7 @@
       "linked_funding_usd": 3704200000
     },
     {
-      "id": "coinvest::2738",
+      "id": "coinvest::2761",
       "source": "investor_amd_ventures",
       "target": "investor_greycroft",
       "kind": "co_invested",
@@ -42238,7 +42543,7 @@
       "linked_funding_usd": 1350000000
     },
     {
-      "id": "coinvest::2747",
+      "id": "coinvest::2770",
       "source": "investor_ark_invest",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42246,7 +42551,7 @@
       "linked_funding_usd": 1180000000
     },
     {
-      "id": "coinvest::2774",
+      "id": "coinvest::2797",
       "source": "investor_nvidia",
       "target": "investor_qualcomm_ventures",
       "kind": "co_invested",
@@ -42254,7 +42559,7 @@
       "linked_funding_usd": 840000000
     },
     {
-      "id": "coinvest::2790",
+      "id": "coinvest::2813",
       "source": "investor_elad_gil",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -42262,7 +42567,7 @@
       "linked_funding_usd": 1170000000
     },
     {
-      "id": "coinvest::2800",
+      "id": "coinvest::2823",
       "source": "investor_coatue",
       "target": "investor_conviction",
       "kind": "co_invested",
@@ -42270,7 +42575,7 @@
       "linked_funding_usd": 760000000
     },
     {
-      "id": "coinvest::2812",
+      "id": "coinvest::2835",
       "source": "investor_conviction",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -42278,7 +42583,7 @@
       "linked_funding_usd": 760000000
     },
     {
-      "id": "coinvest::2815",
+      "id": "coinvest::2838",
       "source": "investor_conviction",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -42286,7 +42591,7 @@
       "linked_funding_usd": 760000000
     },
     {
-      "id": "coinvest::2831",
+      "id": "coinvest::2854",
       "source": "investor_elad_gil",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -42294,7 +42599,7 @@
       "linked_funding_usd": 1037000000
     },
     {
-      "id": "coinvest::3004",
+      "id": "coinvest::3027",
       "source": "investor_andreessen_horowitz",
       "target": "investor_gv",
       "kind": "co_invested",
@@ -42302,7 +42607,7 @@
       "linked_funding_usd": 231000000
     },
     {
-      "id": "coinvest::3005",
+      "id": "coinvest::3028",
       "source": "investor_andreessen_horowitz",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -42310,7 +42615,7 @@
       "linked_funding_usd": 5604200000
     },
     {
-      "id": "coinvest::3108",
+      "id": "coinvest::3131",
       "source": "investor_dst_global",
       "target": "investor_menlo_ventures",
       "kind": "co_invested",
@@ -42318,7 +42623,7 @@
       "linked_funding_usd": 1230000000
     },
     {
-      "id": "coinvest::3189",
+      "id": "coinvest::3212",
       "source": "investor_kleiner_perkins",
       "target": "investor_sv_angel",
       "kind": "co_invested",
@@ -42326,7 +42631,7 @@
       "linked_funding_usd": 541000000
     },
     {
-      "id": "coinvest::3207",
+      "id": "coinvest::3230",
       "source": "investor_gv",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42334,7 +42639,7 @@
       "linked_funding_usd": 1330000000
     },
     {
-      "id": "coinvest::3227",
+      "id": "coinvest::3250",
       "source": "investor_altimeter_capital",
       "target": "investor_redpoint_ventures",
       "kind": "co_invested",
@@ -42342,7 +42647,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::3255",
+      "id": "coinvest::3278",
       "source": "investor_gv",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -42350,7 +42655,7 @@
       "linked_funding_usd": 1010000000
     },
     {
-      "id": "coinvest::3287",
+      "id": "coinvest::3310",
       "source": "investor_t_rowe_price",
       "target": "investor_us_innovative_technology_fund",
       "kind": "co_invested",
@@ -42358,7 +42663,7 @@
       "linked_funding_usd": 620000000
     },
     {
-      "id": "coinvest::3294",
+      "id": "coinvest::3317",
       "source": "investor_g_squared",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42366,7 +42671,7 @@
       "linked_funding_usd": 1580000000
     },
     {
-      "id": "coinvest::3305",
+      "id": "coinvest::3328",
       "source": "investor_general_catalyst",
       "target": "investor_redpoint_ventures",
       "kind": "co_invested",
@@ -42374,7 +42679,7 @@
       "linked_funding_usd": 905000000
     },
     {
-      "id": "coinvest::3352",
+      "id": "coinvest::3375",
       "source": "investor_hanabi_capital",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -42382,7 +42687,7 @@
       "linked_funding_usd": 200000000
     },
     {
-      "id": "coinvest::3356",
+      "id": "coinvest::3379",
       "source": "investor_index_ventures",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -42390,7 +42695,7 @@
       "linked_funding_usd": 3584200000
     },
     {
-      "id": "coinvest::3358",
+      "id": "coinvest::3381",
       "source": "investor_andreessen_horowitz",
       "target": "investor_felicis",
       "kind": "co_invested",
@@ -42398,7 +42703,7 @@
       "linked_funding_usd": 550000000
     },
     {
-      "id": "coinvest::3359",
+      "id": "coinvest::3382",
       "source": "investor_andreessen_horowitz",
       "target": "investor_uc_investments",
       "kind": "co_invested",
@@ -42406,7 +42711,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::3360",
+      "id": "coinvest::3383",
       "source": "investor_felicis",
       "target": "investor_kleiner_perkins",
       "kind": "co_invested",
@@ -42414,7 +42719,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::3361",
+      "id": "coinvest::3384",
       "source": "investor_felicis",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -42422,7 +42727,7 @@
       "linked_funding_usd": 550000000
     },
     {
-      "id": "coinvest::3362",
+      "id": "coinvest::3385",
       "source": "investor_felicis",
       "target": "investor_uc_investments",
       "kind": "co_invested",
@@ -42430,7 +42735,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::3363",
+      "id": "coinvest::3386",
       "source": "investor_kleiner_perkins",
       "target": "investor_uc_investments",
       "kind": "co_invested",
@@ -42438,7 +42743,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::3364",
+      "id": "coinvest::3387",
       "source": "investor_lightspeed_venture_partners",
       "target": "investor_uc_investments",
       "kind": "co_invested",
@@ -42446,7 +42751,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::3378",
+      "id": "coinvest::3401",
       "source": "investor_accel",
       "target": "investor_capitalg",
       "kind": "co_invested",
@@ -42454,40 +42759,8 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3381",
-      "source": "investor_accel",
-      "target": "investor_evantic_capital",
-      "kind": "co_invested",
-      "shared_rounds": 2,
-      "linked_funding_usd": 730000000
-    },
-    {
-      "id": "coinvest::3382",
-      "source": "investor_accel",
-      "target": "investor_hubspot_ventures",
-      "kind": "co_invested",
-      "shared_rounds": 2,
-      "linked_funding_usd": 730000000
-    },
-    {
-      "id": "coinvest::3385",
-      "source": "investor_accel",
-      "target": "investor_salesforce_ventures",
-      "kind": "co_invested",
-      "shared_rounds": 2,
-      "linked_funding_usd": 730000000
-    },
-    {
-      "id": "coinvest::3402",
-      "source": "investor_capitalg",
-      "target": "investor_dst_global",
-      "kind": "co_invested",
-      "shared_rounds": 2,
-      "linked_funding_usd": 730000000
-    },
-    {
       "id": "coinvest::3404",
-      "source": "investor_capitalg",
+      "source": "investor_accel",
       "target": "investor_evantic_capital",
       "kind": "co_invested",
       "shared_rounds": 2,
@@ -42495,6 +42768,38 @@
     },
     {
       "id": "coinvest::3405",
+      "source": "investor_accel",
+      "target": "investor_hubspot_ventures",
+      "kind": "co_invested",
+      "shared_rounds": 2,
+      "linked_funding_usd": 730000000
+    },
+    {
+      "id": "coinvest::3408",
+      "source": "investor_accel",
+      "target": "investor_salesforce_ventures",
+      "kind": "co_invested",
+      "shared_rounds": 2,
+      "linked_funding_usd": 730000000
+    },
+    {
+      "id": "coinvest::3425",
+      "source": "investor_capitalg",
+      "target": "investor_dst_global",
+      "kind": "co_invested",
+      "shared_rounds": 2,
+      "linked_funding_usd": 730000000
+    },
+    {
+      "id": "coinvest::3427",
+      "source": "investor_capitalg",
+      "target": "investor_evantic_capital",
+      "kind": "co_invested",
+      "shared_rounds": 2,
+      "linked_funding_usd": 730000000
+    },
+    {
+      "id": "coinvest::3428",
       "source": "investor_capitalg",
       "target": "investor_hubspot_ventures",
       "kind": "co_invested",
@@ -42502,7 +42807,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3406",
+      "id": "coinvest::3429",
       "source": "investor_capitalg",
       "target": "investor_khosla_ventures",
       "kind": "co_invested",
@@ -42510,7 +42815,7 @@
       "linked_funding_usd": 650000000
     },
     {
-      "id": "coinvest::3408",
+      "id": "coinvest::3431",
       "source": "investor_capitalg",
       "target": "investor_menlo_ventures",
       "kind": "co_invested",
@@ -42518,7 +42823,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3410",
+      "id": "coinvest::3433",
       "source": "investor_capitalg",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -42526,7 +42831,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3433",
+      "id": "coinvest::3456",
       "source": "investor_dst_global",
       "target": "investor_evantic_capital",
       "kind": "co_invested",
@@ -42534,7 +42839,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3434",
+      "id": "coinvest::3457",
       "source": "investor_dst_global",
       "target": "investor_hubspot_ventures",
       "kind": "co_invested",
@@ -42542,7 +42847,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3437",
+      "id": "coinvest::3460",
       "source": "investor_dst_global",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -42550,7 +42855,7 @@
       "linked_funding_usd": 4214200000
     },
     {
-      "id": "coinvest::3447",
+      "id": "coinvest::3470",
       "source": "investor_evantic_capital",
       "target": "investor_hubspot_ventures",
       "kind": "co_invested",
@@ -42558,7 +42863,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3451",
+      "id": "coinvest::3474",
       "source": "investor_evantic_capital",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -42566,7 +42871,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3455",
+      "id": "coinvest::3478",
       "source": "investor_hubspot_ventures",
       "target": "investor_menlo_ventures",
       "kind": "co_invested",
@@ -42574,7 +42879,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3457",
+      "id": "coinvest::3480",
       "source": "investor_hubspot_ventures",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -42582,7 +42887,7 @@
       "linked_funding_usd": 730000000
     },
     {
-      "id": "coinvest::3515",
+      "id": "coinvest::3538",
       "source": "investor_carmignac",
       "target": "investor_dst_global",
       "kind": "co_invested",
@@ -42590,7 +42895,7 @@
       "linked_funding_usd": 3884200000
     },
     {
-      "id": "coinvest::3522",
+      "id": "coinvest::3545",
       "source": "investor_carmignac",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -42598,7 +42903,7 @@
       "linked_funding_usd": 3884200000
     },
     {
-      "id": "coinvest::3523",
+      "id": "coinvest::3546",
       "source": "investor_carmignac",
       "target": "investor_scaleup_europe_fund",
       "kind": "co_invested",
@@ -42606,7 +42911,7 @@
       "linked_funding_usd": 3884200000
     },
     {
-      "id": "coinvest::3529",
+      "id": "coinvest::3552",
       "source": "investor_dst_global",
       "target": "investor_scaleup_europe_fund",
       "kind": "co_invested",
@@ -42614,7 +42919,7 @@
       "linked_funding_usd": 3884200000
     },
     {
-      "id": "coinvest::3565",
+      "id": "coinvest::3588",
       "source": "investor_salesforce_ventures",
       "target": "investor_scaleup_europe_fund",
       "kind": "co_invested",
@@ -42622,7 +42927,7 @@
       "linked_funding_usd": 3884200000
     },
     {
-      "id": "coinvest::3695",
+      "id": "coinvest::3718",
       "source": "investor_khosla_ventures",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42630,7 +42935,7 @@
       "linked_funding_usd": 900000000
     },
     {
-      "id": "coinvest::3718",
+      "id": "coinvest::3741",
       "source": "investor_alibaba",
       "target": "investor_hongshan",
       "kind": "co_invested",
@@ -42638,7 +42943,7 @@
       "linked_funding_usd": 1600000000
     },
     {
-      "id": "coinvest::3727",
+      "id": "coinvest::3750",
       "source": "investor_andreessen_horowitz",
       "target": "investor_bpifrance",
       "kind": "co_invested",
@@ -42646,7 +42951,7 @@
       "linked_funding_usd": 6119200000
     },
     {
-      "id": "coinvest::3731",
+      "id": "coinvest::3754",
       "source": "investor_bnp_paribas",
       "target": "investor_bpifrance",
       "kind": "co_invested",
@@ -42654,7 +42959,7 @@
       "linked_funding_usd": 1475000000
     },
     {
-      "id": "coinvest::3740",
+      "id": "coinvest::3763",
       "source": "investor_bpifrance",
       "target": "investor_general_catalyst",
       "kind": "co_invested",
@@ -42662,7 +42967,7 @@
       "linked_funding_usd": 6119200000
     },
     {
-      "id": "coinvest::3742",
+      "id": "coinvest::3765",
       "source": "investor_bpifrance",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -42670,7 +42975,7 @@
       "linked_funding_usd": 6119200000
     },
     {
-      "id": "coinvest::3743",
+      "id": "coinvest::3766",
       "source": "investor_bpifrance",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -42678,7 +42983,7 @@
       "linked_funding_usd": 4129200000
     },
     {
-      "id": "coinvest::3760",
+      "id": "coinvest::3783",
       "source": "investor_andreessen_horowitz",
       "target": "investor_asml",
       "kind": "co_invested",
@@ -42686,7 +42991,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3761",
+      "id": "coinvest::3784",
       "source": "investor_asml",
       "target": "investor_bpifrance",
       "kind": "co_invested",
@@ -42694,7 +42999,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3762",
+      "id": "coinvest::3785",
       "source": "investor_asml",
       "target": "investor_dst_global",
       "kind": "co_invested",
@@ -42702,7 +43007,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3763",
+      "id": "coinvest::3786",
       "source": "investor_asml",
       "target": "investor_general_catalyst",
       "kind": "co_invested",
@@ -42710,7 +43015,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3764",
+      "id": "coinvest::3787",
       "source": "investor_asml",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -42718,7 +43023,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3765",
+      "id": "coinvest::3788",
       "source": "investor_asml",
       "target": "investor_lightspeed_venture_partners",
       "kind": "co_invested",
@@ -42726,7 +43031,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3766",
+      "id": "coinvest::3789",
       "source": "investor_asml",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42734,7 +43039,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3767",
+      "id": "coinvest::3790",
       "source": "investor_bpifrance",
       "target": "investor_dst_global",
       "kind": "co_invested",
@@ -42742,7 +43047,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3768",
+      "id": "coinvest::3791",
       "source": "investor_bpifrance",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -42750,7 +43055,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3769",
+      "id": "coinvest::3792",
       "source": "investor_dst_global",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -42758,7 +43063,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3770",
+      "id": "coinvest::3793",
       "source": "investor_general_catalyst",
       "target": "investor_index_ventures",
       "kind": "co_invested",
@@ -42766,7 +43071,7 @@
       "linked_funding_usd": 5474200000
     },
     {
-      "id": "coinvest::3799",
+      "id": "coinvest::3822",
       "source": "investor_andreessen_horowitz",
       "target": "investor_blackrock",
       "kind": "co_invested",
@@ -42774,7 +43079,7 @@
       "linked_funding_usd": 9484200000
     },
     {
-      "id": "coinvest::3986",
+      "id": "coinvest::4009",
       "source": "investor_bain_capital_ventures",
       "target": "investor_redpoint_ventures",
       "kind": "co_invested",
@@ -42782,7 +43087,7 @@
       "linked_funding_usd": 855000000
     },
     {
-      "id": "coinvest::4072",
+      "id": "coinvest::4095",
       "source": "investor_aker_asa",
       "target": "investor_dell_technologies",
       "kind": "co_invested",
@@ -42790,7 +43095,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4075",
+      "id": "coinvest::4098",
       "source": "investor_aker_asa",
       "target": "investor_nokia",
       "kind": "co_invested",
@@ -42798,7 +43103,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4076",
+      "id": "coinvest::4099",
       "source": "investor_aker_asa",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42806,7 +43111,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4077",
+      "id": "coinvest::4100",
       "source": "investor_aker_asa",
       "target": "investor_point72_ventures",
       "kind": "co_invested",
@@ -42814,7 +43119,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4090",
+      "id": "coinvest::4113",
       "source": "investor_dell_technologies",
       "target": "investor_nokia",
       "kind": "co_invested",
@@ -42822,7 +43127,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4091",
+      "id": "coinvest::4114",
       "source": "investor_dell_technologies",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42830,7 +43135,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4092",
+      "id": "coinvest::4115",
       "source": "investor_dell_technologies",
       "target": "investor_point72_ventures",
       "kind": "co_invested",
@@ -42838,7 +43143,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4104",
+      "id": "coinvest::4127",
       "source": "investor_nokia",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42846,7 +43151,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4105",
+      "id": "coinvest::4128",
       "source": "investor_nokia",
       "target": "investor_point72_ventures",
       "kind": "co_invested",
@@ -42854,7 +43159,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4108",
+      "id": "coinvest::4131",
       "source": "investor_nvidia",
       "target": "investor_point72_ventures",
       "kind": "co_invested",
@@ -42862,7 +43167,7 @@
       "linked_funding_usd": 3100000000
     },
     {
-      "id": "coinvest::4158",
+      "id": "coinvest::4181",
       "source": "investor_microsoft",
       "target": "investor_softbank_group",
       "kind": "co_invested",
@@ -42870,7 +43175,7 @@
       "linked_funding_usd": 47650000000
     },
     {
-      "id": "coinvest::4159",
+      "id": "coinvest::4182",
       "source": "investor_microsoft",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -42878,7 +43183,7 @@
       "linked_funding_usd": 46600000000
     },
     {
-      "id": "coinvest::4161",
+      "id": "coinvest::4184",
       "source": "investor_nvidia",
       "target": "investor_softbank_group",
       "kind": "co_invested",
@@ -42886,7 +43191,7 @@
       "linked_funding_usd": 129650000000
     },
     {
-      "id": "coinvest::4163",
+      "id": "coinvest::4186",
       "source": "investor_softbank_group",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -42894,7 +43199,7 @@
       "linked_funding_usd": 46600000000
     },
     {
-      "id": "coinvest::4170",
+      "id": "coinvest::4193",
       "source": "investor_coatue",
       "target": "investor_gv",
       "kind": "co_invested",
@@ -42902,7 +43207,7 @@
       "linked_funding_usd": 410000000
     },
     {
-      "id": "coinvest::4173",
+      "id": "coinvest::4196",
       "source": "investor_kleiner_perkins",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -42910,7 +43215,7 @@
       "linked_funding_usd": 410000000
     },
     {
-      "id": "coinvest::4174",
+      "id": "coinvest::4197",
       "source": "investor_sequoia_capital",
       "target": "investor_thrive_capital",
       "kind": "co_invested",
@@ -42918,7 +43223,7 @@
       "linked_funding_usd": 410000000
     },
     {
-      "id": "coinvest::4235",
+      "id": "coinvest::4258",
       "source": "investor_felicis",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42926,7 +43231,7 @@
       "linked_funding_usd": 615000000
     },
     {
-      "id": "coinvest::4236",
+      "id": "coinvest::4259",
       "source": "investor_jeff_bezos",
       "target": "investor_lux_capital",
       "kind": "co_invested",
@@ -42934,7 +43239,7 @@
       "linked_funding_usd": 1000000000
     },
     {
-      "id": "coinvest::4238",
+      "id": "coinvest::4261",
       "source": "investor_lux_capital",
       "target": "investor_sequoia_capital",
       "kind": "co_invested",
@@ -42942,7 +43247,7 @@
       "linked_funding_usd": 1400000000
     },
     {
-      "id": "coinvest::4282",
+      "id": "coinvest::4305",
       "source": "investor_general_catalyst",
       "target": "investor_ngp_capital",
       "kind": "co_invested",
@@ -42950,7 +43255,7 @@
       "linked_funding_usd": 255000000
     },
     {
-      "id": "coinvest::4312",
+      "id": "coinvest::4335",
       "source": "investor_nvidia",
       "target": "investor_premji_invest",
       "kind": "co_invested",
@@ -42958,7 +43263,7 @@
       "linked_funding_usd": 815000000
     },
     {
-      "id": "coinvest::4345",
+      "id": "coinvest::4368",
       "source": "investor_nvidia",
       "target": "investor_snowflake",
       "kind": "co_invested",
@@ -42966,7 +43271,7 @@
       "linked_funding_usd": 370000000
     },
     {
-      "id": "coinvest::4361",
+      "id": "coinvest::4384",
       "source": "investor_adobe_ventures",
       "target": "investor_premji_invest",
       "kind": "co_invested",
@@ -42974,7 +43279,7 @@
       "linked_funding_usd": 515000000
     },
     {
-      "id": "coinvest::4412",
+      "id": "coinvest::4435",
       "source": "investor_lux_capital",
       "target": "investor_new_enterprise_associates",
       "kind": "co_invested",
@@ -42982,7 +43287,7 @@
       "linked_funding_usd": 1206000000
     },
     {
-      "id": "coinvest::4414",
+      "id": "coinvest::4437",
       "source": "investor_lux_capital",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42990,7 +43295,7 @@
       "linked_funding_usd": 405000000
     },
     {
-      "id": "coinvest::4417",
+      "id": "coinvest::4440",
       "source": "investor_new_enterprise_associates",
       "target": "investor_nvidia",
       "kind": "co_invested",
@@ -42998,7 +43303,7 @@
       "linked_funding_usd": 360000000
     },
     {
-      "id": "coinvest::4764",
+      "id": "coinvest::4787",
       "source": "investor_amd",
       "target": "investor_andreessen_horowitz",
       "kind": "co_invested",
@@ -43006,7 +43311,7 @@
       "linked_funding_usd": 8000000000
     },
     {
-      "id": "coinvest::4767",
+      "id": "coinvest::4790",
       "source": "investor_lux_capital",
       "target": "investor_salesforce_ventures",
       "kind": "co_invested",
@@ -43014,7 +43319,7 @@
       "linked_funding_usd": 411000000
     },
     {
-      "id": "coinvest::4770",
+      "id": "coinvest::4793",
       "source": "investor_nvidia",
       "target": "investor_prosperity7_ventures",
       "kind": "co_invested",
@@ -43022,7 +43327,7 @@
       "linked_funding_usd": 565000000
     },
     {
-      "id": "coinvest::4824",
+      "id": "coinvest::4847",
       "source": "investor_bessemer_venture_partners",
       "target": "investor_vine_ventures",
       "kind": "co_invested",
@@ -43030,7 +43335,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::4825",
+      "id": "coinvest::4848",
       "source": "investor_index_ventures",
       "target": "investor_insight_partners",
       "kind": "co_invested",
@@ -43038,7 +43343,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::4826",
+      "id": "coinvest::4849",
       "source": "investor_index_ventures",
       "target": "investor_vine_ventures",
       "kind": "co_invested",
@@ -43046,7 +43351,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::4827",
+      "id": "coinvest::4850",
       "source": "investor_insight_partners",
       "target": "investor_ivp",
       "kind": "co_invested",
@@ -43054,7 +43359,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::4828",
+      "id": "coinvest::4851",
       "source": "investor_insight_partners",
       "target": "investor_vine_ventures",
       "kind": "co_invested",
@@ -43062,7 +43367,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::4829",
+      "id": "coinvest::4852",
       "source": "investor_ivp",
       "target": "investor_vine_ventures",
       "kind": "co_invested",
@@ -43070,7 +43375,7 @@
       "linked_funding_usd": 250000000
     },
     {
-      "id": "coinvest::4832",
+      "id": "coinvest::4855",
       "source": "investor_amd",
       "target": "investor_fidelity_management_research",
       "kind": "co_invested",
@@ -43078,7 +43383,7 @@
       "linked_funding_usd": 7000000000
     },
     {
-      "id": "coinvest::4875",
+      "id": "coinvest::4898",
       "source": "investor_andreessen_horowitz",
       "target": "investor_fidelity_management_research",
       "kind": "co_invested",
@@ -43086,7 +43391,7 @@
       "linked_funding_usd": 12000000000
     },
     {
-      "id": "coinvest::4878",
+      "id": "coinvest::4901",
       "source": "investor_andreessen_horowitz",
       "target": "investor_vy_capital",
       "kind": "co_invested",
@@ -43094,7 +43399,7 @@
       "linked_funding_usd": 12000000000
     },
     {
-      "id": "coinvest::4881",
+      "id": "coinvest::4904",
       "source": "investor_fidelity_management_research",
       "target": "investor_vy_capital",
       "kind": "co_invested",
@@ -43102,7 +43407,7 @@
       "linked_funding_usd": 12000000000
     },
     {
-      "id": "coinvest::4889",
+      "id": "coinvest::4912",
       "source": "investor_sequoia_capital",
       "target": "investor_vy_capital",
       "kind": "co_invested",
@@ -43110,7 +43415,7 @@
       "linked_funding_usd": 12000000000
     },
     {
-      "id": "coinvest::4890",
+      "id": "coinvest::4913",
       "source": "investor_valor_equity_partners",
       "target": "investor_vy_capital",
       "kind": "co_invested",
@@ -43118,7 +43423,7 @@
       "linked_funding_usd": 12000000000
     },
     {
-      "id": "coinvest::4925",
+      "id": "coinvest::4948",
       "source": "investor_qatar_investment_authority",
       "target": "investor_valor_equity_partners",
       "kind": "co_invested",
