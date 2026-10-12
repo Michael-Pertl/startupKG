@@ -7,7 +7,7 @@ const compiled = await build({
   entryPoints: [fileURLToPath(new URL('../src/investorAnalytics.ts', import.meta.url))],
   bundle: true, platform: 'node', format: 'esm', write: false,
 });
-const { selectResearchRounds, periodMetrics } = await import(
+const { selectResearchRounds, periodMetrics, evidenceCsv } = await import(
   `data:text/javascript;base64,${Buffer.from(compiled.outputFiles[0].text).toString('base64')}`
 );
 const rounds = [
@@ -37,4 +37,19 @@ test('median, concentration and empty years are defined', () => {
   assert.equal(periods[0].topFiveShare, 0);
   assert.equal(periods[1].median, 500);
   assert.equal(periods[1].topFiveShare, 1);
+});
+
+test('company counts use graph relationships and do not count missing identifiers', () => {
+  const events = [{ id: 'a', year: '2025', amount_usd: 100 }, { id: 'b', year: '2025', amount_usd: 200 }, { id: 'c', year: '2025', amount_usd: 300 }];
+  const companies = new Map([['a', { id: 'one' }], ['b', { id: 'one' }], ['c', { id: 'two' }]]);
+  assert.equal(periodMetrics(events, ['2025'], companies)[0].companies, 2);
+  assert.equal(periodMetrics(events, ['2025'])[0].companies, 0);
+});
+test('evidence CSV includes sources and safely quotes spreadsheet values', () => {
+  const csv = evidenceCsv([{ id: 'round', label: 'Fallback', amount_usd: 100, source_url: 'https://example.org/source', confidence: 'high' }],
+    new Map([['round', { label: '=danger,"quoted"', country: 'US' }]]), new Map([['round', [{ label: 'Investor A' }]]]));
+  assert.match(csv, /"'=danger,""quoted"""/);
+  assert.match(csv, /https:\/\/example.org\/source/);
+  assert.match(csv, /Investor A/);
+  assert.equal(csv.split('\r\n').length, 3);
 });

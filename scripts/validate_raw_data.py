@@ -86,6 +86,8 @@ def parse_int(value: str, field: str, line_no: int, errors: list[str]) -> int | 
 
 def validate_row(row: dict[str, str], line_no: int, seen_event_ids: set[str]) -> list[str]:
     errors: list[str] = []
+    if set(row) != set(REQUIRED_COLUMNS) or any(not isinstance(value, str) for value in row.values()):
+        return [f"line {line_no}: malformed CSV row; expected {len(REQUIRED_COLUMNS)} fields with no missing or extra columns"]
 
     event_id = row["event_id"].strip()
     if not event_id:

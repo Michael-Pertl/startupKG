@@ -35,8 +35,8 @@ export function DataHealth() {
     <div className="evidence-health-summary">
       <strong>Curated coverage</strong>
       <span>Latest funding evidence: {dateLabel(health.latest_funding_date)}{stale ? " (over 30 days old)" : ""}</span>
-      <span>Tavily: {health.tavily.enabled_for_last_refresh === false ? "paused" : (health.tavily.status || "never_run").replace(/_/g, " ")}</span>
-      <span>Pipeline: {health.pipeline.status || "never run"}{overdue(health.pipeline.completed_at, 72) ? " (refresh overdue)" : ""}</span>
+      <span>Public feeds: {health.rss.successful_feeds ?? 0}/{health.rss.active_feeds ?? 0} available</span>
+      <span>Refresh: {health.pipeline.status === "degraded" ? "completed with source warnings" : health.pipeline.status === "ok" ? "completed" : health.pipeline.status || "not recorded"}{overdue(health.pipeline.completed_at, 72) ? " (overdue)" : ""}</span>
     </div>
     <details>
       <summary>Coverage and source status</summary>

@@ -87,10 +87,10 @@ def main() -> int:
     # Corrections can change dates, but existing graph identifiers must remain stable.
     round_ids = make_round_ids(events)
     from funding_evidence import apply_evidence
-    from validate_raw_data import validate_row
+    from validate_raw_data import REQUIRED_COLUMNS, validate_row
     events = apply_evidence(events)
     seen = set()
-    errors = [error for number, event in enumerate(events, 2) for error in validate_row(event, number, seen)]
+    errors = [error for number, event in enumerate(events, 2) for error in validate_row({field: event[field] for field in REQUIRED_COLUMNS}, number, seen)]
     if errors:
         raise ValueError("Effective evidence failed validation: " + "; ".join(errors))
     mappings = load_investor_mapping()

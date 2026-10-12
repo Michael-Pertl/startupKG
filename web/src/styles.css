@@ -3657,3 +3657,31 @@ a {
 .research-table th, .research-table td { padding: 10px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border, #526069); }
 .research-table th:first-child, .research-table td:first-child { text-align: left; }
 @media (max-width: 600px) { .research-controls { align-items: flex-start; flex-direction: column; } .research-table th, .research-table td { padding: 9px 8px; } }
+
+/* Analytics: clear hierarchy and accessible evidence exploration. */
+.analytics-intro { max-width: 580px; margin: 12px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.analytics-toolbar, .evidence-controls, .evidence-pagination { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.analytics-toolbar { margin: 20px 0 12px; }
+.analytics-toolbar p { flex: 1; margin: 0; font-size: 13px; color: var(--muted); }
+.analytics-scope { max-width: 900px; font-size: 12px; line-height: 1.7; color: var(--muted); }
+.analytics-toolbar button, .evidence-controls button, .evidence-pagination button, .analytics-empty button, .slice-summary button { border: 1px solid var(--border); border-radius: 8px; background: var(--surface-elevated); color: var(--text); padding: 9px 13px; font: inherit; font-size: 12px; cursor: pointer; }
+.analytics-toolbar button:hover, .evidence-controls button:hover, .evidence-pagination button:hover { border-color: var(--accent); }
+.analytics-toolbar button:focus-visible, .evidence-controls :focus-visible, .evidence-pagination button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.evidence-controls { padding: 16px 0; align-items: end; }
+.evidence-controls label { display: flex; flex-direction: column; gap: 7px; color: var(--muted); font-size: 12px; }
+.evidence-controls label:first-child { flex: 1; min-width: 180px; }
+.evidence-controls input, .evidence-controls select { min-height: 38px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-elevated); color: var(--text); font: inherit; }
+.evidence-pagination { justify-content: flex-end; margin-top: 16px; font-size: 12px; color: var(--muted); }
+.evidence-pagination button:disabled, .evidence-controls button:disabled { opacity: .45; cursor: default; }
+.analytics-empty { padding: 24px; margin: 20px 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-elevated); }
+.analytics-empty h2 { margin: 0 0 8px; font-size: 18px; }
+.analytics-empty p, .analytics-no-results { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.slice-summary button { margin-top: 8px; }
+@media (max-width: 640px) { .analytics-toolbar p { flex-basis: 100%; } .evidence-controls label { width: 100%; } .evidence-controls button { width: 100%; } .evidence-pagination { justify-content: space-between; } }
+
+.analytics-kpis { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+
+.evidence-table-head { grid-template-columns: minmax(140px, 1.3fr) minmax(90px, .7fr) minmax(140px, 1fr) 90px; padding-right: 40px; }
+.evidence-row-main { grid-template-columns: minmax(140px, 1.3fr) minmax(90px, .7fr) minmax(140px, 1fr) 90px; }
+.evidence-table-head span:last-child { text-align: right; }
+@media (max-width: 760px) { .evidence-table-head, .evidence-row-main { grid-template-columns: minmax(0, 1fr) 90px; } }

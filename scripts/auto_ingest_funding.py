@@ -4,6 +4,7 @@
 import json
 import re
 from datetime import date, datetime, timezone
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 from ingest_funding_events import append_rows, read_rows
@@ -24,7 +25,7 @@ def select_rows(candidates, existing):
             decisions.append({"event_id": event_id, "status": "already_ingested"})
             continue
         errors = []
-        if set(row) != set(REQUIRED_COLUMNS) or any(value is None for value in row.values()):
+        if set(row) != set(REQUIRED_COLUMNS) or any(not isinstance(value, str) for value in row.values()):
             errors.append("Incomplete structured evidence record")
         else:
             errors.extend(validate_row(row, number, set(ids)))
@@ -35,7 +36,11 @@ def select_rows(candidates, existing):
                     errors.append("Financing date cannot be in the future")
             except ValueError:
                 errors.append("Confirmed financing date is required")
-            if row["amount_currency"] != "USD" or row["amount_original"] != row["amount_usd"]:
+            try:
+                matching_amounts = Decimal(row["amount_original"]) == Decimal(row["amount_usd"])
+            except InvalidOperation:
+                matching_amounts = False
+            if row["amount_currency"].strip() != "USD" or not matching_amounts:
                 errors.append("Foreign currency or amount-basis differences need sourced conversion")
             if not row["round_type"].strip():
                 errors.append("Round type is required")
@@ -65,8 +70,13 @@ def main():
     if accepted:
         append_rows(RAW_FILE, accepted)
     REPORT.parent.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text(json.dumps({"completed_at": datetime.now(timezone.utc).isoformat(),
-                                 "ingested": len(accepted), "decisions": decisions}, indent=2) + "\n")
+    temporary = REPORT.with_suffix(".tmp")
+    temporary.write_text(json.dumps({"completed_at": datetime.now(timezone.utc).isoformat(),
+                                    "candidates": len(candidates), "ingested": len(accepted),
+                                    "quarantined": sum(item["status"] == "quarantined" for item in decisions),
+                                    "already_ingested": sum(item["status"] == "already_ingested" for item in decisions),
+                                    "decisions": decisions}, indent=2) + "\n")
+    temporary.replace(REPORT)
     print(f"Automatically ingested {len(accepted)} complete evidence records; see {REPORT.name}.")
     return 0
 

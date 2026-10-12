@@ -1,9 +1,14 @@
 {
-  "completed_at": "2026-10-04T15:17:10.488298+00:00",
-  "status": "ok",
-  "discovery_requested": false,
+  "completed_at": "2026-10-12T14:57:52.880989+00:00",
+  "status": "degraded",
+  "discovery_requested": true,
   "tavily_requested": false,
   "steps": [
+    {
+      "script": "fetch_market_events_feeds.py",
+      "exit_code": 1,
+      "status": "warning"
+    },
     {
       "script": "validate_raw_data.py",
       "exit_code": 0,

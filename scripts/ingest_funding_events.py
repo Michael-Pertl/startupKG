@@ -5,6 +5,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import fcntl
+import os
+import tempfile
 import sys
 from pathlib import Path
 
@@ -30,12 +33,36 @@ def load_existing_event_ids(path: Path) -> set[str]:
 
 def append_rows(path: Path, rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    file_exists = path.exists() and path.stat().st_size > 0
-    with path.open("a", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=REQUIRED_COLUMNS)
-        if not file_exists:
-            writer.writeheader()
-        writer.writerows(rows)
+    # One lock for both ingestion entry points; a failed write leaves evidence intact.
+    lock_path = ROOT / "cache" / "funding_ingestion.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        existing = []
+        if path.exists() and path.stat().st_size:
+            header, existing = read_rows(path)
+            if header != REQUIRED_COLUMNS:
+                raise ValueError(f"Invalid destination CSV header: {path}")
+        seen = {row["event_id"].strip() for row in existing}
+        errors = []
+        for line_no, row in enumerate(rows, len(existing) + 2):
+            errors.extend(validate_row(row, line_no, seen))
+        if errors:
+            raise ValueError("Funding ingestion failed: " + "; ".join(errors))
+        pending = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", newline="", encoding="utf-8",
+                                             dir=path.parent, delete=False) as handle:
+                pending = Path(handle.name)
+                writer = csv.DictWriter(handle, fieldnames=REQUIRED_COLUMNS)
+                writer.writeheader()
+                writer.writerows(existing + rows)
+                handle.flush()
+                os.fsync(handle.fileno())
+            pending.replace(path)
+        finally:
+            if pending and pending.exists():
+                pending.unlink()
 
 
 def main() -> int:
@@ -74,8 +101,11 @@ def main() -> int:
     existing_rows = read_rows(RAW_FILE)[1] if RAW_FILE.exists() else []
     semantic_keys = {(row["startup_name"].strip().casefold(), row["round_date"], row["amount_usd"]) for row in existing_rows if row["round_date"]}
     for line_no, row in enumerate(staged_rows, start=2):
+        row_errors = validate_row(row, line_no, seen_event_ids)
+        errors.extend(row_errors)
+        if set(row) != set(REQUIRED_COLUMNS) or any(not isinstance(value, str) for value in row.values()):
+            continue
         event_id = row["event_id"].strip()
-        errors.extend(validate_row(row, line_no, seen_event_ids))
         key = (row["startup_name"].strip().casefold(), row["round_date"], row["amount_usd"])
         if row["round_date"] and key in semantic_keys:
             errors.append(f"line {line_no}: duplicate company/date/amount; review existing financing evidence")
