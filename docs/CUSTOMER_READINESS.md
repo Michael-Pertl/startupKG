@@ -55,7 +55,7 @@ The readiness check intentionally fails while evidence/operational gaps remain.
 It evaluates current timestamps, not just the state when the JSON was generated.
 Its 48-hour discovery and 72-hour rebuild checks are operational targets, not
 guarantees of current worldwide coverage. Core-field rechecks and metadata must
-be complete for this conservative paid-release gate. Payment/authentication,
+be complete for this conservative public-release gate. Administrator authentication,
 privacy/terms, backups, production monitoring and deployed smoke tests remain
 separate requirements in `LAUNCH_CHECKLIST.md`.
 
@@ -69,7 +69,7 @@ separate requirements in `LAUNCH_CHECKLIST.md`.
    regions through documented sampling; do not claim representative global totals.
 4. Schedule daily single-writer refreshes on persistent production storage and
    alert on failures. Boot-time refreshes and merged code do not create a schedule.
-5. Run deployed authentication, billing, refund/support and data-freshness smoke
+5. Run deployed administrator authentication, support and data-freshness smoke
 tests before accepting paying customers. CI is not a production launch approval.
 
 ## Observed production state

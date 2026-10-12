@@ -1,3 +1,5 @@
+> Hackathon edition: all graph lenses, analytics, news, and Nebius Ask are open to everyone. See [the submission guide](docs/HACKATHON_SUBMISSION.md) for setup, the project pitch, and a demo outline.
+
 # AI Investment Knowledge Graph
 
 This project builds a Neo4j property graph for analysing AI startup mega-round investment activity globally, with US and Europe retained as major comparison regions.
@@ -111,8 +113,7 @@ secret-handling rules.
 ## Deployment
 
 The production target is the Node server in `web/server/app-server.mjs`. It
-serves the Vite build and handles Ask, credit usage, Stripe Checkout, and Stripe
-webhooks server-side. See `docs/DEPLOYMENT.md` and
+serves the Vite build and handles unrestricted Nebius Ask requests server-side. See `docs/DEPLOYMENT.md` and
 `docs/LAUNCH_CHECKLIST.md`.
 
 Production env template:
@@ -243,19 +244,7 @@ npm run ask-server
 
 The API key stays server-side in the local proxy. The React app calls `/api/ask` through the Vite proxy.
 
-For a metered Ask beta, enable access tokens in `web/.env.local`:
-
-```bash
-ASK_REQUIRE_AUTH=true
-ASK_CREDIT_USERS={"demo-token-1":{"user_id":"demo_user","credits":25,"plan":"starter"}}
-ASK_CREDITS_PER_PROMPT=1
-ASK_MAX_REQUESTS_PER_MINUTE=8
-```
-
-Users enter their Ask access token in the Ask panel. The proxy stores local
-credit state in `.ask_ledger.json` and request usage in `.ask_usage_log.jsonl`.
-These files are ignored by git. Stripe or another payment provider can later
-create/top up these user credits server-side.
+Ask is available without login, subscriptions, or a credit allowance.
 
 ## Market Event Monitoring
 
@@ -288,5 +277,5 @@ not called by the default refresh.
 ## Customer Readiness
 
 See [customer readiness and sourced corrections](docs/CUSTOMER_READINESS.md).
-Run `python3 scripts/check_customer_readiness.py --require-ready` before a paid
+Run `python3 scripts/check_customer_readiness.py --require-ready` before a public
 release. A successful rebuild is not proof of source accuracy or market coverage.

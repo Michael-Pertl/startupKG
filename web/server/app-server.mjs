@@ -1,8 +1,7 @@
 import { createServer } from "node:http";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import Stripe from "stripe";
 import { mergeMarketEventRows } from "./market-event-merge.mjs";
 import { canonicalContext } from "./canonical-context.mjs";
 
@@ -36,19 +35,8 @@ const PORT = Number(process.env.PORT || process.env.GRAPH_ASSISTANT_PORT || 8080
 const DIST_DIR = resolve(process.cwd(), process.env.STATIC_DIR || "dist");
 const BASE_URL = process.env.NEBIUS_BASE_URL || "https://api.tokenfactory.nebius.com/v1/";
 const MODEL = process.env.NEBIUS_MODEL || "moonshotai/Kimi-K2.5";
-const ASK_REQUIRE_AUTH = (process.env.ASK_REQUIRE_AUTH || "false").toLowerCase() === "true";
-const ASK_CREDITS_PER_PROMPT = Number(process.env.ASK_CREDITS_PER_PROMPT || 1);
-const ASK_MONTHLY_FREE_CREDITS = 5;
-const ASK_MAX_REQUESTS_PER_MINUTE = Number(process.env.ASK_MAX_REQUESTS_PER_MINUTE || 8);
-const ASK_LEDGER_FILE = resolve(process.cwd(), process.env.ASK_LEDGER_FILE || ".ask_ledger.json");
-const ASK_USAGE_LOG_FILE = resolve(process.cwd(), process.env.ASK_USAGE_LOG_FILE || ".ask_usage_log.jsonl");
-const ASK_AUTH_PROVIDER = process.env.ASK_AUTH_PROVIDER || "local";
 const SUPABASE_URL = process.env.SUPABASE_URL || "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
-const STRIPE_STARTER_PRICE_ID = process.env.STRIPE_STARTER_PRICE_ID || "";
-const STRIPE_PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID || "";
 const APP_PUBLIC_URL = process.env.APP_PUBLIC_URL || "http://127.0.0.1:5173";
 const ADMIN_EMAILS = new Set(
   (process.env.ADMIN_EMAILS || "")
@@ -56,29 +44,6 @@ const ADMIN_EMAILS = new Set(
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean),
 );
-const SUBSCRIPTION_PLANS = {
-  free: {
-    label: "Free",
-    price_id: "",
-    amount_cents: 0,
-    currency: "eur",
-    monthly_credits: ASK_MONTHLY_FREE_CREDITS,
-  },
-  starter: {
-    label: "Starter",
-    price_id: STRIPE_STARTER_PRICE_ID,
-    amount_cents: 499,
-    currency: "eur",
-    monthly_credits: 75,
-  },
-  pro: {
-    label: "Pro",
-    price_id: STRIPE_PRO_PRICE_ID,
-    amount_cents: 1999,
-    currency: "eur",
-    monthly_credits: 500,
-  },
-};
 const MARKET_EVENT_CORE_TYPES = new Set([
   "funding_round",
   "strategic_investment",
@@ -102,200 +67,32 @@ const supabaseAdmin =
         auth: { autoRefreshToken: false, persistSession: false },
       })
     : null;
-const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2026-02-25.clover" }) : null;
-const rateBuckets = new Map();
 
 function configStatus() {
   return {
-    auth_provider: ASK_AUTH_PROVIDER,
-    ask_auth_required: ASK_REQUIRE_AUTH,
     nebius_configured: Boolean(process.env.NEBIUS_API_KEY),
     supabase_configured: Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY),
-    stripe_configured: Boolean(STRIPE_SECRET_KEY && STRIPE_WEBHOOK_SECRET),
-    stripe_subscription_prices_configured: Boolean(STRIPE_STARTER_PRICE_ID && STRIPE_PRO_PRICE_ID),
     admin_review_configured: ADMIN_EMAILS.size > 0,
     app_public_url: APP_PUBLIC_URL,
     static_dir: DIST_DIR,
   };
 }
 
-function stableMonth() {
-  return new Date().toISOString().slice(0, 7);
-}
-
 function readJsonFile(path, fallback) {
   if (!existsSync(path)) return fallback;
-  try {
-    return JSON.parse(readFileSync(path, "utf8"));
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJsonFile(path, payload) {
-  writeFileSync(path, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
-}
-
-function appendJsonLine(path, payload) {
-  writeFileSync(path, `${JSON.stringify(payload)}\n`, { encoding: "utf8", flag: "a" });
-}
-
-function configuredUsers() {
-  const users = {};
-  const rawJson = process.env.ASK_CREDIT_USERS || "";
-  if (rawJson.trim()) {
-    try {
-      const parsed = JSON.parse(rawJson);
-      for (const [token, config] of Object.entries(parsed)) {
-        users[token] = {
-          user_id: config.user_id || config.userId || `user_${token.slice(0, 8)}`,
-          credits: Number(config.credits || ASK_MONTHLY_FREE_CREDITS),
-          plan: config.plan || "manual",
-        };
-      }
-    } catch (error) {
-      console.warn(`ASK_CREDIT_USERS is not valid JSON: ${error.message}`);
-    }
-  }
-  const rawTokens = process.env.ASK_ACCESS_TOKENS || "";
-  rawTokens
-    .split(",")
-    .map((token) => token.trim())
-    .filter(Boolean)
-    .forEach((token) => {
-      users[token] ||= {
-        user_id: `user_${token.slice(0, 8)}`,
-        credits: ASK_MONTHLY_FREE_CREDITS,
-        plan: "manual",
-      };
-    });
-  return users;
-}
-
-function loadLedger() {
-  const ledger = readJsonFile(ASK_LEDGER_FILE, { users: {} });
-  ledger.users ||= {};
-  const seeded = configuredUsers();
-  const month = stableMonth();
-  for (const [token, config] of Object.entries(seeded)) {
-    ledger.users[token] ||= {
-      user_id: config.user_id,
-      plan: config.plan,
-      credits_remaining: config.credits,
-      credits_granted: config.credits,
-      current_month: month,
-      request_timestamps: [],
-    };
-    ledger.users[token].user_id ||= config.user_id;
-    ledger.users[token].plan ||= config.plan;
-  }
-  return ledger;
-}
-
-function saveLedger(ledger) {
-  writeJsonFile(ASK_LEDGER_FILE, ledger);
+  return JSON.parse(readFileSync(path, "utf8"));
 }
 
 function tokenFromRequest(request) {
   const header = request.headers["x-ask-token"] || request.headers.authorization || "";
-  const value = Array.isArray(header) ? header[0] : header;
-  return value.replace(/^Bearer\s+/i, "").trim();
-}
-
-function checkRateLimit(key) {
-  const now = Date.now();
-  const timestamps = (rateBuckets.get(key) || []).filter((timestamp) => now - timestamp < 60_000);
-  if (timestamps.length >= ASK_MAX_REQUESTS_PER_MINUTE) {
-    rateBuckets.set(key, timestamps);
-    return false;
-  }
-  timestamps.push(now);
-  rateBuckets.set(key, timestamps);
-  return true;
-}
-
-async function getSupabaseProfile(userId) {
-  if (!supabaseAdmin) return null;
-  const { data, error } = await supabaseAdmin
-    .from("profiles")
-    .select("plan, subscription_status, stripe_customer_id, stripe_subscription_id, current_period_end, monthly_ask_limit")
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (error) {
-    console.warn(`Could not read Supabase profile for ${userId}: ${error.message}`);
-    return null;
-  }
-  return data || null;
+  return (Array.isArray(header) ? header[0] : header).replace(/^Bearer\s+/i, "").trim();
 }
 
 async function ensureSupabaseUser(request) {
-  if (!supabaseAdmin) {
-    return { error: { status: 503, message: "Supabase backend credentials are not configured." } };
-  }
-  const accessToken = tokenFromRequest(request);
-  if (!accessToken) {
-    return { error: { status: 401, message: "Supabase session token is missing." } };
-  }
-  const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(accessToken);
-  if (userError || !userData?.user) {
-    return { error: { status: 401, message: "Supabase session token is invalid." } };
-  }
-  const userId = userData.user.id;
-  const profile = await getSupabaseProfile(userId);
-  const planId = SUBSCRIPTION_PLANS[profile?.plan] ? profile.plan : "free";
-  const plan = SUBSCRIPTION_PLANS[planId];
-  const { data: balanceData, error: balanceError } = await supabaseAdmin.rpc("get_ask_credit_balance", {
-    target_user_id: userId,
-  });
-  if (balanceError) {
-    return { error: { status: 500, message: `Could not read Ask credits: ${balanceError.message}` } };
-  }
-  return {
-    provider: "supabase",
-    accessToken,
-    user: {
-      user_id: userId,
-      email: userData.user.email,
-      plan: planId,
-      subscription_status: profile?.subscription_status || "trial",
-      stripe_customer_id: profile?.stripe_customer_id || null,
-      stripe_subscription_id: profile?.stripe_subscription_id || null,
-      current_period_end: profile?.current_period_end || null,
-      monthly_ask_limit: plan.monthly_credits,
-      credits_remaining: Number(balanceData || 0),
-      request_timestamps: [],
-    },
-  };
-}
-
-function ensureLocalUser(request) {
-  const ledger = loadLedger();
-  if (!ASK_REQUIRE_AUTH) {
-    const token = "local_dev";
-    ledger.users[token] ||= {
-      user_id: "local_dev",
-      plan: "local",
-      credits_remaining: 1_000_000,
-      credits_granted: 1_000_000,
-      current_month: stableMonth(),
-      request_timestamps: [],
-    };
-    saveLedger(ledger);
-    return { provider: "local", ledger, token, user: ledger.users[token] };
-  }
-
-  const token = tokenFromRequest(request);
-  if (!token || !ledger.users[token]) {
-    return { provider: "local", ledger, token, error: { status: 401, message: "Ask access token is missing or invalid." } };
-  }
-  const user = ledger.users[token];
-  user.request_timestamps ||= [];
-  return { provider: "local", ledger, token, user };
-}
-
-async function ensureUser(request) {
-  if (ASK_AUTH_PROVIDER === "supabase") return ensureSupabaseUser(request);
-  return ensureLocalUser(request);
+  if (!supabaseAdmin) return { error: { status: 503, message: "Optional admin backend is not configured." } };
+  const { data, error } = await supabaseAdmin.auth.getUser(tokenFromRequest(request));
+  if (error || !data?.user) return { error: { status: 401, message: "Valid admin login required." } };
+  return { user: { user_id: data.user.id, email: data.user.email } };
 }
 
 async function ensureAdminUser(request) {
@@ -315,69 +112,6 @@ async function adminStatus(request) {
   return {
     admin: Boolean(ADMIN_EMAILS.size && ADMIN_EMAILS.has(email)),
     email: auth.user.email || "",
-  };
-}
-
-function checkCreditsAndRateLimit(user, provider = "local") {
-  if (provider === "supabase") {
-    if (!checkRateLimit(user.user_id)) {
-      return { status: 429, message: "Ask rate limit reached. Try again in a minute." };
-    }
-    if (Number(user.credits_remaining || 0) < ASK_CREDITS_PER_PROMPT) {
-      return { status: 402, message: "No Ask credits remaining. Please top up your account." };
-    }
-    return null;
-  }
-  const now = Date.now();
-  user.request_timestamps = (user.request_timestamps || []).filter((timestamp) => now - timestamp < 60_000);
-  if (user.request_timestamps.length >= ASK_MAX_REQUESTS_PER_MINUTE) {
-    return { status: 429, message: "Ask rate limit reached. Try again in a minute." };
-  }
-  if (Number(user.credits_remaining || 0) < ASK_CREDITS_PER_PROMPT) {
-    return { status: 402, message: "No Ask credits remaining. Please top up your account." };
-  }
-  return null;
-}
-
-function chargeUser(user, usage) {
-  user.credits_remaining = Number(user.credits_remaining || 0) - ASK_CREDITS_PER_PROMPT;
-  user.request_timestamps = [...(user.request_timestamps || []), Date.now()];
-  user.last_request_at = new Date().toISOString();
-  user.last_usage = usage;
-}
-
-async function consumeSupabaseCredits(user, selected, question, usage) {
-  const metadata = {
-    model: MODEL,
-    prompt_tokens: String(usage.prompt_tokens || ""),
-    completion_tokens: String(usage.completion_tokens || ""),
-    total_tokens: String(usage.total_tokens || ""),
-    selected_entity_id: selected.id || "",
-    selected_entity_label: selected.label || "",
-    question_chars: String(question.length),
-  };
-  const { data, error } = await supabaseAdmin.rpc("consume_ask_credits", {
-    target_user_id: user.user_id,
-    credit_amount: ASK_CREDITS_PER_PROMPT,
-    usage_metadata: metadata,
-  });
-  if (error) throw new Error(`Could not deduct Ask credits: ${error.message}`);
-  const row = Array.isArray(data) ? data[0] : data;
-  user.credits_remaining = Number(row?.balance_after ?? user.credits_remaining - ASK_CREDITS_PER_PROMPT);
-  return row;
-}
-
-function publicUsage(user) {
-  return {
-    user_id: user.user_id,
-    plan: user.plan,
-    subscription_status: user.subscription_status,
-    current_period_end: user.current_period_end,
-    monthly_ask_limit: user.monthly_ask_limit,
-    credits_remaining: Number(user.credits_remaining || 0),
-    credits_per_prompt: ASK_CREDITS_PER_PROMPT,
-    requests_last_minute: (user.request_timestamps || []).filter((timestamp) => Date.now() - timestamp < 60_000).length,
-    max_requests_per_minute: ASK_MAX_REQUESTS_PER_MINUTE,
   };
 }
 
@@ -483,198 +217,6 @@ async function publicMarketEvents() {
   }
   if (fallback) return { ...fallback, metadata: { ...fallback.metadata, source: "static_json" } };
   return marketEventPayload([], "empty");
-}
-
-async function createCheckoutSession(request) {
-  if (!stripe) {
-    return { error: { status: 503, message: "Stripe is not configured." } };
-  }
-  if (!supabaseAdmin) {
-    return { error: { status: 503, message: "Supabase backend credentials are not configured." } };
-  }
-  const auth = await ensureSupabaseUser(request);
-  if (auth.error) return auth;
-  const body = JSON.parse(await readBody(request));
-  const planId = String(body.plan_id || body.pack_id || "starter");
-  const plan = SUBSCRIPTION_PLANS[planId];
-  if (!plan) {
-    return { error: { status: 400, message: "Unknown subscription plan." } };
-  }
-  if (!plan.price_id) {
-    return { error: { status: 503, message: `Stripe price ID is not configured for the ${plan.label} plan.` } };
-  }
-
-  const sessionParams = {
-    mode: "subscription",
-    success_url: `${APP_PUBLIC_URL}/?checkout=success`,
-    cancel_url: `${APP_PUBLIC_URL}/?checkout=cancelled`,
-    client_reference_id: auth.user.user_id,
-    allow_promotion_codes: true,
-    line_items: [
-      {
-        price: plan.price_id,
-        quantity: 1,
-      },
-    ],
-    metadata: {
-      user_id: auth.user.user_id,
-      plan_id: planId,
-      monthly_credits: String(plan.monthly_credits),
-    },
-    subscription_data: {
-      metadata: {
-        user_id: auth.user.user_id,
-        plan_id: planId,
-        monthly_credits: String(plan.monthly_credits),
-      },
-    },
-  };
-
-  const stripeCustomer = auth.user.stripe_customer_id
-    ? await retrieveStripeCustomer(auth.user.stripe_customer_id)
-    : null;
-  if (stripeCustomer && !stripeCustomer.deleted) {
-    sessionParams.customer = auth.user.stripe_customer_id;
-  } else if (auth.user.email || body.email) {
-    sessionParams.customer_email = body.email || auth.user.email;
-  }
-
-  const session = await stripe.checkout.sessions.create(sessionParams);
-
-  return { session };
-}
-
-async function createBillingPortalSession(request) {
-  if (!stripe) {
-    return { error: { status: 503, message: "Stripe is not configured." } };
-  }
-  const auth = await ensureSupabaseUser(request);
-  if (auth.error) return auth;
-  if (!auth.user.stripe_customer_id) {
-    return { error: { status: 400, message: "No Stripe customer is linked to this account yet." } };
-  }
-  const stripeCustomer = await retrieveStripeCustomer(auth.user.stripe_customer_id);
-  if (!stripeCustomer || stripeCustomer.deleted) {
-    return {
-      error: {
-        status: 409,
-        message:
-          "The Stripe customer linked to this account does not exist in the active Stripe environment. This usually happens after switching from test mode to live mode. Start a new live checkout for this account, or clear the stale Stripe customer ID in Supabase.",
-      },
-    };
-  }
-  const session = await stripe.billingPortal.sessions.create({
-    customer: auth.user.stripe_customer_id,
-    return_url: `${APP_PUBLIC_URL}/account`,
-  });
-  return { session };
-}
-
-function isMissingStripeResource(error) {
-  return error?.type === "StripeInvalidRequestError" && error?.code === "resource_missing";
-}
-
-async function retrieveStripeCustomer(customerId) {
-  if (!customerId) return null;
-  try {
-    return await stripe.customers.retrieve(customerId);
-  } catch (error) {
-    if (isMissingStripeResource(error)) return null;
-    throw error;
-  }
-}
-
-function planIdFromPriceId(priceId) {
-  for (const [planId, plan] of Object.entries(SUBSCRIPTION_PLANS)) {
-    if (plan.price_id && plan.price_id === priceId) return planId;
-  }
-  return "";
-}
-
-function subscriptionIdFromInvoice(invoice) {
-  if (typeof invoice.subscription === "string") return invoice.subscription;
-  if (invoice.subscription?.id) return invoice.subscription.id;
-  if (typeof invoice.parent?.subscription_details?.subscription === "string") {
-    return invoice.parent.subscription_details.subscription;
-  }
-  return "";
-}
-
-function customerIdFromStripeObject(object) {
-  if (typeof object.customer === "string") return object.customer;
-  if (object.customer?.id) return object.customer.id;
-  return "";
-}
-
-async function stripeEventAlreadyProcessed(eventId) {
-  const { data } = await supabaseAdmin
-    .from("stripe_events")
-    .select("stripe_event_id")
-    .eq("stripe_event_id", eventId)
-    .maybeSingle();
-  return Boolean(data);
-}
-
-async function recordStripeEvent(event, { userId = null, creditsGranted = null, amountTotal = null, currency = null } = {}) {
-  const { error } = await supabaseAdmin.from("stripe_events").insert({
-    stripe_event_id: event.id,
-    event_type: event.type,
-    user_id: userId,
-    credits_granted: creditsGranted,
-    amount_total_cents: amountTotal,
-    currency,
-    payload: event,
-  });
-  if (error) throw new Error(`Could not record Stripe event: ${error.message}`);
-}
-
-async function updateSubscriptionProfile({
-  userId,
-  planId,
-  status,
-  customerId,
-  subscriptionId,
-  currentPeriodEnd,
-}) {
-  if (!userId) return;
-  const normalizedStatus = status || "active";
-  const nextPlan = normalizedStatus === "active" || normalizedStatus === "trialing" || normalizedStatus === "past_due"
-    ? planId || "free"
-    : "free";
-  const effectivePlan = SUBSCRIPTION_PLANS[nextPlan] || SUBSCRIPTION_PLANS.free;
-  const { error } = await supabaseAdmin
-    .from("profiles")
-    .update({
-      plan: nextPlan,
-      subscription_status: normalizedStatus,
-      stripe_customer_id: customerId || null,
-      stripe_subscription_id: subscriptionId || null,
-      current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null,
-      monthly_ask_limit: effectivePlan.monthly_credits,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("user_id", userId);
-  if (error) throw new Error(`Could not update subscription profile: ${error.message}`);
-}
-
-async function resolveSubscriptionContext({ subscriptionId, customerId, priceId }) {
-  let subscription = null;
-  if (subscriptionId) {
-    subscription = await stripe.subscriptions.retrieve(subscriptionId);
-  }
-  const firstItem = subscription?.items?.data?.[0];
-  const resolvedPriceId = priceId || firstItem?.price?.id || "";
-  const planId = subscription?.metadata?.plan_id || planIdFromPriceId(resolvedPriceId);
-  const userId = subscription?.metadata?.user_id || "";
-  return {
-    subscription,
-    userId,
-    planId,
-    customerId: customerId || customerIdFromStripeObject(subscription || {}),
-    subscriptionId: subscription?.id || subscriptionId,
-    status: subscription?.status || "",
-    currentPeriodEnd: subscription?.current_period_end || null,
-  };
 }
 
 async function listAdminEvents(request) {
@@ -791,120 +333,6 @@ async function markAdminEventPromotionReady(request, candidateId) {
     promotion_hint:
       "Export promotion_ready candidates, validate them against funding_events_raw.csv, then rebuild graph artifacts.",
   };
-}
-
-async function handleStripeWebhook(request) {
-  if (!stripe || !STRIPE_WEBHOOK_SECRET) {
-    return { error: { status: 503, message: "Stripe webhook is not configured." } };
-  }
-  if (!supabaseAdmin) {
-    return { error: { status: 503, message: "Supabase backend credentials are not configured." } };
-  }
-  const rawBody = await readBody(request);
-  const signature = request.headers["stripe-signature"];
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(rawBody, signature, STRIPE_WEBHOOK_SECRET);
-  } catch (error) {
-    return { error: { status: 400, message: error instanceof Error ? error.message : "Invalid Stripe webhook." } };
-  }
-
-  if (await stripeEventAlreadyProcessed(event.id)) {
-    return { ok: true, duplicate: true };
-  }
-
-  try {
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-      const userId = session.metadata?.user_id || session.client_reference_id;
-      const planId = session.metadata?.plan_id || "";
-      const customerId = customerIdFromStripeObject(session);
-      const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id || "";
-      const context = await resolveSubscriptionContext({ subscriptionId, customerId });
-      await updateSubscriptionProfile({
-        userId,
-        planId: context.planId || planId,
-        status: context.status || "active",
-        customerId,
-        subscriptionId,
-        currentPeriodEnd: context.currentPeriodEnd,
-      });
-      await recordStripeEvent(event, {
-        userId,
-        amountTotal: session.amount_total,
-        currency: session.currency,
-      });
-      return { ok: true };
-    }
-
-    if (event.type === "invoice.paid") {
-      const invoice = event.data.object;
-      const subscriptionId = subscriptionIdFromInvoice(invoice);
-      const customerId = customerIdFromStripeObject(invoice);
-      const priceId = invoice.lines?.data?.[0]?.price?.id || "";
-      const context = await resolveSubscriptionContext({ subscriptionId, customerId, priceId });
-      const plan = SUBSCRIPTION_PLANS[context.planId];
-      if (!context.userId || !plan) {
-        await recordStripeEvent(event, {
-          amountTotal: invoice.amount_paid,
-          currency: invoice.currency,
-        });
-        return { ok: true, ignored: true };
-      }
-      await updateSubscriptionProfile({
-        userId: context.userId,
-        planId: context.planId,
-        status: context.status || "active",
-        customerId: context.customerId,
-        subscriptionId: context.subscriptionId,
-        currentPeriodEnd: context.currentPeriodEnd,
-      });
-      const { error: grantError } = await supabaseAdmin.rpc("grant_ask_credits", {
-        target_user_id: context.userId,
-        credit_amount: plan.monthly_credits,
-        grant_reason: "stripe_purchase",
-        stripe_event_id: event.id,
-        grant_metadata: {
-          source: "subscription_invoice",
-          plan_id: context.planId,
-          invoice_id: invoice.id,
-          subscription_id: context.subscriptionId,
-          amount_paid_cents: invoice.amount_paid,
-          currency: invoice.currency,
-        },
-      });
-      if (grantError) throw new Error(`Could not grant Ask credits: ${grantError.message}`);
-      await recordStripeEvent(event, {
-        userId: context.userId,
-        creditsGranted: plan.monthly_credits,
-        amountTotal: invoice.amount_paid,
-        currency: invoice.currency,
-      });
-      return { ok: true };
-    }
-
-    if (event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
-      const subscription = event.data.object;
-      const priceId = subscription.items?.data?.[0]?.price?.id || "";
-      const planId = subscription.metadata?.plan_id || planIdFromPriceId(priceId);
-      const userId = subscription.metadata?.user_id || "";
-      await updateSubscriptionProfile({
-        userId,
-        planId,
-        status: subscription.status,
-        customerId: customerIdFromStripeObject(subscription),
-        subscriptionId: subscription.id,
-        currentPeriodEnd: subscription.current_period_end,
-      });
-      await recordStripeEvent(event, { userId });
-      return { ok: true };
-    }
-
-    await recordStripeEvent(event);
-    return { ok: true, ignored: true };
-  } catch (error) {
-    return { error: { status: 500, message: error instanceof Error ? error.message : "Stripe webhook failed." } };
-  }
 }
 
 function sendJson(response, status, payload) {
@@ -1057,7 +485,7 @@ function summarizeContext(selected, nodes, edges) {
   };
 }
 
-createServer(async (request, response) => {
+const server = createServer(async (request, response) => {
   if (request.method === "OPTIONS") {
     sendJson(response, 200, {});
     return;
@@ -1070,16 +498,6 @@ createServer(async (request, response) => {
       timestamp: new Date().toISOString(),
       config: configStatus(),
     });
-    return;
-  }
-
-  if (request.method === "GET" && request.url === "/api/ask/usage") {
-    const auth = await ensureUser(request);
-    if (auth.error) {
-      sendJson(response, auth.error.status, { error: auth.error.message });
-      return;
-    }
-    sendJson(response, 200, { usage: publicUsage(auth.user) });
     return;
   }
 
@@ -1142,61 +560,6 @@ createServer(async (request, response) => {
     return;
   }
 
-  if (request.method === "GET" && (request.url === "/api/subscription-plans" || request.url === "/api/credit-packs")) {
-    sendJson(response, 200, {
-      plans: Object.fromEntries(
-        Object.entries(SUBSCRIPTION_PLANS).map(([planId, plan]) => [
-          planId,
-          {
-            label: plan.label,
-            amount_cents: plan.amount_cents,
-            currency: plan.currency,
-            monthly_credits: plan.monthly_credits,
-          },
-        ]),
-      ),
-    });
-    return;
-  }
-
-  if (request.method === "POST" && request.url === "/api/checkout") {
-    try {
-      const result = await createCheckoutSession(request);
-      if (result.error) {
-        sendJson(response, result.error.status, { error: result.error.message });
-        return;
-      }
-      sendJson(response, 200, { url: result.session.url });
-    } catch (error) {
-      sendJson(response, 500, { error: error instanceof Error ? error.message : "Checkout failed." });
-    }
-    return;
-  }
-
-  if (request.method === "POST" && request.url === "/api/billing-portal") {
-    try {
-      const result = await createBillingPortalSession(request);
-      if (result.error) {
-        sendJson(response, result.error.status, { error: result.error.message });
-        return;
-      }
-      sendJson(response, 200, { url: result.session.url });
-    } catch (error) {
-      sendJson(response, 500, { error: error instanceof Error ? error.message : "Billing portal failed." });
-    }
-    return;
-  }
-
-  if (request.method === "POST" && request.url === "/api/stripe/webhook") {
-    const result = await handleStripeWebhook(request);
-    if (result.error) {
-      sendJson(response, result.error.status, { error: result.error.message });
-      return;
-    }
-    sendJson(response, 200, result);
-    return;
-  }
-
   if (request.url?.startsWith("/api/") && (request.method !== "POST" || request.url !== "/api/ask")) {
     sendJson(response, 404, { error: "Not found." });
     return;
@@ -1219,21 +582,10 @@ createServer(async (request, response) => {
   }
 
   try {
-    const auth = await ensureUser(request);
-    if (auth.error) {
-      sendJson(response, auth.error.status, { error: auth.error.message });
-      return;
-    }
-    const preflightError = checkCreditsAndRateLimit(auth.user, auth.provider);
-    if (preflightError) {
-      sendJson(response, preflightError.status, { error: preflightError.message, usage: publicUsage(auth.user) });
-      return;
-    }
-
     const payload = JSON.parse(await readBody(request));
     const graph = readJsonFile(resolve(DIST_DIR, "data", "market_graph.json"), null);
     if (!graph) {
-      sendJson(response, 503, { error: "Published graph evidence is unavailable. No credits were deducted." });
+      sendJson(response, 503, { error: "Published graph evidence is unavailable." });
       return;
     }
     const canonical = canonicalContext(graph, payload);
@@ -1306,31 +658,12 @@ createServer(async (request, response) => {
 
     const choice = data.choices?.[0] || {};
     const answer = choice.message?.content || choice.text;
-    const usage = data.usage || {};
-    if (auth.provider === "supabase") {
-      await consumeSupabaseCredits(auth.user, selected, String(payload.question || ""), usage);
-    } else {
-      chargeUser(auth.user, usage);
-      saveLedger(auth.ledger);
-      appendJsonLine(ASK_USAGE_LOG_FILE, {
-        timestamp: new Date().toISOString(),
-        user_id: auth.user.user_id,
-        model: MODEL,
-        credits_charged: ASK_CREDITS_PER_PROMPT,
-        credits_remaining: auth.user.credits_remaining,
-        prompt_tokens: usage.prompt_tokens,
-        completion_tokens: usage.completion_tokens,
-        total_tokens: usage.total_tokens,
-        status: "ok",
-      });
-    }
     sendJson(response, 200, {
       answer:
         typeof answer === "string" && answer.trim()
           ? answer.trim()
           : "The model returned reasoning tokens but no final answer. Try asking a shorter question or use a non-reasoning model.",
       model: MODEL,
-      usage: publicUsage(auth.user),
     });
   } catch (error) {
     sendJson(response, 500, {
@@ -1338,5 +671,5 @@ createServer(async (request, response) => {
     });
   }
 }).listen(PORT, "0.0.0.0", () => {
-  console.log(`AI Market Graph server listening on http://0.0.0.0:${PORT}`);
+  console.log(`AI Market Graph server listening on http://0.0.0.0:${server.address().port}`);
 });

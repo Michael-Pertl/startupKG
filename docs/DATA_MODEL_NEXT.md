@@ -46,7 +46,6 @@ Examples for `metric_type`:
 - `valuation_pre_money_usd`
 - `annualized_revenue_usd`
 - `weekly_active_users`
-- `paid_subscribers`
 - `employee_count`
 - `total_funding_reported_usd`
 

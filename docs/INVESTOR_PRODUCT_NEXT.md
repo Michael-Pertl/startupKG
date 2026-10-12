@@ -47,7 +47,7 @@ The dataset remains curated publicly reported AI mega-rounds above the threshold
 4. Company histories: distinct sourced valuation, revenue and financing records with as-of dates. Preserve pre-money/post-money and annualized/realized revenue distinctions. Existing profile totals must never substitute for individual funding proceeds.
 5. Research assurance: provider failure alerts, reviewed-source freshness targets, point-in-time snapshots, and independent manual audits of high-value events. Publish methodology and known gaps alongside evidence.
 
-Before a paid launch, close the unresolved metadata/source-review gaps and verify production discovery, deployed exports, authenticated review permissions, and provider health alerts. The current local update does not establish comprehensive global coverage or production operations.
+Before a public launch, close the unresolved metadata/source-review gaps and verify production discovery, deployed exports, authenticated review permissions, and provider health alerts. The current local update does not establish comprehensive global coverage or production operations.
 
 ## Checks completed
 

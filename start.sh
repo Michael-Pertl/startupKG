@@ -22,7 +22,7 @@ trap cleanup EXIT INT TERM
 
 cd "$WEB_DIR"
 
-python3 "$ROOT_DIR/scripts/refresh_platform.py" --discover
+python3 "$ROOT_DIR/scripts/refresh_platform.py"
 
 if [ ! -d node_modules ]; then
   echo "Installing web dependencies..."
