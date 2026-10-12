@@ -13,7 +13,7 @@ services:
       NODE_ENV: production
       PORT: 8080
       NEBIUS_API_KEY: "${NEBIUS_API_KEY:-}"
-      NEBIUS_MODEL: "${NEBIUS_MODEL:-moonshotai/Kimi-K2.5}"
+      NEBIUS_MODEL: "${NEBIUS_MODEL:-moonshotai/Kimi-K2.6}"
       NEBIUS_BASE_URL: "${NEBIUS_BASE_URL:-https://api.tokenfactory.nebius.com/v1/}"
       SUPABASE_URL: "${SUPABASE_URL:-}"
       SUPABASE_SERVICE_ROLE_KEY: "${SUPABASE_SERVICE_ROLE_KEY:-}"
