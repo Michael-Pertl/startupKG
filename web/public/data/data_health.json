@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-04T15:17:10.700996+00:00",
+  "generated_at": "2026-10-12T14:57:52.976078+00:00",
   "coverage_status": "curated_incomplete",
   "scope_note": "Curated publicly reported AI mega-rounds of USD100M or more in 2024-2026; smaller rounds and undisclosed funding are outside core coverage. Regional samples are uneven.",
   "latest_funding_date": "2026-09-10",
   "funding_events": 212,
   "companies": 164,
   "unknown_investors": 63,
-  "unreviewed_events": 28,
+  "unreviewed_events": 35,
   "undated_funding_events": 0,
   "low_confidence_events": 0,
   "source_rechecked_events": 2,
@@ -87,14 +87,15 @@
     "enabled_for_last_refresh": false
   },
   "rss": {
-    "fetched_at": "2026-10-04T15:06:53.871163+00:00",
+    "fetched_at": "2026-10-12T14:57:51.714101+00:00",
     "active_feeds": 6,
     "successful_feeds": 5,
     "failed_feeds": 1,
-    "matching_candidates": 4,
-    "added_events": 0,
+    "matching_candidates": 7,
+    "added_events": 7,
     "candidate_status_counts": {
-      "needs_review": 4
+      "staged": 1,
+      "needs_review": 6
     },
     "feeds": [
       {
@@ -102,21 +103,21 @@
         "url": "https://techcrunch.com/feed/",
         "status": "ok",
         "items_fetched": 20,
-        "items_matched": 0
+        "items_matched": 1
       },
       {
         "name": "Sifted",
         "url": "https://sifted.eu/feed/",
         "status": "ok",
         "items_fetched": 24,
-        "items_matched": 1
+        "items_matched": 0
       },
       {
         "name": "EU-Startups",
         "url": "https://www.eu-startups.com/feed/",
         "status": "ok",
         "items_fetched": 10,
-        "items_matched": 3
+        "items_matched": 5
       },
       {
         "name": "VentureBeat AI",
@@ -131,7 +132,7 @@
         "url": "https://www.prnewswire.com/rss/technology-latest-news/technology-latest-news-list.rss",
         "status": "ok",
         "items_fetched": 20,
-        "items_matched": 0
+        "items_matched": 1
       },
       {
         "name": "BusinessWire Technology",
@@ -143,11 +144,16 @@
     ]
   },
   "pipeline": {
-    "completed_at": "2026-10-04T15:17:10.488298+00:00",
-    "status": "ok",
-    "discovery_requested": false,
+    "completed_at": "2026-10-12T14:57:52.880989+00:00",
+    "status": "degraded",
+    "discovery_requested": true,
     "tavily_requested": false,
     "steps": [
+      {
+        "script": "fetch_market_events_feeds.py",
+        "exit_code": 1,
+        "status": "warning"
+      },
       {
         "script": "validate_raw_data.py",
         "exit_code": 0,
@@ -206,13 +212,16 @@
     ]
   },
   "automatic_ingestion": {
-    "completed_at": "2026-10-04T15:17:08.587155+00:00",
+    "completed_at": "2026-10-12T14:57:51.874646+00:00",
+    "candidates": 0,
     "ingested": 0,
+    "quarantined": 0,
+    "already_ingested": 0,
     "decisions": []
   },
   "assurance": {
     "status": "limited_preview",
-    "evaluated_at": "2026-10-04T15:17:10.792068+00:00",
+    "evaluated_at": "2026-10-12T14:57:53.010415+00:00",
     "blockers": [
       "One or more configured public feeds are unavailable",
       "Historical funding evidence has not been fully rechecked",
