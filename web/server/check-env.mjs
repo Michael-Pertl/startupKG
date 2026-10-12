@@ -33,7 +33,7 @@ function requireEnv(name, reason) {
   checks.push({
     name,
     required: true,
-    ok: Boolean(process.env[name]),
+    ok: Boolean(process.env[name]) && !/replace_with|your-project|your-server/i.test(process.env[name]),
     reason,
   });
 }
@@ -42,44 +42,17 @@ function recommendEnv(name, reason) {
   checks.push({
     name,
     required: false,
-    ok: Boolean(process.env[name]),
+    ok: Boolean(process.env[name]) && !/replace_with|your-project|your-server/i.test(process.env[name]),
     reason,
   });
 }
 
-const authProvider = process.env.ASK_AUTH_PROVIDER || "local";
-const requireAskAuth = (process.env.ASK_REQUIRE_AUTH || "false").toLowerCase() === "true";
-
-requireEnv("NEBIUS_API_KEY", "Server-side model calls for the Ask panel.");
-requireEnv("APP_PUBLIC_URL", "Stripe redirects and production canonical URL.");
-
-if (authProvider !== "supabase") {
-  checks.push({
-    name: "ASK_AUTH_PROVIDER",
-    required: true,
-    ok: false,
-    reason: "Set ASK_AUTH_PROVIDER=supabase before a public launch.",
-  });
+requireEnv("NEBIUS_API_KEY", "Server-side Nebius model calls for the hackathon Ask panel.");
+recommendEnv("NEBIUS_MODEL", "Defaults to moonshotai/Kimi-K2.5.");
+if (process.env.ADMIN_EMAILS) {
+  requireEnv("SUPABASE_URL", "Optional authenticated administrator review.");
+  requireEnv("SUPABASE_SERVICE_ROLE_KEY", "Optional administrator review storage.");
 }
-
-if (!requireAskAuth) {
-  checks.push({
-    name: "ASK_REQUIRE_AUTH",
-    required: true,
-    ok: false,
-    reason: "Set ASK_REQUIRE_AUTH=true so Ask is gated by login/credits.",
-  });
-}
-
-requireEnv("SUPABASE_URL", "Server-side Supabase project URL.");
-requireEnv("SUPABASE_SERVICE_ROLE_KEY", "Server-side Supabase admin key for credit RPCs.");
-requireEnv("VITE_SUPABASE_URL", "Frontend Supabase login client.");
-requireEnv("VITE_SUPABASE_ANON_KEY", "Frontend Supabase anonymous key.");
-
-requireEnv("STRIPE_SECRET_KEY", "Server-side Stripe Checkout.");
-requireEnv("STRIPE_WEBHOOK_SECRET", "Stripe webhook signature verification.");
-recommendEnv("ASK_CREDITS_PER_PROMPT", "Controls how many credits each successful Ask response deducts.");
-recommendEnv("ASK_MAX_REQUESTS_PER_MINUTE", "Protects the Ask endpoint from excessive use.");
 
 const failures = checks.filter((check) => check.required && !check.ok);
 const warnings = checks.filter((check) => !check.required && !check.ok);

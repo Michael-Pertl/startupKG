@@ -622,10 +622,6 @@ a {
   padding: 24px;
 }
 
-.pricing-panel {
-  max-width: 1080px;
-}
-
 .legal-header {
   border-bottom: 1px solid var(--border-soft);
   display: grid;
@@ -715,11 +711,6 @@ a {
   color: var(--text-strong);
 }
 
-.pricing-grid {
-  border-bottom: 1px solid var(--border-soft);
-  padding-bottom: 6px;
-}
-
 .admin-panel {
   display: grid;
   gap: 14px;
@@ -763,7 +754,6 @@ a {
 
 .account-panel span,
 .admin-panel span,
-.account-billing span,
 .account-balance span,
 .profile-summary span {
   color: var(--accent);
@@ -773,8 +763,7 @@ a {
 }
 
 .account-panel h1,
-.admin-panel h1,
-.account-billing h2 {
+.admin-panel h1{
   color: var(--text-strong);
   letter-spacing: 0;
   margin: 8px 0;
@@ -1122,80 +1111,7 @@ a {
   margin-top: 6px;
 }
 
-.account-billing,
-.plan-card {
-  border: 1px solid var(--border-soft);
-  background: var(--surface-muted);
-  padding: 14px;
-}
-
-.account-billing {
-  display: grid;
-  gap: 18px;
-}
-
-.plan-grid {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.plan-card {
-  display: grid;
-  gap: 8px;
-}
-
-.plan-card.current {
-  border-color: var(--accent-border);
-  background: var(--accent-soft);
-}
-
-.plan-card.recommended {
-  border-color: var(--accent-border);
-  position: relative;
-}
-
-.plan-card.recommended::before {
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  color: var(--accent);
-  content: "Recommended";
-  font-size: 9px;
-  font-weight: 900;
-  justify-self: start;
-  padding: 3px 6px;
-  text-transform: uppercase;
-}
-
-.plan-card:hover,
-.plan-card:focus-within {
-  border-color: var(--accent-border);
-  background: color-mix(in srgb, var(--accent-soft) 72%, var(--surface-muted));
-}
-
-.plan-card strong {
-  color: var(--text-strong);
-  font-size: 13px;
-}
-
-.plan-card ul {
-  color: var(--muted);
-  display: grid;
-  gap: 6px;
-  line-height: 1.35;
-  list-style: none;
-  margin: 2px 0;
-  padding: 0;
-}
-
-.plan-card li {
-  border-left: 2px solid var(--accent-border);
-  padding-left: 10px;
-}
-
-.account-primary,
-.plan-card button,
-.account-billing button {
+.account-primary{
   background: var(--accent);
   border: 1px solid var(--accent);
   border-radius: 2px;
@@ -1204,107 +1120,6 @@ a {
   font-weight: 900;
   min-height: 40px;
   padding: 8px 14px;
-}
-
-.plan-card button:disabled,
-.account-billing button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-.upgrade-backdrop {
-  align-items: center;
-  background: rgba(0, 0, 0, 0.58);
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  padding: 18px;
-  position: fixed;
-  z-index: 80;
-}
-
-.upgrade-modal {
-  background: var(--surface-elevated);
-  border: 1px solid var(--accent-border);
-  box-shadow: 0 24px 80px var(--shadow);
-  display: grid;
-  gap: 12px;
-  max-width: 430px;
-  padding: 22px;
-  position: relative;
-  width: min(100%, 430px);
-}
-
-.upgrade-modal > span {
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.upgrade-modal h2 {
-  color: var(--text-strong);
-  font-size: 23px;
-  letter-spacing: 0;
-  line-height: 1.08;
-  margin: 0;
-  padding-right: 28px;
-}
-
-.upgrade-modal p {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.55;
-  margin: 0;
-}
-
-.upgrade-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.upgrade-actions button,
-.upgrade-close {
-  border: 1px solid var(--border-soft);
-  color: var(--text);
-  cursor: pointer;
-}
-
-.upgrade-actions button {
-  background: transparent;
-  min-height: 38px;
-  padding: 8px 13px;
-}
-
-.upgrade-actions .upgrade-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--bg);
-  font-weight: 900;
-}
-
-.upgrade-close {
-  align-items: center;
-  background: transparent;
-  display: inline-flex;
-  height: 30px;
-  justify-content: center;
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  width: 30px;
-}
-
-.upgrade-close svg {
-  fill: none;
-  height: 15px;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-width: 2;
-  width: 15px;
 }
 
 .account-error {
@@ -2033,11 +1848,6 @@ a {
   opacity: 0.5;
 }
 
-.rail-group.graph-context-locked button {
-  border-color: var(--accent-border);
-  color: var(--accent);
-}
-
 .graph-frame {
   background:
     linear-gradient(var(--bg-grid) 1px, transparent 1px),
@@ -2551,92 +2361,6 @@ a {
   font-size: 12px;
   line-height: 1.25;
   min-width: 86px;
-}
-
-.credit-pack-row {
-  align-items: end;
-  border: 1px solid var(--border-soft);
-  display: grid;
-  gap: 8px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  padding: 9px;
-}
-
-.credit-pack-row label {
-  display: grid;
-  gap: 5px;
-  min-width: 0;
-}
-
-.credit-pack-row span {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.credit-pack-row select {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  color: var(--text);
-  min-height: 32px;
-  outline: none;
-  padding: 6px 8px;
-  width: 100%;
-}
-
-.credit-pack-row button {
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  border-radius: 2px;
-  color: var(--text-strong);
-  cursor: pointer;
-  min-height: 32px;
-  padding: 6px 10px;
-  white-space: nowrap;
-}
-
-.credit-pack-row button:disabled {
-  color: var(--muted-2);
-  cursor: not-allowed;
-}
-
-.ask-credit-notice {
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  display: grid;
-  gap: 4px;
-  padding: 10px 11px;
-}
-
-.ask-credit-notice strong {
-  color: var(--text-strong);
-  font-size: 12px;
-}
-
-.ask-credit-notice span {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.ask-credit-notice button {
-  justify-self: start;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  border-radius: 2px;
-  color: var(--text-strong);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 900;
-  margin-top: 4px;
-  padding: 7px 10px;
-}
-
-.ask-credit-notice.depleted {
-  background: var(--danger-surface);
-  border-color: rgba(180, 94, 94, 0.34);
 }
 
 .chat-thread {
@@ -3198,47 +2922,6 @@ a {
   color: #b9c5bc;
   font-size: 12px;
   text-align: right;
-  white-space: nowrap;
-}
-
-.locked-upgrade-row {
-  align-items: center;
-  background: rgba(185, 144, 95, 0.08);
-  border: 1px dashed rgba(185, 144, 95, 0.42);
-  color: var(--text);
-  cursor: pointer;
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-  margin-top: 8px;
-  min-height: 38px;
-  padding: 9px 11px;
-  text-align: left;
-  width: 100%;
-}
-
-.locked-upgrade-row:hover,
-.locked-upgrade-row:focus-visible {
-  background: rgba(185, 144, 95, 0.14);
-  border-color: rgba(185, 144, 95, 0.72);
-  outline: none;
-}
-
-.locked-upgrade-row span {
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 760;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.locked-upgrade-row strong {
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 900;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -3852,8 +3535,6 @@ a {
   .admin-summary,
   .admin-event-meta,
   .admin-event-actions,
-  .plan-grid,
-  .pricing-grid,
   .profile-summary {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
