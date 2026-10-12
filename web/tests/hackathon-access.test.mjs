@@ -15,19 +15,27 @@ test('hackathon Ask is anonymous and unmetered; billing routes are removed', asy
     nodes: [{ id: 'round', label: 'Example round', kind: 'round', amount_usd: 100_000_000 }], edges: [],
   }));
   let calls = 0;
+  let providerStatus = 200;
   const model = createServer(async (request, response) => {
     let body = '';
     for await (const chunk of request) body += chunk;
-    assert.match(JSON.parse(body).messages[1].content, /100000000/);
+    const payload = JSON.parse(body);
+    assert.match(payload.messages[1].content, /100000000/);
+    assert.equal(payload.model, "nvidia/test-nemotron");
+    assert.equal(payload.reasoning_effort, undefined);
     calls++;
-    response.writeHead(200, { 'content-type': 'application/json' });
+    response.writeHead(providerStatus, { 'content-type': 'application/json' });
+    if (providerStatus !== 200) {
+      response.end(JSON.stringify({ detail: 'Requested model is unavailable' }));
+      return;
+    }
     response.end(JSON.stringify({ choices: [{ message: { content: 'Source-grounded demo answer.' } }] }));
   });
   model.listen(0, '127.0.0.1');
   await once(model, 'listening');
   const child = spawn(process.execPath, ['server/app-server.mjs'], {
     cwd: new URL('..', import.meta.url),
-    env: { ...process.env, PORT: '0', STATIC_DIR: directory, NEBIUS_API_KEY: 'test-only',
+    env: { ...process.env, PORT: '0', STATIC_DIR: directory, NEBIUS_API_KEY: 'test-only', NEBIUS_MODEL: 'nvidia/test-nemotron', NEBIUS_REASONING_EFFORT: '',
       NEBIUS_BASE_URL: `http://127.0.0.1:${model.address().port}/v1`,
       SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', ADMIN_EMAILS: '',
       // Old deployment settings cannot reinstate a paywall.
@@ -62,6 +70,16 @@ test('hackathon Ask is anonymous and unmetered; billing routes are removed', asy
     assert.equal(result.usage, undefined);
   }
   assert.equal(calls, 10);
+  providerStatus = 404;
+  const failure = await fetch(`${address}/api/ask`, { method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ selected: { id: 'round' }, question: 'Explain this round.' }),
+  });
+  assert.equal(failure.status, 404);
+  const failureBody = await failure.json();
+  assert.match(failureBody.error, /Requested model is unavailable/);
+  assert.match(failureBody.error, /NEBIUS_MODEL/);
+  assert.match(failureBody.error, /endpoint:/);
   for (const path of ['/api/checkout', '/api/billing-portal', '/api/stripe/webhook', '/api/subscription-plans', '/api/credit-packs', '/api/ask/usage']) {
     const response = await fetch(`${address}${path}`, { method: path.includes('plans') || path.includes('packs') || path.includes('usage') ? 'GET' : 'POST' });
     assert.equal(response.status, 404, path);
