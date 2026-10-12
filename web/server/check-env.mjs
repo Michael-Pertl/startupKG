@@ -48,7 +48,7 @@ function recommendEnv(name, reason) {
 }
 
 requireEnv("NEBIUS_API_KEY", "Server-side Nebius model calls for the hackathon Ask panel.");
-recommendEnv("NEBIUS_MODEL", "Defaults to moonshotai/Kimi-K2.5.");
+recommendEnv("NEBIUS_MODEL", "Defaults to moonshotai/Kimi-K2.6.");
 if (process.env.ADMIN_EMAILS) {
   requireEnv("SUPABASE_URL", "Optional authenticated administrator review.");
   requireEnv("SUPABASE_SERVICE_ROLE_KEY", "Optional administrator review storage.");
@@ -72,3 +72,27 @@ if (failures.length) {
 }
 
 console.log("\nProduction env check passed.");
+
+// Read-only provider check: no inference requests or token charges.
+if (process.argv.includes("--check-models")) {
+  const base = (process.env.NEBIUS_BASE_URL || "https://api.tokenfactory.nebius.com/v1/").replace(/\/$/, "");
+  const model = process.env.NEBIUS_MODEL || "moonshotai/Kimi-K2.6";
+  try {
+    const response = await fetch(`${base}/models`, {
+      headers: { authorization: `Bearer ${process.env.NEBIUS_API_KEY}` },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) throw new Error(`Model catalog returned HTTP ${response.status}. Check NEBIUS_API_KEY and NEBIUS_BASE_URL.`);
+    const data = await response.json();
+    const ids = (data.data || []).map((item) => item.id);
+    if (!ids.includes(model)) {
+      console.error(`Configured model ${model} is unavailable at ${base}. Available model IDs:`);
+      console.error(ids.join("\n"));
+      process.exit(1);
+    }
+    console.log(`Provider check passed: ${model} is listed at ${base}.`);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : "Model catalog check failed.");
+    process.exit(1);
+  }
+}

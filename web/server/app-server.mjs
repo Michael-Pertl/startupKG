@@ -34,7 +34,7 @@ for (const envPath of [
 const PORT = Number(process.env.PORT || process.env.GRAPH_ASSISTANT_PORT || 8080);
 const DIST_DIR = resolve(process.cwd(), process.env.STATIC_DIR || "dist");
 const BASE_URL = process.env.NEBIUS_BASE_URL || "https://api.tokenfactory.nebius.com/v1/";
-const MODEL = process.env.NEBIUS_MODEL || "moonshotai/Kimi-K2.5";
+const MODEL = process.env.NEBIUS_MODEL || "moonshotai/Kimi-K2.6";
 const SUPABASE_URL = process.env.SUPABASE_URL || "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const APP_PUBLIC_URL = process.env.APP_PUBLIC_URL || "http://127.0.0.1:5173";
@@ -71,6 +71,8 @@ const supabaseAdmin =
 function configStatus() {
   return {
     nebius_configured: Boolean(process.env.NEBIUS_API_KEY),
+    nebius_model: MODEL,
+    nebius_base_url: BASE_URL,
     supabase_configured: Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY),
     admin_review_configured: ADMIN_EMAILS.size > 0,
     app_public_url: APP_PUBLIC_URL,
@@ -651,7 +653,15 @@ const server = createServer(async (request, response) => {
     const data = await nebiusResponse.json();
     if (!nebiusResponse.ok) {
       sendJson(response, nebiusResponse.status, {
-        error: data.error?.message || data.message || `Nebius request failed with HTTP ${nebiusResponse.status}.`,
+        error: [
+          `Nebius request failed with HTTP ${nebiusResponse.status} (model: ${MODEL}; endpoint: ${BASE_URL}).`,
+          typeof data.detail === "string" ? data.detail : data.error?.message || data.message || "",
+          nebiusResponse.status === 404
+            ? "Check NEBIUS_MODEL against GET /v1/models and set NEBIUS_BASE_URL to the correct API base URL."
+            : nebiusResponse.status === 401
+              ? "Check the server-side NEBIUS_API_KEY; the provider rejected authentication."
+              : "",
+        ].filter(Boolean).join(" "),
       });
       return;
     }

@@ -8,7 +8,7 @@ The graph represents curated publicly reported AI mega-rounds above the selected
 
 ## Nebius integration
 
-The application calls Nebius Token Factory's chat completions endpoint from `web/server/app-server.mjs`. The default model is `moonshotai/Kimi-K2.5`; `NEBIUS_MODEL` and `NEBIUS_BASE_URL` can override it. The key stays on the server. The assistant receives selected entities and relationships resolved against the published graph, evidence metadata, and conversation history. Browser-supplied amounts cannot replace the published evidence.
+The application calls Nebius Token Factory's chat completions endpoint from `web/server/app-server.mjs`. The default model is `moonshotai/Kimi-K2.6`; `NEBIUS_MODEL` and `NEBIUS_BASE_URL` can override it. The key stays on the server. The assistant receives selected entities and relationships resolved against the published graph, evidence metadata, and conversation history. Browser-supplied amounts cannot replace the published evidence.
 
 All graph context lenses, analytics, source links, news, and Ask are available without an account. There are no subscription plans, payment flows, credit deductions, or trial allowances. Supabase is optional and used for authenticated administrator review.
 
