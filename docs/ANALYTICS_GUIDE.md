@@ -8,7 +8,7 @@ The graph represents curated publicly reported AI mega-rounds above the selected
 - **Investors:** the top eight companies and investors. Select a participant to open its graph connections. Investor rankings show linked round totals, not cheque sizes.
 - **Rounds:** source-linked records with search, date/amount sorting, fourteen-row pagination and CSV export. A selected slice has one Clear control. Totals follow the displayed records; exports include all matches, not just the current page.
 
-Year and Region filters are always visible. Reset appears only after a filter changes. The default methodology compares the same month/day cutoff across years and excludes low-confidence events, debt, mixed funding, upper bounds and commitments. Region/sector bars use proportional lengths. Detailed coverage and methodology are available in the footer.
+Year and Region filters are always visible. Reset appears only after a filter changes. The default methodology compares the same month/day cutoff across years and excludes low-confidence events, debt, mixed funding, upper bounds and commitments. Region/sector bars use proportional lengths. Detailed coverage and methodology are on the Methodology page, reached through the existing app footer link. Analytics does not repeat a coverage banner or a methodology disclosure.
 
 The interface removes instructional banners, the large question navigation cards, country/confidence controls, research toggles, expanded rankings, duplicate slice totals and extra graph buttons. Funding records and ranking rows remain the path to the graph and original evidence. No dataset changes are made by this redesign.
 

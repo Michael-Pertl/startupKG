@@ -3712,9 +3712,6 @@ a {
 .question-analytics .bar-row.selected { background: var(--accent-soft); border-radius: 3px; }
 .question-analytics .segmented-control button { text-transform: none; font-weight: 500; font-size: 12px; border-radius: 4px; padding: 7px 14px; }
 .card-explanation { color: var(--muted); font-size: 12px; line-height: 1.65; margin: 0 0 20px; }
-.analytics-coverage { border-top: 1px solid var(--border-soft); padding-top: 16px; color: var(--muted); font-size: 11px; line-height: 1.7; }
-.analytics-coverage > p { margin: 0 0 10px; max-width: 900px; }
-.analytics-coverage summary { cursor: pointer; color: var(--text); }
 .question-analytics .evidence-health { margin-bottom: 0; border-bottom: 0; }
 .question-analytics .evidence-table-head, .question-analytics .evidence-row-main { grid-template-columns: minmax(140px, 1.1fr) minmax(70px, .4fr) minmax(130px, 1fr) minmax(75px, .4fr); }
 @media (max-width: 1050px) {
@@ -3742,9 +3739,7 @@ a {
 .ask-scope-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; width: 100%; }
 .ask-scope-buttons .chip { width: 100%; min-height: 34px; border-radius: 2px; padding: 6px 7px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
 .ask-scope-buttons .chip:disabled { cursor: not-allowed; opacity: .5; }
-.ask-scope p { margin: 10px 0 0; font-size: 11px; line-height: 1.6; color: var(--muted); }
-.chat-empty button { padding: 10px; border: 1px solid var(--accent-border); border-radius: 4px; color: var(--text); background: var(--accent-soft); font: inherit; font-size: 12px; line-height: 1.6; text-align: left; cursor: pointer; }
-.ask-scope-buttons .chip:focus-visible, .chat-empty button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ask-scope-buttons .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 @media (max-width: 760px) {
   .explorer-shell.graph-shell, .explorer-shell.graph-shell.has-right, .explorer-shell.graph-shell.no-right {
