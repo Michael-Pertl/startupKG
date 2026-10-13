@@ -3515,6 +3515,7 @@ export default function App() {
       className={[
     "app-shell",
     "explorer-shell",
+    view === "graph" ? "graph-shell" : "",
     view === "analytics" ? "analytics-shell" : "",
         view === "news" ? "news-shell" : "",
         isLegalView ? "legal-shell" : "",

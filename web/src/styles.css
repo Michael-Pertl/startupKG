@@ -3747,7 +3747,7 @@ a {
 .ask-scope-buttons .chip:focus-visible, .chat-empty button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 @media (max-width: 760px) {
-  .explorer-shell, .explorer-shell.has-right, .explorer-shell.no-right {
+  .explorer-shell.graph-shell, .explorer-shell.graph-shell.has-right, .explorer-shell.graph-shell.no-right {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "nav" "workspace" "drawer" "footer";
   }
