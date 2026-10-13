@@ -1945,18 +1945,13 @@ function AskPanel({
               onClick={() => setScope(option.value)} type="button">{option.label}</button>
           ))}
         </div>
-        <p>{scope === "graph" ? "Find companies, backers, and their other funding connections beyond the visible view." : "Use only the selected entity and its visible connections."} Shared investors suggest connections; possible partnerships remain hypotheses.</p>
       </div>
       <div className="chat-thread">
-        {messages.length ? (
-          messages.map((message, index) => (
-            <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}>
-              {message.role === "assistant" ? <AssistantMessage content={message.content} /> : message.content}
-            </div>
-          ))
-        ) : (
-          <div className="chat-empty"><p>Ask about an entity by name or follow its connections across the graph.</p><button type="button" onClick={() => setQuestion(`Who backs ${selected.startup_name || selected.label}, what other companies have those investors backed, and which partnerships might make sense? Separate evidence from hypotheses.`)}>Explore shared investors and possible partnerships →</button></div>
-        )}
+        {messages.map((message, index) => (
+          <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}>
+            {message.role === "assistant" ? <AssistantMessage content={message.content} /> : message.content}
+          </div>
+        ))}
         {status === "loading" ? <div className="chat-message assistant">Thinking...</div> : null}
       </div>
       <div className="chat-composer">
