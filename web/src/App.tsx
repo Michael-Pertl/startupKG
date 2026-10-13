@@ -1938,7 +1938,13 @@ function AskPanel({
   return (
     <section className="ask-panel">
       <div className="ask-scope">
-        <label>Search scope<select value={scope} onChange={(event) => setScope(event.target.value as "graph" | "visible")} disabled={status === "loading"}><option value="graph">Across the graph</option><option value="visible">Current view only</option></select></label>
+        <div className="ask-scope-buttons" role="group" aria-label="Search scope">
+          {([{ value: "graph", label: "Across the graph" }, { value: "visible", label: "Current view only" }] as const).map((option) => (
+            <button key={option.value} className={scope === option.value ? "chip selected" : "chip"}
+              aria-pressed={scope === option.value} disabled={status === "loading"}
+              onClick={() => setScope(option.value)} type="button">{option.label}</button>
+          ))}
+        </div>
         <p>{scope === "graph" ? "Find companies, backers, and their other funding connections beyond the visible view." : "Use only the selected entity and its visible connections."} Shared investors suggest connections; possible partnerships remain hypotheses.</p>
       </div>
       <div className="chat-thread">

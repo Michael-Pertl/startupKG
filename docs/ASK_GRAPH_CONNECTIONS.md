@@ -1,6 +1,6 @@
 # Asking about connections across the graph
 
-Ask defaults to **Across the graph**. Name a company or investor in the question; the server searches the published snapshot rather than relying on the current viewport. **Current view only** preserves the selected-entity and visible-neighborhood behavior. View filters do not restrict a broader search.
+Ask defaults to **Across the graph**. Two equally sized context-style buttons span the top of the chat panel and show the selected scope. Name a company or investor in the question; the server searches the published snapshot rather than relying on the current viewport. **Current view only** preserves the selected-entity and visible-neighborhood behavior. View filters do not restrict a broader search.
 
 Example:
 
