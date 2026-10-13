@@ -2019,16 +2019,8 @@ type AnalyticsFilters = {
   confidence: string[];
 };
 
-type AnalyticsMetric = "funding" | "events" | "companies" | "investors";
 type AnalyticsBreakdown = "year" | "region" | "country" | "domain" | "confidence";
 type AnalyticsRow = { id: string; label: string; value: number; node?: MarketNode; rounds?: MarketNode[] };
-
-const metricLabels: Record<AnalyticsMetric, string> = {
-  funding: "Funding",
-  events: "Events",
-  companies: "Companies",
-  investors: "Investors",
-};
 
 const breakdownLabels: Record<AnalyticsBreakdown, string> = {
   year: "Year",
@@ -2225,7 +2217,7 @@ function horizontalBars({
         >
           <span>{row.label}</span>
           <div>
-            <i style={{ width: `${Math.max(3, (row.value / max) * 100)}%` }} />
+            <i style={{ width: `${Math.max(0, (row.value / max) * 100)}%` }} />
           </div>
           <strong>{valueFormatter ? valueFormatter(row.value) : formatCount(row.value)}</strong>
         </button>
@@ -2249,8 +2241,15 @@ function AnalyticsPage({
   onSelectRound: (node: MarketNode) => void;
   onSelectSlice: (kind: AnalyticsBreakdown, label: string) => void;
 }) {
+  const [question, setQuestion] = useState<"allocation" | "network" | "time" | "evidence">("allocation");
+  const questions = [
+    { id: "allocation", label: "Where does funding go?", hint: "Regions & sectors" },
+    { id: "network", label: "Who is involved?", hint: "Companies & investors" },
+    { id: "time", label: "How is funding changing?", hint: "Yearly comparison" },
+    { id: "evidence", label: "What supports the numbers?", hint: "Rounds & sources" },
+  ] as const;
   const [activeSlice, setActiveSlice] = useState<{ kind: AnalyticsBreakdown; label: string } | null>(null);
-  const [breakdown, setBreakdown] = useState<AnalyticsBreakdown>("domain");
+  const [breakdown, setBreakdown] = useState<AnalyticsBreakdown>("region");
   const [comparable, setComparable] = useState(true);
   const [equityOnly, setEquityOnly] = useState(true);
   const [excludeLargest, setExcludeLargest] = useState(false);
@@ -2420,14 +2419,30 @@ function AnalyticsPage({
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
+  const latestPeriod = periods[periods.length - 1];
+  const previousPeriod = periods[periods.length - 2];
+  const fundingChange = previousPeriod?.funding && latestPeriod
+    ? (latestPeriod.funding / previousPeriod.funding - 1) * 100 : null;
+  const leadingSegment = breakdownRows[0];
+  const segmentShare = leadingSegment && totalFunding ? leadingSegment.value / totalFunding * 100 : 0;
+  const activeFilterCount = (["years", "regions", "countries", "domains", "confidence"] as const)
+    .filter((key) => filters[key].length !== graph.facets[key].filter((value) => key !== "confidence" || value !== "low").length).length;
+
   return (
-    <main className="analytics-page">
-      <header className="analytics-header">
-        <div>
-          <div className="eyebrow">Market dashboard</div>
-          <h1>AI investment landscape</h1>
-          <p className="analytics-intro">Explore where major AI funding goes, who participates, and how the network changes over time.</p>
-        </div>
+    <main className="analytics-page question-analytics">
+      <header className="analytics-heading">
+        <div><div className="eyebrow">Explore the evidence</div><h1>Understand the AI funding graph</h1>
+          <p>Follow the money, discover the participants, and check the sources behind each connection.</p></div>
+        <span className="analytics-date">Evidence through <strong>{cutoff}</strong></span>
+      </header>
+      <nav className="question-nav" aria-label="Analytics questions">
+        {questions.map((item, index) => <button key={item.id} type="button" aria-current={question === item.id ? "page" : undefined}
+          className={question === item.id ? "active" : ""} aria-controls="analytics-answer" onClick={() => setQuestion(item.id)}>
+          <span className="question-number">0{index + 1}</span><span><strong>{item.label}</strong><small>{item.hint}</small></span>
+        </button>)}
+      </nav>
+      <details className="analytics-view-controls">
+        <summary>Refine this view <span>{activeFilterCount ? `${activeFilterCount} filters changed` : "All regions · All sectors"} · {comparable ? "Same period" : "All available dates"} · {equityOnly ? "Comparable funding" : "All funding types"}{excludeLargest ? " · Largest rounds excluded" : ""}</span></summary>
         <div className="analytics-filters">
           <AnalyticsSelect
             label="Year"
@@ -2460,100 +2475,64 @@ function AnalyticsPage({
             values={graph.facets.confidence.filter((value) => value !== "low")}
           />
         </div>
-      </header>
-
-      <div className="analytics-toolbar">
-        <p>{formatCount(filteredRounds.length)} rounds in this view · Evidence through {cutoff}</p>
-        <button onClick={resetFilters} type="button">Reset view</button>
-        <button onClick={() => setShowAllRankings((value) => !value)} type="button" aria-pressed={showAllRankings}>
-          {showAllRankings ? "Show top rankings" : "Show all rankings"}
-        </button>
-      </div>
-      <p className="analytics-scope">Curated publicly reported AI mega-rounds above USD 100M or equivalent, not the full AI startup ecosystem. Low-confidence events are excluded from totals. Investor volumes describe linked rounds, not individual cheque sizes.</p>
-      {!filteredRounds.length ? <div className="analytics-empty" role="status"><h2>No rounds match this view</h2><p>Try another region, year, or evidence filter, or reset the view to start again.</p><button onClick={resetFilters} type="button">Reset filters</button></div> : null}
-      <DataHealth />
-      <section className="research-periods" aria-label="Funding over time">
-        <div className="research-controls">
-          <h2>Funding over time</h2>
-          <label><input type="checkbox" checked={comparable} onChange={(event) => setComparable(event.target.checked)} />Same period through {cutoff.slice(5)}</label>
+        <div className="analytics-method-controls">
+          <label><input type="checkbox" checked={comparable} onChange={(event) => setComparable(event.target.checked)} />Compare the same period through {cutoff.slice(5)}</label>
           <label><input type="checkbox" checked={equityOnly} onChange={(event) => setEquityOnly(event.target.checked)} />Exclude debt, mixed funding and commitments</label>
-          <label><input type="checkbox" checked={excludeLargest} onChange={(event) => setExcludeLargest(event.target.checked)} />Exclude largest round per year</label>
+          <label><input type="checkbox" checked={excludeLargest} onChange={(event) => setExcludeLargest(event.target.checked)} />Exclude the largest round in each year</label>
+          <button onClick={resetFilters} type="button">Reset view</button>
         </div>
+      </details>
+      <section className="analytics-kpis" aria-label="Current view totals">
+        <div><span>Reported funding</span><strong>{formatUsd(totalFunding)}</strong></div>
+        <div><span>Funding rounds</span><strong>{formatCount(filteredRounds.length)}</strong></div>
+        <div><span>Companies</span><strong>{formatCount(filteredStartups.length)}</strong></div>
+        <div><span>Named investors</span><strong>{formatCount(visibleInvestors.length)}</strong></div>
+      </section>
+      {!filteredRounds.length ? <div className="analytics-empty" role="status"><h2>No rounds match this view</h2><p>Broaden the filters to explore more of the graph.</p><button onClick={resetFilters} type="button">Reset view</button></div> : null}
+      <section id="analytics-answer" className="analytics-answer" aria-label={questions.find((item) => item.id === question)?.label}>
+        {question === "allocation" ? <>
+          <div className="answer-heading"><div className="eyebrow">Where does funding go?</div><h2>See where capital is concentrated</h2><p>Compare the funding linked to regions, countries, and AI sectors. Select a bar to inspect its rounds.</p></div>
+          {leadingSegment ? <div className="answer-insight"><strong>{leadingSegment.label}</strong><p>accounts for <strong>{segmentShare.toFixed(1)}%</strong> of reported funding in this view, across <strong>{leadingSegment.rounds?.length}</strong> rounds.</p><span>Share of this curated sample, not global market share.</span></div> : null}
+          <article className="analytics-card">
+            <div className="card-heading"><h3>Funding by {breakdownLabels[breakdown].toLowerCase()}</h3><span>USD · reported round amounts</span></div>
+            <div className="segmented-control" aria-label="Funding breakdown">
+              {(["region", "country", "domain"] as AnalyticsBreakdown[]).map((item) => <button key={item} type="button" aria-pressed={breakdown === item} className={breakdown === item ? "active" : ""} onClick={() => { setBreakdown(item); setActiveSlice(null); }}>{item === "domain" ? "AI sector" : breakdownLabels[item]}</button>)}
+            </div>
+            {horizontalBars({ rows: breakdownRows, valueFormatter: formatUsd, selectedId: activeSlice?.kind === breakdown ? `${breakdown}:${activeSlice.label}` : "", onSelectRow: (row) => setActiveSlice({ kind: breakdown, label: row.label }) })}
+            {activeSlice ? <div className="selected-answer"><div><strong>{activeSlice.label}</strong><span>{formatCount(activeRounds.length)} rounds · {formatUsd(activeFunding)}</span></div><button type="button" onClick={() => setQuestion("evidence")}>View funding evidence →</button><button type="button" onClick={() => onSelectSlice(activeSlice.kind, activeSlice.label)}>Explore in graph ↗</button><button type="button" onClick={() => setActiveSlice(null)}>Clear selection</button></div> : null}
+          </article>
+        </> : null}
+        {question === "network" ? <>
+          <div className="answer-heading"><div className="eyebrow">Who is involved?</div><h2>Meet the companies and their backers</h2><p>Select a company or investor to explore its connections in the graph.</p></div>
+          {topCompanies[0] ? <div className="answer-insight"><strong>{topCompanies[0].label}</strong><p>has the most reported funding in this view: <strong>{formatUsd(topCompanies[0].value)}</strong>.</p><span>{formatCount(visibleInvestors.length)} publicly named investors connect to these funding rounds. Rankings reflect the selected evidence, not the entire market.</span></div> : null}
+          <div className="ranking-toolbar"><p>Ranked by reported funding in the current view.</p><button type="button" aria-pressed={showAllRankings} onClick={() => setShowAllRankings((value) => !value)}>{showAllRankings ? "Show top 8" : "Show all participants"}</button></div>
+          <div className="analytics-grid">
+            <article className="analytics-card"><h3>Which companies raised the most?</h3><p className="card-explanation">Sum of each company’s included funding rounds.</p>{horizontalBars({ rows: topCompanies, valueFormatter: formatUsd, onSelect: onSelectNode })}</article>
+            <article className="analytics-card"><h3>Which investors back the largest rounds?</h3><p className="card-explanation">Total size of rounds an investor joined. These are not individual investment amounts; shared rounds appear for each participant.</p>{horizontalBars({ rows: topInvestors, valueFormatter: formatUsd, onSelect: onSelectNode })}</article>
+          </div>
+        </> : null}
+        {question === "time" ? <>
+          <div className="answer-heading"><div className="eyebrow">How is funding changing?</div><h2>Compare years on equal terms</h2><p>{comparable ? `Each year includes events through ${cutoff.slice(5)}. Rounds without an exact date are excluded.` : "Each year shows the available evidence. Partial years are not directly comparable."}</p></div>
+          {latestPeriod && previousPeriod && fundingChange !== null ? <div className="answer-insight"><strong>{latestPeriod.year}: {formatUsd(latestPeriod.funding)}</strong><p>{Math.abs(fundingChange).toFixed(1)}% {fundingChange >= 0 ? "more" : "less"} reported funding than {previousPeriod.year} in this view.</p><span>{comparable ? "The date cutoff is aligned across years, but evidence coverage may differ." : "Available evidence includes partial years; this is not an equal-period growth comparison."}</span></div> : null}
+          {filteredRounds.length ? <p className="card-explanation">The largest round accounts for {(largestShare * 100).toFixed(1)}% of this view’s funding. Use “Refine this view” to exclude the largest round per year and check its influence.</p> : null}
+          <article className="analytics-card"><h3>Reported funding by year</h3>{horizontalBars({ rows: aggregateFunding("year").sort((a, b) => a.label.localeCompare(b.label)), valueFormatter: formatUsd, onSelectRow: (row) => { setActiveSlice({ kind: "year", label: row.label }); setQuestion("evidence"); } })}
         <div className="research-table-scroll"><table className="research-table">
           <thead><tr><th>Period</th><th>Reported funding</th><th>Rounds</th><th>Companies</th><th>Median round</th><th>Top 5 round share</th></tr></thead>
           <tbody>{periods.map((period) => <tr key={period.year}><td>{period.year}{comparable ? ` through ${cutoff.slice(5)}` : " (available evidence)"}</td><td>{formatUsd(period.funding)}</td><td>{period.events}</td><td>{period.companies}</td><td>{period.events ? formatUsd(period.median) : "-"}</td><td>{period.events ? `${(period.topFiveShare * 100).toFixed(1)}%` : "-"}</td></tr>)}</tbody>
         </table></div>
         <p className="analytics-scope">Top 5 round share measures concentration in the five largest events in each year. Comparable periods use the same month and day across years; missing dates are excluded.</p>
-      </section>
-
-      <section className="analytics-kpis">
-        <div><span>Largest round share</span><strong>{filteredRounds.length ? `${(largestShare * 100).toFixed(1)}%` : "—"}</strong></div>
-        <div>
-          <span>Reported funding</span>
-          <strong>{formatUsd(totalFunding)}</strong>
-        </div>
-        <div>
-          <span>Funding events</span>
-          <strong>{formatCount(filteredRounds.length)}</strong>
-        </div>
-        <div>
-          <span>Companies</span>
-          <strong>{formatCount(filteredStartups.length)}</strong>
-        </div>
-        <div>
-          <span>Investors</span>
-          <strong>{formatCount(visibleInvestors.length)}</strong>
-        </div>
-      </section>
-
-      <section className="analytics-grid">
-        <article className="analytics-card wide">
-          <div className="card-heading">
-            <h2>Market concentration</h2>
-            {activeSlice ? (
-              <button onClick={() => setActiveSlice(null)} type="button">Clear slice</button>
-            ) : null}
-          </div>
-          <div className="segmented-control" aria-label="Analytics breakdown">
-            {(["domain", "country", "year", "confidence"] as AnalyticsBreakdown[]).map((item) => (
-              <button
-                className={breakdown === item ? "active" : ""}
-                key={item}
-                onClick={() => setBreakdown(item)}
-                type="button"
-              >
-                {breakdownLabels[item]}
-              </button>
-            ))}
-          </div>
-          <div className="focused-breakdown">
-            {horizontalBars({
-              rows: breakdownRows,
-              valueFormatter: formatUsd,
-              selectedId: activeSlice?.kind === breakdown ? `${breakdown}:${activeSlice.label}` : "",
-              onSelectRow: (row) => {
-                setActiveSlice({ kind: breakdown, label: row.label });
-              },
-            })}
-
-          </div>
-        </article>
-        <article className="analytics-card">
-          <h2>Top companies</h2>
-          {horizontalBars({ rows: topCompanies, valueFormatter: formatUsd, onSelect: onSelectNode })}
-
-        </article>
-        <article className="analytics-card">
-          <h2>Investors by linked round volume</h2>
-          {horizontalBars({ rows: topInvestors, valueFormatter: formatUsd, onSelect: onSelectNode })}
-
-        </article>
-        <article className="analytics-card wide">
+          </article>
+        </> : null}
+        {question === "evidence" ? <>
+          <div className="answer-heading"><div className="eyebrow">What supports the numbers?</div><h2>Trace the numbers to funding events</h2><p>Search the records behind this view, open an original source, or select a round to inspect its graph connections.</p></div>
+        <article className="analytics-card wide evidence-card">
           <div className="slice-summary">
             <div>
-              <span>Selected slice</span>
+              <span>Evidence scope</span>
               <strong>{activeTitle}</strong>
+              {activeSlice && activeSlice.kind !== "confidence" ? <button onClick={() => onSelectSlice(activeSlice.kind, activeSlice.label)} type="button">Explore in graph ↗</button> : null}
               {activeSlice ? <button onClick={() => setActiveSlice(null)} type="button">Clear selection</button> : null}
+              <small>Search narrows the records and export; totals describe this evidence scope.</small>
             </div>
             <div>
               <span>Funding</span>
@@ -2627,7 +2606,12 @@ function AnalyticsPage({
             <button disabled={currentPage >= pageCount} onClick={() => setEvidencePage(currentPage + 1)} type="button">Next</button>
           </nav>
         </article>
+        </> : null}
       </section>
+      <footer className="analytics-coverage">
+        <p>Curated publicly reported AI mega-rounds above USD 100M or equivalent, not the full AI startup ecosystem. Low-confidence events are excluded. Regional coverage is uneven.</p>
+        <details><summary>Understand the scope and evidence quality</summary><DataHealth /></details>
+      </footer>
     </main>
   );
 }
