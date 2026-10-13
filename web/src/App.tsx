@@ -2244,36 +2244,22 @@ function AnalyticsPage({
   setFilters,
   onSelectNode,
   onSelectRound,
-  onSelectSlice,
 }: {
   graph: MarketGraph;
   filters: AnalyticsFilters;
   setFilters: (filters: AnalyticsFilters) => void;
   onSelectNode: (node: MarketNode) => void;
   onSelectRound: (node: MarketNode) => void;
-  onSelectSlice: (kind: AnalyticsBreakdown, label: string) => void;
 }) {
-  const [question, setQuestion] = useState<"allocation" | "network" | "time" | "evidence">("allocation");
-  const questions = [
-    { id: "allocation", label: "Where does funding go?", hint: "Regions & sectors" },
-    { id: "network", label: "Who is involved?", hint: "Companies & investors" },
-    { id: "time", label: "How is funding changing?", hint: "Yearly comparison" },
-    { id: "evidence", label: "What supports the numbers?", hint: "Rounds & sources" },
-  ] as const;
+  const [tab, setTab] = useState<"funding" | "investors" | "rounds">("funding");
+  const tabs = [{ id: "funding", label: "Funding" }, { id: "investors", label: "Investors" }, { id: "rounds", label: "Rounds" }] as const;
   const [activeSlice, setActiveSlice] = useState<{ kind: AnalyticsBreakdown; label: string } | null>(null);
   const [breakdown, setBreakdown] = useState<AnalyticsBreakdown>("region");
-  const [comparable, setComparable] = useState(true);
-  const [equityOnly, setEquityOnly] = useState(true);
-  const [excludeLargest, setExcludeLargest] = useState(false);
   const [evidenceQuery, setEvidenceQuery] = useState("");
   const [evidenceSort, setEvidenceSort] = useState<"amount" | "latest">("amount");
   const [evidencePage, setEvidencePage] = useState(1);
-  const [showAllRankings, setShowAllRankings] = useState(false);
   const resetFilters = () => {
     setFilters({ ...graph.facets, confidence: graph.facets.confidence.filter((value) => value !== "low") });
-    setComparable(true);
-    setEquityOnly(true);
-    setExcludeLargest(false);
     setActiveSlice(null);
     setEvidenceQuery("");
   };
@@ -2314,27 +2300,14 @@ function AnalyticsPage({
         if (startup?.domain && !filters.domains.includes(startup.domain)) return false;
         return round.confidence !== "low";
       });
-    return selectResearchRounds(scoped, { comparable, equityOnly, excludeLargest, cutoff });
-  }, [filters, graph.nodes, roundToStartup, comparable, equityOnly, excludeLargest, cutoff]);
+    return selectResearchRounds(scoped, { comparable: true, equityOnly: true, excludeLargest: false, cutoff });
+  }, [filters, graph.nodes, roundToStartup, cutoff]);
   const periods = periodMetrics(filteredRounds, filters.years, roundToStartup);
-  const includedFunding = filteredRounds.reduce((sum, round) => sum + Number(round.amount_usd || 0), 0);
-  const largestShare = includedFunding ? Math.max(0, ...filteredRounds.map((round) => Number(round.amount_usd || 0))) / includedFunding : 0;
 
-  const filteredStartups = useMemo(() => {
-    const ids = new Set(filteredRounds.map((round) => roundToStartup.get(round.id)?.id).filter(Boolean));
-    return graph.nodes.filter((node) => node.kind === "startup" && ids.has(node.id));
-  }, [filteredRounds, graph.nodes, roundToStartup]);
-
-  const roundIds = new Set(filteredRounds.map((round) => round.id));
-  const investorIds = new Set(
-    graph.edges.filter((edge) => edge.kind === "participated" && roundIds.has(edge.target)).map((edge) => edge.source),
-  );
-  const visibleInvestors = graph.nodes.filter((node) => node.kind === "investor" && investorIds.has(node.id));
-  const totalFunding = filteredRounds.reduce((sum, round) => sum + Number(round.amount_usd || 0), 0);
 
   useEffect(() => {
     setActiveSlice(null);
-  }, [filters, comparable, equityOnly, excludeLargest]);
+  }, [filters]);
 
   const segmentLabel = (round: MarketNode, key: AnalyticsBreakdown) => {
     const startup = roundToStartup.get(round.id);
@@ -2364,11 +2337,6 @@ function AnalyticsPage({
     : filteredRounds;
 
   const activeTitle = activeSlice ? `${breakdownLabels[activeSlice.kind]}: ${activeSlice.label}` : "All visible events";
-  const activeFunding = activeRounds.reduce((sum, round) => sum + Number(round.amount_usd || 0), 0);
-  const activeCompanies = new Set(activeRounds.map((round) => roundToStartup.get(round.id)?.id).filter(Boolean)).size;
-  const activeInvestors = new Set(
-    activeRounds.flatMap((round) => (investorByRound.get(round.id) || []).map((node) => node.id)),
-  ).size;
 
   const breakdownRows = aggregateFunding(breakdown);
 
@@ -2390,7 +2358,7 @@ function AnalyticsPage({
 
   const topCompanies = [...companyFunding.values()]
     .sort((left, right) => right.value - left.value)
-    .slice(0, showAllRankings ? undefined : 8)
+    .slice(0, 8)
     .map(({ node, value }) => ({
       id: node.id,
       label: node.label,
@@ -2400,7 +2368,7 @@ function AnalyticsPage({
 
   const topInvestors = [...investorFunding.values()]
     .sort((left, right) => right.value - left.value)
-    .slice(0, showAllRankings ? undefined : 8)
+    .slice(0, 8)
     .map(({ node, value }) => ({
       id: node.id,
       label: node.label,
@@ -2420,7 +2388,7 @@ function AnalyticsPage({
   const currentPage = Math.min(evidencePage, pageCount);
   const evidenceRows = matchingEvidence.slice((currentPage - 1) * 14, currentPage * 14);
   const evidenceLimit = evidenceRows.length;
-  useEffect(() => setEvidencePage(1), [filters, activeSlice, evidenceQuery, evidenceSort, comparable, equityOnly, excludeLargest]);
+  useEffect(() => setEvidencePage(1), [filters, activeSlice, evidenceQuery, evidenceSort]);
   const exportEvidence = () => {
     const csv = evidenceCsv(matchingEvidence, roundToStartup, investorByRound);
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
@@ -2431,30 +2399,29 @@ function AnalyticsPage({
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
-  const latestPeriod = periods[periods.length - 1];
-  const previousPeriod = periods[periods.length - 2];
-  const fundingChange = previousPeriod?.funding && latestPeriod
-    ? (latestPeriod.funding / previousPeriod.funding - 1) * 100 : null;
-  const leadingSegment = breakdownRows[0];
-  const segmentShare = leadingSegment && totalFunding ? leadingSegment.value / totalFunding * 100 : 0;
-  const activeFilterCount = (["years", "regions", "countries", "domains", "confidence"] as const)
-    .filter((key) => filters[key].length !== graph.facets[key].filter((value) => key !== "confidence" || value !== "low").length).length;
+  const displayedRounds = tab === "rounds" ? matchingEvidence : filteredRounds;
+  const displayedFunding = displayedRounds.reduce((sum, round) => sum + Number(round.amount_usd || 0), 0);
+  const displayedCompanies = new Set(displayedRounds.map((round) => roundToStartup.get(round.id)?.id).filter(Boolean)).size;
+  const displayedInvestors = new Set(displayedRounds.flatMap((round) => (investorByRound.get(round.id) || []).map((investor) => investor.id))).size;
+  const filtersChanged = (["years", "regions", "countries", "domains", "confidence"] as const)
+    .some((key) => filters[key].length !== graph.facets[key].filter((value) => key !== "confidence" || value !== "low").length);
+  const openRounds = (kind: AnalyticsBreakdown, label: string) => {
+    setActiveSlice({ kind, label });
+    setEvidenceQuery("");
+    setTab("rounds");
+  };
 
   return (
-    <main className="analytics-page question-analytics">
+    <main className="analytics-page question-analytics simple-analytics">
       <header className="analytics-heading">
-        <div><div className="eyebrow">Explore the evidence</div><h1>Understand the AI funding graph</h1>
-          <p>Follow the money, discover the participants, and check the sources behind each connection.</p></div>
+        <h1>Analytics</h1>
         <span className="analytics-date">Evidence through <strong>{cutoff}</strong></span>
       </header>
-      <nav className="question-nav" aria-label="Analytics questions">
-        {questions.map((item, index) => <button key={item.id} type="button" aria-current={question === item.id ? "page" : undefined}
-          className={question === item.id ? "active" : ""} aria-controls="analytics-answer" onClick={() => setQuestion(item.id)}>
-          <span className="question-number">0{index + 1}</span><span><strong>{item.label}</strong><small>{item.hint}</small></span>
-        </button>)}
-      </nav>
-      <details className="analytics-view-controls">
-        <summary>Refine this view <span>{activeFilterCount ? `${activeFilterCount} filters changed` : "All regions · All sectors"} · {comparable ? "Same period" : "All available dates"} · {equityOnly ? "Comparable funding" : "All funding types"}{excludeLargest ? " · Largest rounds excluded" : ""}</span></summary>
+      <div className="analytics-simple-toolbar">
+        <nav className="analytics-tabs" aria-label="Analytics views">
+          {tabs.map((item) => <button key={item.id} type="button" className={tab === item.id ? "active" : ""}
+            aria-current={tab === item.id ? "page" : undefined} aria-controls="analytics-answer" onClick={() => setTab(item.id)}>{item.label}</button>)}
+        </nav>
         <div className="analytics-filters">
           <AnalyticsSelect
             label="Year"
@@ -2468,101 +2435,42 @@ function AnalyticsPage({
             selected={filters.regions}
             values={graph.facets.regions}
           />
-          <AnalyticsSelect
-            label="Country"
-            onChange={(values) => setFilters({ ...filters, countries: values })}
-            selected={filters.countries}
-            values={graph.facets.countries}
-          />
-          <AnalyticsSelect
-            label="Domain"
-            onChange={(values) => setFilters({ ...filters, domains: values })}
-            selected={filters.domains}
-            values={graph.facets.domains}
-          />
-          <AnalyticsSelect
-            label="Evidence"
-            onChange={(values) => setFilters({ ...filters, confidence: values })}
-            selected={filters.confidence}
-            values={graph.facets.confidence.filter((value) => value !== "low")}
-          />
+
+          {filtersChanged ? <button className="analytics-reset" onClick={resetFilters} type="button">Reset</button> : null}
         </div>
-        <div className="analytics-method-controls">
-          <label><input type="checkbox" checked={comparable} onChange={(event) => setComparable(event.target.checked)} />Compare the same period through {cutoff.slice(5)}</label>
-          <label><input type="checkbox" checked={equityOnly} onChange={(event) => setEquityOnly(event.target.checked)} />Exclude debt, mixed funding and commitments</label>
-          <label><input type="checkbox" checked={excludeLargest} onChange={(event) => setExcludeLargest(event.target.checked)} />Exclude the largest round in each year</label>
-          <button onClick={resetFilters} type="button">Reset view</button>
-        </div>
-      </details>
+      </div>
       <section className="analytics-kpis" aria-label="Current view totals">
-        <div><span>Reported funding</span><strong>{formatUsd(totalFunding)}</strong></div>
-        <div><span>Funding rounds</span><strong>{formatCount(filteredRounds.length)}</strong></div>
-        <div><span>Companies</span><strong>{formatCount(filteredStartups.length)}</strong></div>
-        <div><span>Named investors</span><strong>{formatCount(visibleInvestors.length)}</strong></div>
+        <div><span>Reported funding</span><strong>{formatUsd(displayedFunding)}</strong></div>
+        <div><span>Rounds</span><strong>{formatCount(displayedRounds.length)}</strong></div>
+        <div><span>Companies</span><strong>{formatCount(displayedCompanies)}</strong></div>
+        <div><span>Investors</span><strong>{formatCount(displayedInvestors)}</strong></div>
       </section>
-      {!filteredRounds.length ? <div className="analytics-empty" role="status"><h2>No rounds match this view</h2><p>Broaden the filters to explore more of the graph.</p><button onClick={resetFilters} type="button">Reset view</button></div> : null}
-      <section id="analytics-answer" className="analytics-answer" aria-label={questions.find((item) => item.id === question)?.label}>
-        {question === "allocation" ? <>
-          <div className="answer-heading"><div className="eyebrow">Where does funding go?</div><h2>See where capital is concentrated</h2><p>Compare the funding linked to regions, countries, and AI sectors. Select a bar to inspect its rounds.</p></div>
-          {leadingSegment ? <div className="answer-insight"><strong>{leadingSegment.label}</strong><p>accounts for <strong>{segmentShare.toFixed(1)}%</strong> of reported funding in this view, across <strong>{leadingSegment.rounds?.length}</strong> rounds.</p><span>Share of this curated sample, not global market share.</span></div> : null}
+      {!filteredRounds.length ? <div className="analytics-empty" role="status"><h2>No matching rounds</h2><button onClick={resetFilters} type="button">Reset filters</button></div> : null}
+      <section id="analytics-answer" className="analytics-answer" aria-label={tabs.find((item) => item.id === tab)?.label}>
+        {tab === "funding" ? <>
           <article className="analytics-card">
-            <div className="card-heading"><h3>Funding by {breakdownLabels[breakdown].toLowerCase()}</h3><span>USD · reported round amounts</span></div>
-            <div className="segmented-control" aria-label="Funding breakdown">
-              {(["region", "country", "domain"] as AnalyticsBreakdown[]).map((item) => <button key={item} type="button" aria-pressed={breakdown === item} className={breakdown === item ? "active" : ""} onClick={() => { setBreakdown(item); setActiveSlice(null); }}>{item === "domain" ? "AI sector" : breakdownLabels[item]}</button>)}
+            <div className="card-heading"><h2>Funding by {breakdown === "domain" ? "sector" : "region"}</h2>
+              <div className="segmented-control" aria-label="Funding breakdown">
+                {(["region", "domain"] as const).map((item) => <button key={item} type="button" aria-pressed={breakdown === item} className={breakdown === item ? "active" : ""} onClick={() => setBreakdown(item)}>{item === "domain" ? "Sector" : "Region"}</button>)}
+              </div>
             </div>
-            {horizontalBars({ rows: breakdownRows, valueFormatter: formatUsd, selectedId: activeSlice?.kind === breakdown ? `${breakdown}:${activeSlice.label}` : "", onSelectRow: (row) => setActiveSlice({ kind: breakdown, label: row.label }) })}
-            {activeSlice ? <div className="selected-answer"><div><strong>{activeSlice.label}</strong><span>{formatCount(activeRounds.length)} rounds · {formatUsd(activeFunding)}</span></div><button type="button" onClick={() => setQuestion("evidence")}>View funding evidence →</button><button type="button" onClick={() => onSelectSlice(activeSlice.kind, activeSlice.label)}>Explore in graph ↗</button><button type="button" onClick={() => setActiveSlice(null)}>Clear selection</button></div> : null}
+            {horizontalBars({ rows: breakdownRows, valueFormatter: formatUsd, onSelectRow: (row) => openRounds(breakdown, row.label) })}
+          </article>
+          <article className="analytics-card">
+            <div className="card-heading"><h2>By year</h2><span>Same period through {cutoff.slice(5)}</span></div>
+            <div className="funding-years">
+              {periods.map((period) => <button key={period.year} type="button" onClick={() => openRounds("year", period.year)}>
+                <span>{period.year}</span><strong>{formatUsd(period.funding)}</strong><small>{formatCount(period.events)} rounds</small>
+              </button>)}
+            </div>
           </article>
         </> : null}
-        {question === "network" ? <>
-          <div className="answer-heading"><div className="eyebrow">Who is involved?</div><h2>Meet the companies and their backers</h2><p>Select a company or investor to explore its connections in the graph.</p></div>
-          {topCompanies[0] ? <div className="answer-insight"><strong>{topCompanies[0].label}</strong><p>has the most reported funding in this view: <strong>{formatUsd(topCompanies[0].value)}</strong>.</p><span>{formatCount(visibleInvestors.length)} publicly named investors connect to these funding rounds. Rankings reflect the selected evidence, not the entire market.</span></div> : null}
-          <div className="ranking-toolbar"><p>Ranked by reported funding in the current view.</p><button type="button" aria-pressed={showAllRankings} onClick={() => setShowAllRankings((value) => !value)}>{showAllRankings ? "Show top 8" : "Show all participants"}</button></div>
-          <div className="analytics-grid">
-            <article className="analytics-card"><h3>Which companies raised the most?</h3><p className="card-explanation">Sum of each company’s included funding rounds.</p>{horizontalBars({ rows: topCompanies, valueFormatter: formatUsd, onSelect: onSelectNode })}</article>
-            <article className="analytics-card"><h3>Which investors back the largest rounds?</h3><p className="card-explanation">Total size of rounds an investor joined. These are not individual investment amounts; shared rounds appear for each participant.</p>{horizontalBars({ rows: topInvestors, valueFormatter: formatUsd, onSelect: onSelectNode })}</article>
-          </div>
-        </> : null}
-        {question === "time" ? <>
-          <div className="answer-heading"><div className="eyebrow">How is funding changing?</div><h2>Compare years on equal terms</h2><p>{comparable ? `Each year includes events through ${cutoff.slice(5)}. Rounds without an exact date are excluded.` : "Each year shows the available evidence. Partial years are not directly comparable."}</p></div>
-          {latestPeriod && previousPeriod && fundingChange !== null ? <div className="answer-insight"><strong>{latestPeriod.year}: {formatUsd(latestPeriod.funding)}</strong><p>{Math.abs(fundingChange).toFixed(1)}% {fundingChange >= 0 ? "more" : "less"} reported funding than {previousPeriod.year} in this view.</p><span>{comparable ? "The date cutoff is aligned across years, but evidence coverage may differ." : "Available evidence includes partial years; this is not an equal-period growth comparison."}</span></div> : null}
-          {filteredRounds.length ? <p className="card-explanation">The largest round accounts for {(largestShare * 100).toFixed(1)}% of this view’s funding. Use “Refine this view” to exclude the largest round per year and check its influence.</p> : null}
-          <article className="analytics-card"><h3>Reported funding by year</h3>{horizontalBars({ rows: aggregateFunding("year").sort((a, b) => a.label.localeCompare(b.label)), valueFormatter: formatUsd, onSelectRow: (row) => { setActiveSlice({ kind: "year", label: row.label }); setQuestion("evidence"); } })}
-        <div className="research-table-scroll"><table className="research-table">
-          <thead><tr><th>Period</th><th>Reported funding</th><th>Rounds</th><th>Companies</th><th>Median round</th><th>Top 5 round share</th></tr></thead>
-          <tbody>{periods.map((period) => <tr key={period.year}><td>{period.year}{comparable ? ` through ${cutoff.slice(5)}` : " (available evidence)"}</td><td>{formatUsd(period.funding)}</td><td>{period.events}</td><td>{period.companies}</td><td>{period.events ? formatUsd(period.median) : "-"}</td><td>{period.events ? `${(period.topFiveShare * 100).toFixed(1)}%` : "-"}</td></tr>)}</tbody>
-        </table></div>
-        <p className="analytics-scope">Top 5 round share measures concentration in the five largest events in each year. Comparable periods use the same month and day across years; missing dates are excluded.</p>
-          </article>
-        </> : null}
-        {question === "evidence" ? <>
-          <div className="answer-heading"><div className="eyebrow">What supports the numbers?</div><h2>Trace the numbers to funding events</h2><p>Search the records behind this view, open an original source, or select a round to inspect its graph connections.</p></div>
-        <article className="analytics-card wide evidence-card">
-          <div className="slice-summary">
-            <div>
-              <span>Evidence scope</span>
-              <strong>{activeTitle}</strong>
-              {activeSlice && activeSlice.kind !== "confidence" ? <button onClick={() => onSelectSlice(activeSlice.kind, activeSlice.label)} type="button">Explore in graph ↗</button> : null}
-              {activeSlice ? <button onClick={() => setActiveSlice(null)} type="button">Clear selection</button> : null}
-              <small>Search narrows the records and export; totals describe this evidence scope.</small>
-            </div>
-            <div>
-              <span>Funding</span>
-              <strong>{formatUsd(activeFunding)}</strong>
-            </div>
-            <div>
-              <span>Events</span>
-              <strong>{formatCount(activeRounds.length)}</strong>
-            </div>
-            <div>
-              <span>Companies</span>
-              <strong>{formatCount(activeCompanies)}</strong>
-            </div>
-            <div>
-              <span>Investors</span>
-              <strong>{formatCount(activeInvestors)}</strong>
-            </div>
-          </div>
+        {tab === "investors" ? <div className="analytics-grid">
+          <article className="analytics-card"><h2>Top companies</h2>{horizontalBars({ rows: topCompanies, valueFormatter: formatUsd, onSelect: onSelectNode })}</article>
+          <article className="analytics-card"><h2>Top investors</h2><p className="card-explanation">Linked round totals, not individual investment amounts.</p>{horizontalBars({ rows: topInvestors, valueFormatter: formatUsd, onSelect: onSelectNode })}</article>
+        </div> : null}
+        {tab === "rounds" ? <article className="analytics-card evidence-card">
+          <div className="card-heading"><h2>{activeSlice ? activeTitle : "Funding rounds"}</h2>{activeSlice ? <button onClick={() => setActiveSlice(null)} type="button">Clear</button> : null}</div>
           <div className="evidence-controls">
             <label>Search evidence<input type="search" placeholder="Company, investor, country…" value={evidenceQuery} onChange={(event) => setEvidenceQuery(event.target.value)} /></label>
             <label>Sort by<select value={evidenceSort} onChange={(event) => setEvidenceSort(event.target.value as "amount" | "latest")}><option value="amount">Largest funding</option><option value="latest">Most recent</option></select></label>
@@ -2617,12 +2525,14 @@ function AnalyticsPage({
             <span aria-live="polite">Page {currentPage} of {pageCount}</span>
             <button disabled={currentPage >= pageCount} onClick={() => setEvidencePage(currentPage + 1)} type="button">Next</button>
           </nav>
-        </article>
-        </> : null}
+        </article> : null}
       </section>
       <footer className="analytics-coverage">
-        <p>Curated publicly reported AI mega-rounds above USD 100M or equivalent, not the full AI startup ecosystem. Low-confidence events are excluded. Regional coverage is uneven.</p>
-        <details><summary>Understand the scope and evidence quality</summary><DataHealth /></details>
+        <p>Curated publicly reported AI mega-rounds above USD 100M or equivalent, not the full AI startup ecosystem.</p>
+        <details><summary>Coverage & methodology</summary>
+          <p>Totals exclude low-confidence evidence, debt, mixed funding and commitments. Years use the same date cutoff; regional coverage is uneven. Search filters the displayed round totals and CSV.</p>
+          <DataHealth />
+        </details>
       </footer>
     </main>
   );
@@ -3595,16 +3505,6 @@ export default function App() {
     setGraphViewportSignal((signal) => signal + 1);
   };
 
-  const selectSliceAndOpenGraph = (kind: AnalyticsBreakdown, label: string) => {
-    if (kind === "confidence") return;
-    const nodeKind = kind === "year" ? "year" : kind === "country" ? "country" : kind === "domain" ? "domain" : "region";
-    const target = graph.nodes.find((node) => node.kind === nodeKind && node.label === label);
-    if (!target) return;
-    setYears(kind === "year" ? [label] : analyticsFilters.years);
-    setGraphRegions(kind === "region" ? [label] : graph.facets.regions);
-    setLayoutMode("flow");
-    selectNodeAndOpenGraph(target);
-  };
   const legalViews: LegalView[] = ["privacy", "terms", "methodology"];
   const isLegalView = legalViews.includes(view as LegalView);
 
@@ -3691,7 +3591,6 @@ export default function App() {
           graph={graph}
           onSelectNode={selectNodeAndOpenGraph}
           onSelectRound={selectNodeAndOpenGraph}
-          onSelectSlice={selectSliceAndOpenGraph}
           setFilters={setAnalyticsFilters}
         />
       ) : (
