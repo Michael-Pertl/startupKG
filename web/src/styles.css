@@ -3712,9 +3712,6 @@ a {
 .question-analytics .bar-row.selected { background: var(--accent-soft); border-radius: 3px; }
 .question-analytics .segmented-control button { text-transform: none; font-weight: 500; font-size: 12px; border-radius: 4px; padding: 7px 14px; }
 .card-explanation { color: var(--muted); font-size: 12px; line-height: 1.65; margin: 0 0 20px; }
-.analytics-coverage { border-top: 1px solid var(--border-soft); padding-top: 16px; color: var(--muted); font-size: 11px; line-height: 1.7; }
-.analytics-coverage > p { margin: 0 0 10px; max-width: 900px; }
-.analytics-coverage summary { cursor: pointer; color: var(--text); }
 .question-analytics .evidence-health { margin-bottom: 0; border-bottom: 0; }
 .question-analytics .evidence-table-head, .question-analytics .evidence-row-main { grid-template-columns: minmax(140px, 1.1fr) minmax(70px, .4fr) minmax(130px, 1fr) minmax(75px, .4fr); }
 @media (max-width: 1050px) {

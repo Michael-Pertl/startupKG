@@ -259,7 +259,7 @@ const legalPages: Record<LegalView, LegalPageContent> = {
       {
         title: "Scope",
         body:
-          "The knowledge graph focuses on publicly reported AI-native and AI infrastructure funding events, with emphasis on 2024-2026 mega-rounds and public-market signals.",
+          "The graph represents curated publicly reported AI mega-rounds above USD 100M or equivalent in 2024–2026, not the full AI startup ecosystem. The separate market-events feed includes public-market signals and discoveries awaiting review.",
       },
       {
         title: "Sources",
@@ -276,6 +276,14 @@ const legalPages: Record<LegalView, LegalPageContent> = {
           "staged: hidden from public News until reviewed.",
           "approved: reviewed and suitable as a stronger visible signal.",
           "rejected: retained for audit but hidden from public News.",
+        ],
+      },
+      {
+        title: "Analytics",
+        items: [
+          "Totals exclude low-confidence evidence, debt, mixed funding, upper bounds and commitments.",
+          "Years use the same date cutoff; regional coverage is uneven.",
+          "Investor rankings show linked round totals, not individual investment amounts. Round search filters the displayed totals and CSV.",
         ],
       },
       {
@@ -2522,13 +2530,6 @@ function AnalyticsPage({
           </nav>
         </article> : null}
       </section>
-      <footer className="analytics-coverage">
-        <p>Curated publicly reported AI mega-rounds above USD 100M or equivalent, not the full AI startup ecosystem.</p>
-        <details><summary>Coverage & methodology</summary>
-          <p>Totals exclude low-confidence evidence, debt, mixed funding and commitments. Years use the same date cutoff; regional coverage is uneven. Search filters the displayed round totals and CSV.</p>
-          <DataHealth />
-        </details>
-      </footer>
     </main>
   );
 }
@@ -2849,6 +2850,7 @@ function LegalPage({ page, onOpenLegal }: { page: LegalView; onOpenLegal: (view:
             </section>
           ))}
         </div>
+        {page === "methodology" ? <DataHealth /> : null}
         <div className="legal-inline-links">
           <button onClick={() => onOpenLegal("privacy")} type="button">Privacy</button>
           <button onClick={() => onOpenLegal("terms")} type="button">Terms</button>
