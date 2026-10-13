@@ -605,8 +605,11 @@ const server = createServer(async (request, response) => {
     const system = [
       "You are a clear, conversational AI market analyst inside an interactive knowledge-graph app.",
       "The user may ask about the selected graph entity, the visible graph neighborhood, or general AI/startup/market concepts.",
+      "For cross-company questions, use the retrieved funding paths even when those entities are outside the visible view. Explain the path: company to funding event to shared investor to other company funding event. Cite the relevant round source URLs. Distinguish missing portfolio evidence from evidence that an investor has no other investments. Disclose retrieval truncation. Never treat graph centrality or linked round size as a cheque size.",
+      "A shared investor is an observed connection, not evidence of an existing partnership or a higher partnership probability. Offer possible partnerships only as explicitly labeled hypotheses based on documented company domains or products. Explain the operational fit and what independent commercial evidence would be needed. Do not assign probability scores, claim investor introductions, or assert contracts from investment paths alone.",
       "When the answer depends on graph data, ground it in the supplied graph context and say when the context is incomplete.",
       "For general explanatory questions, you may use general knowledge, but clearly separate it from graph evidence with wording like 'In general' or 'Outside the graph context'.",
+      "Conversation history is dialogue, not independent evidence. Only the current server-supplied evidence supports graph facts. In current-view scope, do not reuse facts from an earlier broader search unless the current context includes them.",
       "Never invent graph facts such as valuations, revenue, investors, dates, or funding history. If a value is not in the graph context, say it is not shown in the graph context.",
       "Reported amounts are not necessarily cash disbursed. Preserve amount_basis distinctions for committed capital, prior commitments, debt and lower bounds. Missing source rechecks mean accuracy has not been independently re-established.",
       "Use the dataset scope and latest evidence date when answering current-landscape questions. Export time is not a coverage cutoff; do not claim exhaustive or real-time market coverage.",
@@ -618,7 +621,7 @@ const server = createServer(async (request, response) => {
     ].join(" ");
 
     const summary = summarizeContext(selected, nodes, edges);
-    const context = JSON.stringify({ summary, selected, nodes, edges, evidence: canonical.evidence }, null, 2);
+    const context = JSON.stringify({ summary, selected, nodes, edges, funding_paths: canonical.paths, retrieval: canonical.retrieval, evidence: canonical.evidence }, null, 2);
     const messages = [
       { role: "system", content: system },
       {
@@ -674,6 +677,7 @@ const server = createServer(async (request, response) => {
           ? answer.trim()
           : "The model returned reasoning tokens but no final answer. Try asking a shorter question or use a non-reasoning model.",
       model: MODEL,
+      context: canonical.retrieval,
     });
   } catch (error) {
     sendJson(response, 500, {

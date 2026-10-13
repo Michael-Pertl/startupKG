@@ -12,7 +12,19 @@ test('hackathon Ask is anonymous and unmetered; billing routes are removed', asy
   const directory = await mkdtemp(join(tmpdir(), 'hackathon-access-'));
   await mkdir(join(directory, 'data'));
   await writeFile(join(directory, 'data/market_graph.json'), JSON.stringify({
-    nodes: [{ id: 'round', label: 'Example round', kind: 'round', amount_usd: 100_000_000 }], edges: [],
+    nodes: [
+      { id: 'round', label: 'Example round', kind: 'round', amount_usd: 100_000_000 },
+      { id: 'nebius', label: 'Nebius', kind: 'startup' },
+      { id: 'other', label: 'Other company', kind: 'startup' },
+      { id: 'backer', label: 'Backer', kind: 'investor' },
+      { id: 'nebius-round', label: 'Nebius round', kind: 'round', confidence: 'high', source_url: 'https://example.org/nebius' },
+      { id: 'other-round', label: 'Other round', kind: 'round', confidence: 'high', source_url: 'https://example.org/other' },
+    ], edges: [
+      { source: 'nebius', target: 'nebius-round', kind: 'raised' },
+      { source: 'other', target: 'other-round', kind: 'raised' },
+      { source: 'backer', target: 'nebius-round', kind: 'participated' },
+      { source: 'backer', target: 'other-round', kind: 'participated' },
+    ],
   }));
   let calls = 0;
   let providerStatus = 200;
@@ -23,6 +35,14 @@ test('hackathon Ask is anonymous and unmetered; billing routes are removed', asy
     assert.match(payload.messages[1].content, /100000000/);
     assert.equal(payload.model, "nvidia/test-nemotron");
     assert.equal(payload.reasoning_effort, undefined);
+    if (payload.messages.at(-1).content === 'Who backs Nebius and what else have they funded?') {
+      const context = JSON.parse(payload.messages[1].content.split('\n\n')[0].replace(/^Current graph context JSON:\n/, ''));
+      if (context.retrieval.scope === 'graph') {
+        assert(context.funding_paths.some(path => path.company_id === 'other'));
+        assert.equal(context.nodes.find(node => node.id === 'other-round').source_url, 'https://example.org/other');
+      } else assert.equal(context.funding_paths.length, 0);
+      assert.match(payload.messages[0].content, /not evidence of an existing partnership/);
+    }
     calls++;
     response.writeHead(providerStatus, { 'content-type': 'application/json' });
     if (providerStatus !== 200) {
@@ -70,6 +90,13 @@ test('hackathon Ask is anonymous and unmetered; billing routes are removed', asy
     assert.equal(result.usage, undefined);
   }
   assert.equal(calls, 10);
+  for (const scope of ['graph', 'visible']) {
+    const response = await fetch(`${address}/api/ask`, { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ scope, selected: { id: 'round' }, question: 'Who backs Nebius and what else have they funded?' }),
+    });
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).context.scope, scope);
+  }
   providerStatus = 404;
   const failure = await fetch(`${address}/api/ask`, { method: 'POST',
     headers: { 'content-type': 'application/json' },
