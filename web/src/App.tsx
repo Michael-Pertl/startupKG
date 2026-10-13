@@ -1895,6 +1895,7 @@ function AskPanel({
   nodes: MarketNode[];
   edges: MarketEdge[];
 }) {
+  const [scope, setScope] = useState<"graph" | "visible">("graph");
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -1915,6 +1916,7 @@ function AskPanel({
         },
         body: JSON.stringify({
           question: trimmed,
+          scope,
           messages,
           selected,
           neighborhood: {
@@ -1935,6 +1937,10 @@ function AskPanel({
 
   return (
     <section className="ask-panel">
+      <div className="ask-scope">
+        <label>Search scope<select value={scope} onChange={(event) => setScope(event.target.value as "graph" | "visible")} disabled={status === "loading"}><option value="graph">Across the graph</option><option value="visible">Current view only</option></select></label>
+        <p>{scope === "graph" ? "Find companies, backers, and their other funding connections beyond the visible view." : "Use only the selected entity and its visible connections."} Shared investors suggest connections; possible partnerships remain hypotheses.</p>
+      </div>
       <div className="chat-thread">
         {messages.length ? (
           messages.map((message, index) => (
@@ -1943,7 +1949,7 @@ function AskPanel({
             </div>
           ))
         ) : (
-          <div className="chat-empty">Ask about the graph, the selected entity, or general AI market context.</div>
+          <div className="chat-empty"><p>Ask about an entity by name or follow its connections across the graph.</p><button type="button" onClick={() => setQuestion(`Who backs ${selected.startup_name || selected.label}, what other companies have those investors backed, and which partnerships might make sense? Separate evidence from hypotheses.`)}>Explore shared investors and possible partnerships →</button></div>
         )}
         {status === "loading" ? <div className="chat-message assistant">Thinking...</div> : null}
       </div>
@@ -1956,7 +1962,7 @@ function AskPanel({
             }
           }}
           onChange={(event) => setQuestion(event.target.value)}
-          placeholder={`Ask about ${selected.label}, this graph, or general market context...`}
+          placeholder={`Ask about ${selected.label} or name another company…`}
           value={question}
         />
         <button
@@ -3757,7 +3763,7 @@ export default function App() {
                   aria-label="Ask questions about the selected graph context"
                   className={["rail-ask-primary", drawerMode === "ask" ? "active" : ""].join(" ")}
                   onClick={openAskPanel}
-                  title="Ask the assistant about the selected entity and visible graph"
+                  title="Ask about companies, investors, and connections across the graph"
                   type="button"
                 >
                   Ask AI
