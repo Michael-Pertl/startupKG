@@ -1,0 +1,22 @@
+# Apply as a Blueprint or copy these settings into a separate Render Cron Job.
+# Keep one writer; leave the existing Tavily discovery job paused.
+services:
+  - type: cron
+    name: ai-market-daily-ingestion
+    runtime: python
+    schedule: "0 6 * * *"
+    buildCommand: python3 --version
+    startCommand: python3 scripts/scheduled_ingestion.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: NEBIUS_API_KEY
+        sync: false
+      - key: NEBIUS_MODEL
+        sync: false
+      - key: INGEST_MAX_ARTICLES
+        value: "20"

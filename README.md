@@ -181,7 +181,7 @@ python3 scripts/fetch_market_events_feeds.py
 python3 scripts/build_market_events.py
 ```
 
-`./start.sh` runs the RSS fetch automatically before starting the app. The RSS
+`./start.sh` rebuilds existing data without web discovery. Use `refresh_platform.py --discover` to poll RSS. The RSS
 fetch also writes `data/app/market_event_fetch_report.json` with per-feed
 success/failure and candidate counts.
 
@@ -285,3 +285,5 @@ release. A successful rebuild is not proof of source accuracy or market coverage
 For NVIDIA Nemotron on Nebius Token Factory, set the server-side `NEBIUS_API_KEY`, the exact catalog ID in `NEBIUS_MODEL`, and its matching `NEBIUS_BASE_URL` on Render. The runtime integration is `web/server/app-server.mjs`; Ask uses canonical graph evidence and public source metadata. Restart after environment changes and verify a real Ask answer. See [submission checklist](docs/HACKATHON_SUBMISSION.md) and [latest evidence review](docs/EVIDENCE_REVIEW_2026_10_12.md).
 
 The graph represents curated publicly reported AI mega-rounds above the selected funding threshold, not the full AI startup ecosystem.
+
+Daily automatic RSS verification and publication: see [scheduled ingestion](docs/SCHEDULED_INGESTION.md).

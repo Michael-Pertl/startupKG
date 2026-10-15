@@ -68,6 +68,33 @@ const supabaseAdmin =
       })
     : null;
 
+// One shared snapshot serves browser graph/analytics and server-side Ask evidence.
+let publishedSnapshot = null;
+let snapshotCheckedAt = 0;
+let snapshotRequest = null;
+async function publishedAssets() {
+  if (!supabaseAdmin) return null;
+  if (Date.now() - snapshotCheckedAt < 60000) return publishedSnapshot;
+  if (!snapshotRequest) {
+    snapshotRequest = (async () => {
+      try {
+        const { data, error } = await supabaseAdmin.from("platform_snapshots")
+          .select("payload").eq("id", "current").maybeSingle().abortSignal(AbortSignal.timeout(5000));
+        const assets = data?.payload?.assets;
+        if (!error && Array.isArray(assets?.["market_graph.json"]?.nodes)
+            && Array.isArray(assets?.["market_graph.json"]?.edges)) publishedSnapshot = assets;
+      } catch { /* Keep the last known good snapshot, or bundled data on first boot. */ }
+      snapshotCheckedAt = Date.now();
+      return publishedSnapshot;
+    })().finally(() => { snapshotRequest = null; });
+  }
+  return snapshotRequest;
+}
+async function publishedGraph() {
+  return (await publishedAssets())?.["market_graph.json"]
+    || readJsonFile(resolve(DIST_DIR, "data", "market_graph.json"), null);
+}
+
 function configStatus() {
   return {
     nebius_configured: Boolean(process.env.NEBIUS_API_KEY),
@@ -201,6 +228,8 @@ function marketEventPayload(rows, source = "supabase") {
 }
 
 async function publicMarketEvents() {
+  const liveFeed = (await publishedAssets())?.["market_events.json"];
+  if (liveFeed) return liveFeed;
   const fallback = readJsonFile(resolve(DIST_DIR, "data", "market_events.json"), null);
   if (supabaseAdmin) {
     const { data, error } = await supabaseAdmin
@@ -340,6 +369,7 @@ async function markAdminEventPromotionReady(request, candidateId) {
 function sendJson(response, status, payload) {
   response.writeHead(status, {
     "content-type": "application/json",
+    "cache-control": "no-store",
     "access-control-allow-origin": "http://127.0.0.1:5173",
     "access-control-allow-methods": "GET, POST, OPTIONS",
     "access-control-allow-headers": "content-type, x-ask-token, authorization",
@@ -488,6 +518,12 @@ function summarizeContext(selected, nodes, edges) {
 }
 
 const server = createServer(async (request, response) => {
+  const assetName = new URL(request.url || "/", "http://localhost").pathname.match(/^\/data\/(market_graph\.json|data_health\.json|market_events\.json)$/)?.[1];
+  if (request.method === "GET" && assetName) {
+    const asset = (await publishedAssets())?.[assetName];
+    if (asset) { sendJson(response, 200, asset); return; }
+  }
+
   if (request.method === "OPTIONS") {
     sendJson(response, 200, {});
     return;
@@ -585,7 +621,7 @@ const server = createServer(async (request, response) => {
 
   try {
     const payload = JSON.parse(await readBody(request));
-    const graph = readJsonFile(resolve(DIST_DIR, "data", "market_graph.json"), null);
+    const graph = await publishedGraph();
     if (!graph) {
       sendJson(response, 503, { error: "Published graph evidence is unavailable." });
       return;
