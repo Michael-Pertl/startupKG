@@ -2714,23 +2714,37 @@ function NewsPage({
       </section>
 
       <div className="news-mode-row">
-        <label><input type="checkbox" checked={includeDiscoveries} onChange={(event) => setIncludeDiscoveries(event.target.checked)} />Include unreviewed discoveries</label>
-        <div className="news-view-toggle" role="tablist" aria-label="News views">
-          <button className={newsMode === "ipo" ? "active" : ""} onClick={() => setNewsMode("ipo")} type="button">
+        <div className="news-view-toggle" role="group" aria-label="News views">
+          <button aria-pressed={newsMode === "ipo"} className={newsMode === "ipo" ? "active" : ""} onClick={() => setNewsMode("ipo")} type="button">
             IPO/DPO Watch
           </button>
-          <button className={newsMode === "latest" ? "active" : ""} onClick={() => setNewsMode("latest")} type="button">
+          <button aria-pressed={newsMode === "latest"} className={newsMode === "latest" ? "active" : ""} onClick={() => setNewsMode("latest")} type="button">
             Latest News
           </button>
         </div>
         <label className="news-search">
-          <span>Search news</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="10.5" cy="10.5" r="6.5" />
+            <path d="m16 16 4 4" />
+          </svg>
           <input
+            aria-label="Search news"
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Company, IPO, country, source..."
+            placeholder="Search news…"
+            type="search"
             value={query}
           />
         </label>
+        <button
+          aria-checked={includeDiscoveries}
+          className="news-discovery-switch"
+          onClick={() => setIncludeDiscoveries((included) => !included)}
+          role="switch"
+          type="button"
+        >
+          <span>Include unverified</span>
+          <span aria-hidden="true" className="news-switch-track"><span /></span>
+        </button>
       </div>
 
       <section className="news-layout single">
@@ -2753,6 +2767,7 @@ function NewsPage({
                       <div className="news-item-badges">
                         <span>{eventLabel(event.event_type)}</span>
                         <span>{event.confidence}</span>
+                        {event.status !== "approved" ? <span className="news-unverified-badge">Unverified</span> : null}
                       </div>
                     </div>
                     <p>{event.summary}</p>
