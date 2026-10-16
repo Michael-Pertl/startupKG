@@ -1,38 +1,156 @@
-> Hackathon edition: all graph lenses, analytics, news, and Nebius Ask are open to everyone. See [the submission guide](docs/HACKATHON_SUBMISSION.md) for setup, the project pitch, and a demo outline.
+# AI Market Graph
 
-# AI Investment Knowledge Graph
+Explore the money and connections behind AI: funding rounds, shared investors,
+regional patterns, and source-linked market news. Ask questions about the current
+view or retrieve investment connections across the published graph using a
+Nebius Token Factory–powered assistant.
 
-This project builds a Neo4j property graph for analysing AI startup mega-round investment activity globally, with US and Europe retained as major comparison regions.
+Built independently as a student knowledge-graph project and developed into a
+hackathon application. Graph exploration, analytics, news, and Ask are available
+without a subscription or account.
 
-The graph focuses on publicly reported funding rounds from 2024–2026 where AI startups or AI infrastructure companies raised at least USD 100M or equivalent.
+**Scope:** curated publicly reported AI mega-rounds of USD 100M or equivalent in
+2024–2026, not the full AI startup ecosystem. Every funding event records a public
+source, amount, date/year, investor evidence, and confidence. Coverage is
+incomplete and regionally uneven.
 
-This threshold intentionally captures the AI mega-round ecosystem, not the
-whole worldwide AI startup ecosystem. A USD 100M+ cutoff is useful for studying
-where large pools of capital concentrate by domain, region, investor syndicate,
-and year. It excludes most seed, Series A, and regional AI companies, so final
-claims should be phrased as claims about publicly reported AI mega-rounds.
+## Quick start for judges
 
-## Goal
+Requirements: **Node.js 22+**, **npm**, and **Python 3.11+** for data processing.
+The checked-in graph snapshot runs without Neo4j, Supabase, or Tavily. A working
+Nebius Token Factory key is required for live AI answers.
 
-The goal is to model and analyse relationships between:
+From a clone of this repository:
 
-- AI startups
-- venture capital firms and other investors
-- funding rounds
-- AI application/technology domains
-- countries and regions
-- time
+```bash
+git clone https://github.com/Michael-Pertl/startupKG.git
+cd startupKG/web
+npm ci
+cp .env.example .env.local
+```
 
-The project is designed for a university Knowledge Graphs mini-project portfolio.
-It also includes a React graph UI for exploring the market landscape as a
-product-style knowledge graph. Streamlit can remain as an internal research
-prototype, but the React app is the current user-facing direction.
+Edit `web/.env.local` and set these server-only variables:
 
-## Research Question
+```dotenv
+NEBIUS_API_KEY=your_token_factory_key
+NEBIUS_MODEL=exact_nvidia_nemotron_model_id_from_your_catalog
+NEBIUS_BASE_URL=https://api.tokenfactory.nebius.com/v1/
+```
 
-How do major regional AI mega-round funding networks differ in terms of investor concentration, sector focus, co-investment structure, and temporal development from 2024 to 2026?
+Use the exact model ID and endpoint available to your Token Factory account;
+see [Nebius's NVIDIA Nemotron examples](https://github.com/nebius/token-factory-cookbook/tree/main/models/nemotron).
+The model value above is a placeholder to replace, not a runnable model ID.
+Never put the inference key in a `VITE_` variable or commit your `.env.local`.
 
-## Core Graph Model
+Still inside `web/`:
+
+```bash
+npm run check:deploy-env -- --check-models
+npm run build
+npm start
+```
+
+Open **http://localhost:8080**. `--check-models` checks the authenticated catalog;
+then submit a question in Ask to verify that inference produces an answer. Graph,
+analytics, and news remain usable without a key; Ask reports missing configuration.
+
+For hot-reloading development, run `npm run ask-server` and `npm run dev` in two
+terminals inside `web/`, then open http://localhost:5173. Alternatively, `./start.sh`
+from the repository root rebuilds existing data and starts the development app
+at http://127.0.0.1:5180. It does not automatically fetch RSS or call Tavily.
+
+## NVIDIA Nemotron and Nebius Token Factory
+
+### Where NVIDIA models fit
+
+The NVIDIA Nemotron integration uses Token Factory's chat completions API. The
+server passes retrieved graph evidence and the user's question to the configured
+model, which explains funding events, investor connections, and comparisons in
+natural language. Two context modes are available:
+
+- **Across the graph:** resolve named companies/investors and retrieve connected
+  funding paths beyond the visible graph.
+- **Current view only:** supply the selected entity and visible neighborhood.
+
+Retrieval runs on the server against published evidence. Browser-supplied amounts
+and sources cannot replace those records. The model is instructed to distinguish
+source-backed facts from general explanations and hypothetical partnerships.
+These instructions do not guarantee factual correctness or current ownership
+information; Ask currently performs no live web verification.
+
+The scheduled ingestion implementation also uses Token Factory to extract
+structured funding facts and supporting passages from public articles. Python
+checks those passages and applies deterministic eligibility, currency, duplicate,
+and conflict rules before admitting records. `NEBIUS_INGEST_MODEL` optionally
+selects a separate extraction model; otherwise ingestion uses `NEBIUS_MODEL`.
+
+Implementation references:
+
+| Component | Location |
+| --- | --- |
+| Server-side Ask inference | [`web/server/app-server.mjs`](web/server/app-server.mjs) |
+| Published evidence and scope enforcement | [`web/server/canonical-context.mjs`](web/server/canonical-context.mjs) |
+| Shared-investor path retrieval | [`web/server/graph-retrieval.mjs`](web/server/graph-retrieval.mjs) |
+| Structured extraction and source-passage checks | [`scripts/verify_market_evidence.py`](scripts/verify_market_evidence.py) |
+| Scheduled ingestion and snapshot publication | [`scripts/scheduled_ingestion.py`](scripts/scheduled_ingestion.py) |
+
+**Model verification status:** the integration is configurable for NVIDIA Nemotron.
+The code's fallback is `moonshotai/Kimi-K2.6`, which is not an NVIDIA model. Set
+`NEBIUS_MODEL` explicitly to your chosen Nemotron ID on the deployed web service
+and cron service. A Render environment change is not recorded in this repository;
+the exact deployed model and successful NVIDIA inference have not been verified
+here. `/api/health` exposes the configured model without the API key, and a
+successful `/api/ask` response includes the model ID. Record a successful deployed
+response before presenting NVIDIA model use as verified to judges.
+
+### How Token Factory accelerated development
+
+Token Factory provides hosted inference, so the project can call a model without
+provisioning GPUs, downloading weights, or operating an inference server. The
+same chat-completions interface supports the interactive assistant and the
+structured extraction pipeline. Model and endpoint settings are environment
+variables, allowing model changes without rebuilding the retrieval logic or UI.
+This let development focus on evidence quality, graph retrieval, and the user
+experience. No measured latency or cost improvement is claimed.
+
+The Nebius service integrated in this repository is **Token Factory**. Application
+hosting and scheduled jobs use **Render**, and optional persistence uses
+**Supabase**; those are separate services. No direct Nebius AI Cloud GPU cluster,
+Nebius storage service, model training, or fine-tuning is implemented.
+
+## What to explore
+
+- **Graph:** navigate companies, rounds, investors, domains, countries, and regions;
+  inspect evidence and follow shared-investor connections.
+- **Analytics:** compare funding, investors, and source-linked rounds with year and
+  region filters.
+- **News:** search public market signals and optionally include unverified discoveries.
+- **Ask:** ask a graph question with either visible context or broader graph retrieval.
+
+A useful demo starts with Nebius: open its funding rounds, inspect investors,
+then ask which other companies share those investors. Connections show reported
+funding participation; they do not establish investor cheque sizes, confirmed
+partnerships, or acquisition availability.
+
+## Architecture and stack
+
+```text
+Public funding evidence / RSS / optional Tavily
+                 |
+Python validation, normalization and graph exports
+                 |                     |
+Neo4j + Cypher research         Published JSON snapshots
+                                       |
+                         React + TypeScript + Cytoscape.js
+                                       |
+                              Node.js application server
+                                       |
+                           Nebius Token Factory inference
+```
+
+Neo4j models startups, investors, funding rounds, AI domains, geography, and time.
+The web application reads generated graph JSON; it does not query Neo4j live.
+Optional Supabase snapshots allow scheduled updates to reach the deployed app.
 
 ```text
 (:Startup)-[:RAISED]->(:FundingRound)
@@ -42,248 +160,98 @@ How do major regional AI mega-round funding networks differ in terms of investor
 (:Country)-[:PART_OF]->(:Region)
 ```
 
-## Dataset Scope
+## Reproduce the data pipeline
 
-Included funding events must satisfy all conditions:
-
-1. AI-native or AI-infrastructure company.
-2. Headquarters or primary operating identity can be assigned to a documented country and region.
-3. Round date between 2024 and 2026.
-4. Round amount of at least USD 100M or equivalent.
-5. Public source confirms amount, date/year, and at least one investor.
-6. Source URL is recorded.
-
-## Main Analysis Dimensions
-
-- Funding volume by region and year
-- Funding volume by AI domain
-- Most active investors
-- Lead investor concentration
-- Co-investment networks
-- Cross-region investor participation
-- Centrality of investors and startups
-- Temporal development of funding rounds
-
-## Project Structure
-
-```text
-docs/              Project documentation
-data/raw/          Manually collected raw evidence tables
-data/processed/    Cleaned normalized tables
-data/neo4j_import/ CSV files ready for Neo4j import
-scripts/           Python pipeline scripts
-queries/           Cypher schema, import, and analysis queries
-web/               React graph product prototype
-app/               Optional Streamlit research/admin prototype
-tests/             Data validation tests
-```
-
-## Recommended Workflow
-
-For a complete validated refresh, run `python3 scripts/refresh_platform.py`.
-Add `--discover` to poll RSS. Tavily is disabled unless explicitly requested with
-`--tavily`. Complete structured funding evidence is ingested automatically;
-incomplete or conflicting rows are quarantined. Analytics now includes
-coverage/provider health, comparable-period funding, median rounds and
-concentration sensitivity. See [investor product operations and priorities](docs/INVESTOR_PRODUCT_NEXT.md).
-
-1. Collect raw funding events in `data/raw/funding_events_raw.csv`.
-2. For new events, stage rows in `data/raw/new_funding_events.csv`.
-3. Dry-run ingestion with `python3 scripts/ingest_funding_events.py`.
-4. Append valid staged rows with `python3 scripts/ingest_funding_events.py --apply`.
-5. Validate required fields with `python3 scripts/validate_raw_data.py`.
-6. Normalize startups, investors, countries, domains, and rounds with `python3 scripts/normalize_raw_data.py`.
-7. Build startup growth metrics with `python3 scripts/build_growth_metrics.py`.
-8. Initialize app-facing startup profiles with `python3 scripts/init_startup_profiles.py`.
-9. Validate profile enrichment with `python3 scripts/validate_startup_profiles.py`.
-10. Review compact quality metrics with `python3 scripts/report_data_quality.py` and `python3 scripts/report_profile_quality.py`.
-11. Audit candidate coverage gaps with `python3 scripts/audit_coverage.py`.
-12. Rebuild the React graph export with `python3 scripts/build_app_graph.py`.
-13. Load generated CSVs from `data/neo4j_import/` into Neo4j.
-14. Run Cypher analysis queries.
-15. Export tables/screenshots for the final portfolio.
-
-## GitHub Workflow
-
-Use pull requests, short-lived branches, source-backed data reviews, and local
-validation before merging. See `GITHUB.md` for the repository workflow,
-including branch names, commit conventions, review expectations, CI checks, and
-secret-handling rules.
-
-## Deployment
-
-The production target is the Node server in `web/server/app-server.mjs`. It
-serves the Vite build and handles unrestricted Nebius Ask requests server-side. See `docs/DEPLOYMENT.md` and
-`docs/LAUNCH_CHECKLIST.md`.
-
-Production env template:
+From the repository root:
 
 ```bash
-cp .env.production.example .env
-cd web
-npm run check:deploy-env
+python3 scripts/refresh_platform.py
 ```
 
-## Streamlit App
-
-Streamlit is no longer the recommended product surface. Keep it only as a
-research/admin prototype if needed.
-
-Install app dependencies:
+This validates existing evidence, ingests complete structured inbox records,
+normalizes tables, and rebuilds graph, growth metrics, news, and health reports.
+It does not make discovery calls by default. Individual core steps are:
 
 ```bash
-python3 -m pip install -r requirements.txt
-```
-
-Run the dashboard:
-
-```bash
-streamlit run app/app.py
-```
-
-The app provides filtered views for market overview, company funding histories, investor activity, regional/domain shifts, and data-quality guardrails.
-
-For product direction beyond the Streamlit prototype, see `docs/PRODUCT_STRATEGY.md` and `docs/DATA_MODEL_NEXT.md`.
-
-## Graph Product Prototype
-
-Start the product app from the project root:
-
-```bash
-./start.sh
-```
-
-Then open:
-
-```text
-http://127.0.0.1:5180/
-```
-
-The script installs web dependencies if needed, starts the React app, and starts
-the Ask assistant proxy when `web/.env.local` exists.
-
-Build the app graph export:
-
-```bash
+python3 scripts/validate_raw_data.py
+python3 scripts/normalize_raw_data.py
+python3 scripts/build_growth_metrics.py
 python3 scripts/build_app_graph.py
-```
-
-Build or refresh the News event feed:
-
-```bash
 python3 scripts/build_market_events.py
 ```
 
-Free automated market-event discovery from configured RSS feeds:
+Raw evidence lives in `data/raw/`; processed tables in `data/processed/`; Neo4j
+import files in `data/neo4j_import/`; public app exports in `web/public/data/`.
+Stage additional structured funding evidence in `data/raw/new_funding_events.csv`.
+See [automatic ingestion](docs/AUTOMATIC_INGESTION.md) for eligibility and
+quarantine rules. The optional Streamlit research prototype uses dependencies
+from `requirements.txt`; these are not required for the Node web demo.
 
-```bash
-python3 scripts/fetch_market_events_feeds.py
-python3 scripts/build_market_events.py
+To use Neo4j locally, install Docker Compose and run `docker compose up -d` from
+the repository root. Follow [the Neo4j model](docs/NEO4J_MODEL.md) and import scripts
+under `scripts/`; use queries under `queries/` for analysis. The checked-in Compose
+password is for local development only.
+
+## Daily updates and deployment
+
+Deploy the Node server using [deployment instructions](docs/DEPLOYMENT.md).
+For persistent automatic updates, first apply
+[`supabase/migrations/20261015_platform_snapshots.sql`](supabase/migrations/20261015_platform_snapshots.sql),
+then configure **one** Render Cron Job:
+
+```text
+Schedule: 0 6 * * *
+Command:  python3 scripts/scheduled_ingestion.py
 ```
 
-`./start.sh` rebuilds existing data without web discovery. Use `refresh_platform.py --discover` to poll RSS. The RSS
-fetch also writes `data/app/market_event_fetch_report.json` with per-feed
-success/failure and candidate counts.
+This is daily at 06:00 UTC. Set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
+`NEBIUS_API_KEY`, and `NEBIUS_MODEL` on the job, and use the same Supabase project
+on the web service. The service-role key is server-only. Add `--tavily` and
+`TAVILY_API_KEY` only to opt into paid Tavily discovery. RSS discovery does not
+use Tavily credits; extraction uses Nebius inference. `render.yaml` contains the
+job definition. See [scheduled ingestion](docs/SCHEDULED_INGESTION.md) for setup,
+retry behavior, source restrictions, and publication details.
 
-Optional paid market-event discovery with Tavily:
+Initial automatic admission covers explicit USD funding announcements from
+PRNewswire, BusinessWire, and Reuters. Unresolved records retry without mandatory
+human review and remain outside graph totals. Cross-source corroboration,
+automatic ownership/acquisition enrichment, sourced FX conversion, and live
+ownership checks in Ask are not implemented.
 
-```bash
-export TAVILY_API_KEY=tvly-your-key
-python3 scripts/fetch_market_events_tavily.py
-python3 scripts/build_market_events.py
-```
-
-Rows discovered this way are classified as `auto_ingested`, `needs_review`, or
-`staged` using the same monitoring guardrails as RSS. They are not added to the
-core funding graph.
-Obvious below-threshold funding items and low-signal announcements are staged in
-`data/raw/market_events_raw.csv` but hidden from the app until reviewed.
-The News JSON adds investor-facing signal tiers: `core_signal`,
-`watchlist_signal`, and `review_queue`. These help separate graph-grade evidence
-from broader market intelligence.
-
-Promote a reviewed News item into the staged funding-event workflow:
+## Validation
 
 ```bash
-python3 scripts/promote_market_event.py <market_event_id> \
-  --lead-investors "Investor A; Investor B" \
-  --ai-domain "AI Infrastructure"
-python3 scripts/promote_market_event.py <market_event_id> \
-  --lead-investors "Investor A; Investor B" \
-  --ai-domain "AI Infrastructure" \
-  --apply
-```
+# Repository root
+python3 -m unittest discover -s tests
 
-Then review `data/raw/new_funding_events.csv` and continue with
-`python3 scripts/ingest_funding_events.py`.
-
-Manual React graph UI startup:
-
-```bash
+# Web application
 cd web
-npm install
-npm run dev
+npm ci
+npm test
+npm run build
 ```
 
-The frontend reads `web/public/data/market_graph.json` and renders two product
-views:
+Provider tests use local stubs rather than paid inference. Catalog and real
+inference checks require your own Token Factory credentials.
 
-- `Graph`: adaptive network navigation across companies, investors, funding
-  rounds, countries, domains, and years.
-- `Analytics`: funding-momentum dashboard with filters for year, region, domain,
-  and evidence confidence.
+## License
 
-Optional graph assistant using Nebius Token Factory:
+Original project source code and documentation are licensed under the
+**[MIT License](LICENSE)**, an
+[OSI-approved open-source license](https://opensource.org/license/mit).
+The standard license text is included in the repository; no separate OSI
+application or purchase is needed to use it.
 
-```bash
-cd web
-cp .env.example .env.local
-# edit .env.local and set NEBIUS_API_KEY
-npm run ask-server
-```
+Third-party dependencies, NVIDIA model weights, provider services, linked
+articles, company logos, and publisher content retain their own licenses and
+terms. This project's MIT license does not grant rights to those materials.
+Public source URLs are retained for attribution and verification.
 
-The API key stays server-side in the local proxy. The React app calls `/api/ask` through the Vite proxy.
+## Further documentation
 
-Ask is available without login, subscriptions, or a credit allowance.
-
-## Market Event Monitoring
-
-The next product layer is public event monitoring:
-
-- new large AI funding rounds;
-- major reported valuation increases;
-- IPO filings, IPO pricings, and public listings;
-- strategic investments and compute/infrastructure commitments.
-
-The proposed implementation uses a separate market-event layer, watchlist rules,
-and generated notifications. Alerts should link to public source evidence and
-provide graph context. They should not be framed as investment advice.
-
-See `docs/MARKET_EVENT_MONITORING.md`.
-
-## Dataset Limitation
-
-The October 3, 2026 refresh adds seven verified events and rebuilds the platform
-export. See [refresh research and next priorities](docs/REFRESH_RESEARCH_2026_10_03.md)
-for source links, remaining coverage gaps, and trading-agent feasibility.
-
-This project does not represent the entire AI investment landscape. It represents a curated dataset of publicly reported AI mega-rounds above the selected threshold. The results are therefore suitable for analysing major investor networks, sector focus, and capital concentration, but not for measuring the full population of AI startups.
-## Automatic Ingestion
-
-See [automatic evidence ingestion](docs/AUTOMATIC_INGESTION.md) for the no-admin
-structured funding path and quarantine rules. Tavily discovery is opt-in and is
-not called by the default refresh.
-
-## Customer Readiness
-
-See [customer readiness and sourced corrections](docs/CUSTOMER_READINESS.md).
-Run `python3 scripts/check_customer_readiness.py --require-ready` before a public
-release. A successful rebuild is not proof of source accuracy or market coverage.
-
-## Hackathon deployment
-
-For NVIDIA Nemotron on Nebius Token Factory, set the server-side `NEBIUS_API_KEY`, the exact catalog ID in `NEBIUS_MODEL`, and its matching `NEBIUS_BASE_URL` on Render. The runtime integration is `web/server/app-server.mjs`; Ask uses canonical graph evidence and public source metadata. Restart after environment changes and verify a real Ask answer. See [submission checklist](docs/HACKATHON_SUBMISSION.md) and [latest evidence review](docs/EVIDENCE_REVIEW_2026_10_12.md).
-
-The graph represents curated publicly reported AI mega-rounds above the selected funding threshold, not the full AI startup ecosystem.
-
-Daily automatic RSS verification and publication: see [scheduled ingestion](docs/SCHEDULED_INGESTION.md).
+- [Hackathon submission and demo guide](docs/HACKATHON_SUBMISSION.md)
+- [Project scope](docs/PROJECT_SCOPE.md)
+- [Data acquisition](docs/DATA_ACQUISITION.md)
+- [Data schema](docs/DATA_SCHEMA.md)
+- [Analysis plan](docs/ANALYSIS_PLAN.md)
+- [GitHub contribution and PR workflow](GITHUB.md)

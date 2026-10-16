@@ -10,7 +10,7 @@ The graph represents curated publicly reported AI mega-rounds above the selected
 
 The application calls Nebius Token Factory's chat completions endpoint from `web/server/app-server.mjs`. The default model is `moonshotai/Kimi-K2.6`; `NEBIUS_MODEL` and `NEBIUS_BASE_URL` can override it. For the hackathon, set `NEBIUS_MODEL` to the exact NVIDIA Nemotron model ID available to your key and use its matching API endpoint. The key stays on the server. Optional `NEBIUS_REASONING_EFFORT` is omitted unless configured, because supported parameters vary by model. The assistant receives selected entities and relationships resolved against the published graph, evidence metadata, and conversation history. Browser-supplied amounts cannot replace the published evidence.
 
-All graph context lenses, analytics, source links, news, and Ask are available without an account. There are no subscription plans, payment flows, credit deductions, or trial allowances. Supabase is optional and used for authenticated administrator review.
+All graph context lenses, analytics, source links, news, and Ask are available without an account. There are no subscription plans, payment flows, credit deductions, or trial allowances. Supabase is optional for the local demo and is used for persistent scheduled snapshots and authenticated administrator review.
 
 ## Judge setup
 
@@ -50,7 +50,7 @@ If entering the [Nebius Global AI Hackathon](https://nebiusglobalaihackathon.dev
 - Select a track; Best Apps and Agents is a candidate for this app and requires Nemotron on Nebius.
 - Deploy the branch after review, save the exact model ID in Render, and verify a real Ask response after the service restarts. Catalog verification alone does not prove inference access.
 - Supply the public repository, working demo URL, English project description, and public YouTube demo under three minutes.
-- Add an approved open-source license before submission; the repository currently has none.
+- The repository includes an [OSI-approved MIT license](../LICENSE) for original project source and documentation. Preserve third-party licenses and source attribution.
 - Explain the significant changes made to this existing project after August 26, 2026: anonymous access, payment removal, analytics improvements, safer ingestion, updated evidence, and NVIDIA integration once verified.
 - Keep the demo available to judges through December 15, 2026 and complete the requested tool feedback.
 
